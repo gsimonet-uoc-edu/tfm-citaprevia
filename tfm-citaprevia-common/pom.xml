@@ -1,0 +1,43 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>uoc.edu</groupId>
+    <artifactId>tfm-citaprevia</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <artifactId>tfm-citaprevia-common</artifactId>
+  <name>tfm-citaprevia-common</name>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>17</java.version>
+	</properties>
+	<build>
+		<plugins>
+			<plugin>
+		        <groupId>com.google.cloud.tools</groupId>
+		        <artifactId>jib-maven-plugin</artifactId>
+		        <configuration>
+		          <!-- we don't want jib to execute on this module -->
+		          <skip>true</skip>
+		        </configuration>
+		    </plugin>
+			<!-- we want this library to be built reproducibly -->
+			<plugin>
+				<groupId>io.github.zlika</groupId>
+				<artifactId>reproducible-build-maven-plugin</artifactId>
+				<version>0.11</version>
+				<executions>
+				<execution>
+					<id>run-when-packaged</id>
+					<goals>
+					<goal>strip-jar</goal>
+					</goals>
+					<phase>package</phase>
+				</execution>
+				</executions>
+			</plugin>
+    </plugins>
+	</build>
+	
+</project>

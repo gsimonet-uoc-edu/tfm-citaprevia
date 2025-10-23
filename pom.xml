@@ -1,0 +1,47 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>uoc.edu</groupId>
+  <artifactId>tfm-citaprevia</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>citaprevia</name>
+  <description>Projecte Final de Màster 2025-26, Màster U. en Enginyeria Informàtica, Guillermo Simonet Ramón, Plataforma web de cita prèvia</description>
+  
+  	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.7.18</version>
+	</parent>
+		
+	<properties>
+		<springdoc.version>1.6.12</springdoc.version>
+		<lombok.version>1.18.30</lombok.version>
+	</properties>
+  
+  <modules>
+  	<module>tfm-citaprevia-api</module>
+  	<module>tfm-citaprevia-common</module>
+  	<module>tfm-citaprevia-front</module>
+  </modules>
+  	
+	<dependencies>		
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
+		</dependency>	
+	</dependencies>
+	
+	<build>
+	    <!-- Defines plugins that are used in the modules. -->
+	    <pluginManagement>
+	      <plugins>
+	        <plugin>
+	          <groupId>com.google.cloud.tools</groupId>
+	          <artifactId>jib-maven-plugin</artifactId>
+	          <version>3.3.1</version>
+	        </plugin>
+	      </plugins>
+	    </pluginManagement>
+	</build>
+</project>
