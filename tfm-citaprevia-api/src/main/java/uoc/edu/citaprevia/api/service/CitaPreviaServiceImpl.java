@@ -1,5 +1,7 @@
 package uoc.edu.citaprevia.api.service;
 
+import java.util.Locale;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +26,11 @@ public class CitaPreviaServiceImpl implements CitaPreviaService{
 			dto = Converter.toDto(citaPreviaDao.findCitaByCon(con));
 		}
 		return dto; 
+	}
+	
+	@Override
+	public CitaDto saveCita (CitaDto cita, Locale locale) {
+		return Converter.toDto(citaPreviaDao.saveCita(Converter.toDao(cita)));				
 	}
 
 }

@@ -16,7 +16,7 @@ public class Converter {
 		return dto;
 	}
 	
-	public static Cita toDao (Cita dto) {
+	public static Cita toDao (CitaDto dto) {
 		Cita dao = new Cita();
 		if (dto != null) {
 			dao.setCon(dto.getCon());

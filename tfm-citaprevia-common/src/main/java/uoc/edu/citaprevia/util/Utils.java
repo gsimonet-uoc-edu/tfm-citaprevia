@@ -1,6 +1,5 @@
 package uoc.edu.citaprevia.util;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 public final class Utils {
@@ -25,8 +24,4 @@ public final class Utils {
 		return num == null || num==0;
 	}
 	
-	public static boolean isEmpty(BigDecimal num) {
-		return num == null || num.compareTo(BigDecimal.ZERO) == 0;
-	}
-
 }
