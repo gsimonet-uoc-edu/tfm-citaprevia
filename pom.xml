@@ -33,7 +33,6 @@
 	</dependencies>
 	
 	<build>
-	    <!-- Defines plugins that are used in the modules. -->
 	    <pluginManagement>
 	      <plugins>
 	        <plugin>
