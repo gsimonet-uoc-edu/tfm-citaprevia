@@ -12,6 +12,13 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>17</java.version>
 	</properties>
+	<dependencies>
+			<dependency>
+			    <groupId>org.apache.commons</groupId>
+			    <artifactId>commons-lang3</artifactId>
+			    <version>3.14.0</version>
+			</dependency>
+	</dependencies>
 	<build>
 		<plugins>
 			<plugin>

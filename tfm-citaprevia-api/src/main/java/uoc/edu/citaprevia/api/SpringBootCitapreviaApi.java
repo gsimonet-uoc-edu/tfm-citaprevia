@@ -27,12 +27,7 @@ public class SpringBootCitapreviaApi extends SpringBootServletInitializer {
 
 	@Bean
 	public OpenAPI customOpenAPI() {
-	    return new OpenAPI()
-	    	.components(
-	    		new Components()
-	    			.addSecuritySchemes("api-key",
-    					new SecurityScheme().type(SecurityScheme.Type.APIKEY).in(SecurityScheme.In.HEADER).name("X-API-KEY"))
-	    	)
-	    	.info(new Info().title("TFM-CITAPREVIA API").version("100"));
+	    return new OpenAPI().components(new Components()).info(new Info().title("CITAPREVIA API")
+	    .version("100"));
 	}
 }
