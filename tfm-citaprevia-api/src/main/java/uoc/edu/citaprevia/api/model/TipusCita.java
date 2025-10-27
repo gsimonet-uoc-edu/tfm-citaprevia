@@ -1,6 +1,5 @@
 package uoc.edu.citaprevia.api.model;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -37,6 +36,6 @@ public class TipusCita {
 	private ModalitatTipusCita tipcitmod;
 	@ManyToOne 
 	@JoinColumn(name="SUBAPL_COA")
-	private Subaplicacio subapl;
+	private Subaplicacio subaplicacio;
 	
 }

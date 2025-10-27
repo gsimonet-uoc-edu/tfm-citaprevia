@@ -1,9 +1,9 @@
 package uoc.edu.citaprevia.api.jpa;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 import uoc.edu.citaprevia.api.model.Cita;
 
-public interface CitaRepository extends JpaRepository<Cita, Long> {
+public interface CitaRepository extends PagingAndSortingRepository<Cita, Long> {
     Cita findByCon(Long con);
 }

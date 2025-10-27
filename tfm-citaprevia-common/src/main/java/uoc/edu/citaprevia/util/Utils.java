@@ -4,6 +4,10 @@ import java.util.List;
 
 public final class Utils {
 	
+	public static String getStr(final String str) {
+		return (str == null ? "" : str);
+	}
+	
 	public static boolean isEmpty(final String[] list) {
 		return (list == null || list.length == 0);
 	}
