@@ -15,12 +15,11 @@ import uoc.edu.citaprevia.front.util.RestTemplateResponseErrorHandler;
 @Service("citprePublicService")
 public class CitaPreviaPublicClientImpl  implements CitaPreviaPublicClient{
 	
-	@Value("${imi.citaprevia.api.host}")
+	@Value("${citaprevia.service.api.host}")
 	private String citaPreviaApi;
 	
 	private String getBaseApiUrl() { return citaPreviaApi; }
 	
-	private static final String PARAM_APL_COA = "aplCoa";
 	private static final String PARAM_SUBAPL_COA = "subaplCoa";
 	private static final String PARAM_LOCALE = "locale";
 	private static final String PARAM_UBI_CON = "ubiCon";

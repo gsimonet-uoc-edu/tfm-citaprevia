@@ -4,6 +4,9 @@ import java.util.List;
 
 public final class Utils {
 	
+	public static final int size(List<?> list) { return list == null ? 0 : list.size(); }
+
+	
 	public static String getStr(final String str) {
 		return (str == null ? "" : str);
 	}

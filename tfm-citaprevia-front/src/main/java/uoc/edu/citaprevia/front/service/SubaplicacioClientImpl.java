@@ -17,10 +17,9 @@ public class SubaplicacioClientImpl implements SubaplicacioClient{
 	
 	private static final String SUBAPL_COA = "subaplCoa";
 	
-	@Value("${imi.service.api.host}")
+	@Value("${citaprevia.service.api.host}")
 	private String citapreviaApi;
-	@Value("${imi.citaprevia.apl}")
-	private String application;
+
 	private RestTemplate restTemplate = new RestTemplate();
 	private String getBaseApiUrl() { return citapreviaApi; }
 	
@@ -29,7 +28,7 @@ public class SubaplicacioClientImpl implements SubaplicacioClient{
 		Map<String, Object> params = new HashMap<>();
 		params.put(SUBAPL_COA, subaplCoa);
 		params.put("lang", locale);
-		String url = getBaseApiUrl() + "/subaplicacions/{aplCoa}/{subaplCoa}?lang={lang}";
+		String url = getBaseApiUrl() + "/subaplicacions/{subaplCoa}?lang={lang}";
 		ResponseEntity<SubaplicacioDto> response = restTemplate.exchange(url, HttpMethod.GET, null, SubaplicacioDto.class, params);
 		return response.getBody() == null ? new SubaplicacioDto() : response.getBody();
 	}

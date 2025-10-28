@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Header Común</title>
+</head>
+<body>
+
+<!-- Fragmento: header -->
+<header th:fragment="header" class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+<!-- common/header.html -->
+<div class="ms-auto">
+    <form th:action="@{'/public/' + ${subaplCoa} + '/lang'}" method="post" class="d-inline">
+        <input type="hidden" name="lang" value="ca">
+        <button type="submit" 
+                class="btn btn-outline-secondary btn-sm me-1"
+                th:classappend="${#locale.language == 'ca'} ? 'active' : ''">
+            Català
+        </button>
+    </form>
+    <form th:action="@{'/public/' + ${subaplCoa} + '/lang'}" method="post" class="d-inline">
+        <input type="hidden" name="lang" value="es">
+        <button type="submit" 
+                class="btn btn-outline-secondary btn-sm"
+                th:classappend="${#locale.language == 'es'} ? 'active' : ''">
+            Español
+        </button>
+    </form>
+</div>
+</header>
+
+</body>
+</html>

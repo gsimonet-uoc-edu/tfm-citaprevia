@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Fragmento: errors -->
+<div th:fragment="errors(errors)" 
+     th:if="${errors != null and !#lists.isEmpty(errors)}" 
+     class="alert alert-danger alert-dismissible fade show" 
+     role="alert">
+
+    <strong th:utext="#{errors.title}">Errores:</strong>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+
+    <ul class="mb-0 mt-2">
+        <li th:each="error : ${errors}" 
+            th:utext="${error.dem} 
+                       ?: #{error.generic}">
+            Error desconocido
+        </li>
+    </ul>
+</div>
+
+</body>
+</html>

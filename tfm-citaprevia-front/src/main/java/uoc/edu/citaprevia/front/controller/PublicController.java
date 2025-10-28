@@ -11,12 +11,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
-import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import uoc.edu.citaprevia.dto.SeleccioTipusCitaDto;
 import uoc.edu.citaprevia.dto.SubaplicacioDto;
@@ -32,12 +35,9 @@ public class PublicController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PublicController.class);
 	
-	@Value("${imi.citaprevia.api.host}")
+	@Value("${citaprevia.service.api.host}")
 	private String urlCitapreviaApi;
-	@Value("${imi.citaprevia.apl}")
-	private String application;
-	@Value("${hCaptcha.sitekey}")
-	
+
 	@Autowired
 	private CitaPreviaPublicClient citaPreviaPublicClient;
 	
@@ -51,22 +51,6 @@ public class PublicController {
 	 * Seteo atributos comunes en Model: subaplCoa, subAplicacio, etc 
 	 * @throws ImiException 
 	*/
-	
-	private String msg(String key, Locale locale) {
-		try {
-			return bundle.getMessage(key, null, locale);
-		} catch(NoSuchMessageException e) {
-			return "{" + key + "}";
-		}
-	}
-	private String msg(String key, Locale locale, String defMsg) {
-		try {
-			return bundle.getMessage(key, null, locale);
-		} catch(NoSuchMessageException e) {
-			return defMsg;
-		}
-	}
-	
 	private void setInModelCommonAttributes(HttpServletRequest request, Model model, Locale locale, String subaplCoa)
 	throws Exception {
 		
@@ -82,23 +66,30 @@ public class PublicController {
 	public String welcome(HttpServletRequest request, Model model, @PathVariable String subaplCoa,
 	Locale locale) throws Exception {
 		setInModelCommonAttributes(request, model, locale, subaplCoa);
-		SeleccioTipusCitaDto llistaTipusCites = citaPreviaPublicClient.getAllTipusCites(application, subaplCoa, locale);
+		SeleccioTipusCitaDto llistaTipusCites =   citaPreviaPublicClient.getAllTipusCites(subaplCoa, locale);
 		if(llistaTipusCites == null || Utils.size(llistaTipusCites.getTipusCites()) == 0) {
 			List<ErrorDto> errors = new ArrayList<>();
-			errors.add(new ErrorDto(9999L, "E", this.msg("error_no_public", locale)));
+			errors.add(new ErrorDto(9999L, "E", bundle.getMessage("no_tipus_disponibles", null, locale)));
 			model.addAttribute("errors", errors);
 		}
 		model.addAttribute("llistaTipusCites", llistaTipusCites);
-		List<OficinaCitaPreviaDto> oficines = citaPreviaPublicClient.getOficinesHabilitatesCitaPrevia(
-			application, subaplCoa, locale);
-		boolean senseOficines = true;
-		if(oficines != null && !oficines.isEmpty()) {
-			for(OficinaCitaPreviaDto oficina : oficines) {
-				if(oficina.isHbl()) { senseOficines = false; break; }
-			}
-		}
-		model.addAttribute("senseOficines", senseOficines);
 		return "index";
+	}
+	
+	@PostMapping("/{subaplCoa}/lang")
+	public String changeLanguage(@PathVariable String subaplCoa,
+	                            @RequestParam String lang,
+	                            HttpServletRequest request) {
+
+	    Locale locale = "ca".equals(lang) ? new Locale("ca") : new Locale("es");
+	    
+	    // Usa la constante oficial de Spring
+	    request.getSession().setAttribute(
+	        org.springframework.web.servlet.i18n.SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME,
+	        locale
+	    );
+
+	    return "redirect:/public/" + subaplCoa;
 	}
 
 }
