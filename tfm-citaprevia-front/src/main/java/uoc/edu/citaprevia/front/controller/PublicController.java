@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.i18n.SessionLocaleResolver;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import uoc.edu.citaprevia.dto.SeleccioTipusCitaDto;
 import uoc.edu.citaprevia.dto.SubaplicacioDto;
@@ -76,6 +74,42 @@ public class PublicController {
 		return "index";
 	}
 	
+	
+	@PostMapping("/{subaplCoa}/Seleccio")
+    public String seleccionarTipusCita(@PathVariable String subaplCoa,
+                                       @RequestParam("tipcitCon") Long tipcitCon,
+                                       Model model,
+                                       Locale locale) {
+
+        // Guardar tipo de cita en sesión o modelo
+        model.addAttribute("subaplCoa", subaplCoa);
+        model.addAttribute("tipcitCon", tipcitCon);
+
+        // Cargar agendas disponibles para este tipo de cita
+        var agendas = citaPreviaPublicClient.getAgendasByTipusCita(subaplCoa, tipcitCon, locale);
+        model.addAttribute("agendas", agendas);
+
+        return "redirect:/public/" + subaplCoa + "/calendari?tipcitCon=" + tipcitCon;
+    }
+
+    @GetMapping("/{subaplCoa}/calendari")
+    public String mostrarCalendari(@PathVariable String subaplCoa,
+                                   @RequestParam Long tipcitCon,
+                                   Model model,
+                                   Locale locale) {
+
+        model.addAttribute("subaplCoa", subaplCoa);
+        model.addAttribute("tipcitCon", tipcitCon);
+
+        // Cargar datos del calendario (mes actual)
+        var calendari = citaPreviaPublicClient.getCalendariCites(subaplCoa, tipcitCon, locale);
+        model.addAttribute("calendari", calendari);
+
+        return "calendari";
+    }
+}
+
+
 	@PostMapping("/{subaplCoa}/lang")
 	public String changeLanguage(@PathVariable String subaplCoa,
 	                            @RequestParam String lang,

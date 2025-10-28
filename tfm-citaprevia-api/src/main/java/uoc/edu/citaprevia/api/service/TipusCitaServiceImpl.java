@@ -11,6 +11,7 @@ import uoc.edu.citaprevia.api.dao.TipusCitaDao;
 import uoc.edu.citaprevia.api.model.TipusCita;
 import uoc.edu.citaprevia.api.utils.Converter;
 import uoc.edu.citaprevia.dto.TipusCitaDto;
+import uoc.edu.citaprevia.util.Utils;
 
 @Service("tipusCitaService")
 public class TipusCitaServiceImpl implements TipusCitaService{
@@ -20,10 +21,13 @@ public class TipusCitaServiceImpl implements TipusCitaService{
 	
 	@Override
 	public List<TipusCitaDto> getAllTipusCitaBySubaplCoa(String subaplCoa, Locale locale) {
-		List<TipusCita> llista = tipusCitaDao.getAllTipusCitaBySubapl(subaplCoa);
-		List<TipusCitaDto> dto = new ArrayList<>();
-		llista.forEach(item->dto.add(Converter.toDto(item)));
-		return dto;
+		List<TipusCitaDto> dtos = new ArrayList<>();
+		
+		if (!Utils.isEmpty(subaplCoa)) {
+			List<TipusCita> llista = tipusCitaDao.getAllTipusCitaBySubapl(subaplCoa);			
+			llista.forEach(item->dtos.add(Converter.toDto(item)));
+		}	
+		return dtos;
 	}
 
 }

@@ -22,6 +22,7 @@ INSERT INTO TIPUS_CITA (dec, dem, notval, cap, gespri, tipcitmod, SUBAPL_COA) VA
 -- Inserció a HORARI
 INSERT INTO HORARI (dec, dem, notval, SUBAPL_COA, TIPCIT_CON) VALUES 
 ('Torn de Matí', 'Horari de 9 a 13 h', 'S', 'AP1', 1),
+('Torn de nit', 'Horari de 0 a 8 h', 'S', 'AP1', 1),
 ('Torn de Tarda', 'Horari de 14 a 18 h', 'N', 'AP2', 2);
 
 -- Inserció a AGENDA

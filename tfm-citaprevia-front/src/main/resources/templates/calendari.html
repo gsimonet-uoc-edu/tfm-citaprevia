@@ -1,0 +1,310 @@
+¡Perfecto! Vamos a **implementar el flujo completo**:
+
+1. **Seleccionar tipo de cita** → `SeleccioController`
+2. **Mostrar calendario con citas disponibles** → `calendari.html`
+
+---
+
+## OBJETIVO
+
+Después de elegir el **tipo de cita**, redirigir a un **calendario mensual** que muestre:
+
+- Días con **citas disponibles** (por agenda)
+- Días **sin citas**
+- Posibilidad de **elegir día** → ir a selección de hora
+
+---
+
+## PASO 1: `SeleccioController.java`
+
+```java
+package uoc.edu.citaprevia.front.controller;
+
+import java.util.Locale;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import uoc.edu.citaprevia.front.service.CitaPreviaPublicClient;
+
+@Controller
+@RequestMapping("/public")
+public class SeleccioController {
+
+    @Autowired
+    private CitaPreviaPublicClient citaPreviaPublicClient;
+
+    @PostMapping("/{subaplCoa}/Seleccio")
+    public String seleccionarTipusCita(@PathVariable String subaplCoa,
+                                       @RequestParam("tipcitCon") Long tipcitCon,
+                                       Model model,
+                                       Locale locale) {
+
+        // Guardar tipo de cita en sesión o modelo
+        model.addAttribute("subaplCoa", subaplCoa);
+        model.addAttribute("tipcitCon", tipcitCon);
+
+        // Cargar agendas disponibles para este tipo de cita
+        var agendas = citaPreviaPublicClient.getAgendasByTipusCita(subaplCoa, tipcitCon, locale);
+        model.addAttribute("agendas", agendas);
+
+        return "redirect:/public/" + subaplCoa + "/calendari?tipcitCon=" + tipcitCon;
+    }
+
+    @GetMapping("/{subaplCoa}/calendari")
+    public String mostrarCalendari(@PathVariable String subaplCoa,
+                                   @RequestParam Long tipcitCon,
+                                   Model model,
+                                   Locale locale) {
+
+        model.addAttribute("subaplCoa", subaplCoa);
+        model.addAttribute("tipcitCon", tipcitCon);
+
+        // Cargar datos del calendario (mes actual)
+        var calendari = citaPreviaPublicClient.getCalendariCites(subaplCoa, tipcitCon, locale);
+        model.addAttribute("calendari", calendari);
+
+        return "calendari";
+    }
+}
+```
+
+---
+
+## PASO 2: `CitaPreviaPublicClient` – Métodos necesarios
+
+```java
+public interface CitaPreviaPublicClient {
+
+    // Ya existe
+    SeleccioTipusCitaDto getAllTipusCites(String subaplCoa, Locale locale);
+
+    // NUEVOS
+    List<AgendaDto> getAgendasByTipusCita(String subaplCoa, Long tipcitCon, Locale locale);
+
+    CalendariDto getCalendariCites(String subaplCoa, Long tipcitCon, Locale locale);
+}
+```
+
+---
+
+## PASO 3: DTOs necesarios
+
+### `AgendaDto.java`
+```java
+@Getter @Setter @NoArgsConstructor
+public class AgendaDto {
+    private Long con;
+    private String nomCentre;     // Ubicacio.nom
+    private String nomTecnic;     // Tecnic.nom
+    private Long horariCon;
+}
+```
+
+### `CalendariDto.java`
+```java
+@Getter @Setter @NoArgsConstructor
+public class CalendariDto {
+    private int any;
+    private int mes; // 1-12
+    private List<DiaCalendariDto> dies;
+}
+```
+
+### `DiaCalendariDto.java`
+```java
+@Getter @Setter @NoArgsConstructor
+public class DiaCalendariDto {
+    private int dia; // 1-31
+    private boolean disponible;
+    private List<FranjaDto> franges; // solo si disponible
+}
+```
+
+### `FranjaDto.java`
+```java
+@Getter @Setter @NoArgsConstructor
+public class FranjaDto {
+    private String horaInici; // "09:00"
+    private String horaFi;    // "09:30"
+    private Long agendaCon;
+    private boolean lliure;
+}
+```
+
+---
+
+## PASO 4: `calendari.html` – Calendario mensual
+
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8">
+    <title th:utext="#{calendari.titol} + ' - ' + ${subAplicacio?.dem}"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .dia-disponible { background-color: #d4edda; cursor: pointer; }
+        .dia-no-disponible { background-color: #f8d7da; }
+        .dia-actual { font-weight: bold; border: 2px solid #007bff; }
+        .franja-lliure { background-color: #d1ecf1; }
+        .franja-ocupada { background-color: #f5c6cb; }
+    </style>
+</head>
+<body class="bg-light">
+
+<th:block th:replace="~{common/header :: header}"></th:block>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+
+            <h2 class="text-center mb-4" th:utext="#{calendari.mes} + ' ' + ${calendari.any}"></h2>
+
+            <div class="card shadow">
+                <div class="card-body">
+
+                    <!-- Calendario -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered text-center">
+                            <thead class="table-light">
+                                <tr>
+                                    <th th:utext="#{dilluns}">Dl</th>
+                                    <th th:utext="#{dimarts}">Dt</th>
+                                    <th th:utext="#{dimecres}">Dc</th>
+                                    <th th:utext="#{dijous}">Dj</th>
+                                    <th th:utext="#{divendres}">Dv</th>
+                                    <th th:utext="#{dissabte}">Ds</th>
+                                    <th th:utext="#{diumenge}">Dg</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="setmana, weekStat : ${#lists.chunk(calendari.dies, 7)}">
+                                    <td th:each="dia : ${setmana}"
+                                        th:classappend="${dia.disponible} ? 'dia-disponible' : 'dia-no-disponible'"
+                                        th:onclick="${dia.disponible} ? 'mostrarFranges(' + ${dia.dia} + ')' : ''"
+                                        th:text="${dia.dia}">
+                                        1
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Franjas horarias (se muestran al hacer clic) -->
+                    <div id="frangesContainer" class="mt-4" style="display: none;">
+                        <h5 th:utext="#{selecciona.hora}"></h5>
+                        <div id="frangesList"></div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="text-center mt-3">
+                <a th:href="@{'/public/' + ${subaplCoa}}"
+                   class="btn btn-secondary" th:utext="#{tornar}">Tornar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="~{common/footer :: footer}"></th:block>
+
+<script>
+function mostrarFranges(dia) {
+    const franges = /*[[ ${calendari.dies} ]]*/ [].find(d => d.dia === dia)?.franges || [];
+    const container = document.getElementById('frangesContainer');
+    const list = document.getElementById('frangesList');
+    list.innerHTML = '';
+
+    if (franges.length === 0) {
+        list.innerHTML = '<p class="text-muted">No hi ha franges disponibles.</p>';
+    } else {
+        franges.forEach(f => {
+            const btn = document.createElement('button');
+            btn.className = 'btn m-1 ' + (f.lliure ? 'btn-success' : 'btn-danger');
+            btn.disabled = !f.lliure;
+            btn.innerText = f.horaInici + ' - ' + f.horaFi;
+            if (f.lliure) {
+                btn.onclick = () => window.location.href = 
+                    '/public/${subaplCoa}/hora?tipcitCon=${tipcitCon}&agendaCon=' + f.agendaCon + '&dia=' + dia + '&hora=' + f.horaInici;
+            }
+            list.appendChild(btn);
+        });
+    }
+    container.style.display = 'block';
+}
+</script>
+
+</body>
+</html>
+```
+
+---
+
+## PASO 5: `messages_*.properties` – Textos del calendario
+
+### `messages_ca.properties`
+```properties
+calendari.titol = Calendari de cites
+calendari.mes = Mes de
+dilluns = Dl
+dimarts = Dt
+dimecres = Dc
+dijous = Dj
+divendres = Dv
+dissabte = Ds
+diumenge = Dg
+selecciona.hora = Selecciona una hora:
+tornar = Tornar
+```
+
+### `messages_es.properties`
+```properties
+calendari.titol = Calendario de citas
+calendari.mes = Mes de
+dilluns = Lu
+dimarts = Ma
+dimecres = Mi
+dijous = Ju
+divendres = Vi
+dissabte = Sá
+diumenge = Do
+selecciona.hora = Selecciona una hora:
+tornar = Volver
+```
+
+---
+
+## FLUJO COMPLETO
+
+```
+/public/{subaplCoa} 
+   ↓ (selecciona tipus cita)
+POST /public/{subaplCoa}/Seleccio 
+   ↓
+GET /public/{subaplCoa}/calendari?tipcitCon=123 
+   ↓ (elige día)
+JS → /public/{subaplCoa}/hora?agendaCon=5&dia=15&hora=09:00
+```
+
+---
+
+## Próximos pasos
+
+1. `HoraController` → elegir hora y rellenar datos personales
+2. `ConfirmacioController` → resumen + hCaptcha
+3. `FinalController` → confirmación final
+
+---
+
+**Listo. Tienes un calendario funcional, bonito y multidioma.**
+
+¿Quieres que te genere el **`HoraController` y `hora.html`** para elegir la hora y rellenar datos?
