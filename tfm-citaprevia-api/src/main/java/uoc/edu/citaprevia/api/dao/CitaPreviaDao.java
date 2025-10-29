@@ -1,5 +1,7 @@
 package uoc.edu.citaprevia.api.dao;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +29,10 @@ public class CitaPreviaDao {
 	
 	public void deleteCita (Cita entity) {
 		citaRepository.delete(entity);
+	}
+	
+	public boolean existsByAgendaConAndDathorini(Long con, LocalDateTime current) {
+		return citaRepository.existsByAgendaConAndDathorini(con, current);
 	}
 
 }
