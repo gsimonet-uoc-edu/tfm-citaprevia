@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.querydsl.core.annotations.QueryInit;
@@ -27,8 +28,9 @@ import uoc.edu.citaprevia.model.SiNo;
 @Getter @Setter @NoArgsConstructor @ToString @EqualsAndHashCode
 public class Agenda {
 	
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "agenda_seq")
+	@SequenceGenerator(name = "agenda_seq", sequenceName = "AGENDA_SEQ", allocationSize = 1)
 	private Long con;
 	private LocalDate datini;
 	private LocalDate datfin;

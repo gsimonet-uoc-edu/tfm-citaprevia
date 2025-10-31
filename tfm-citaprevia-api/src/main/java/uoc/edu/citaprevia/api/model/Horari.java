@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import lombok.Getter;
@@ -21,8 +22,9 @@ import uoc.edu.citaprevia.model.SiNo;
 @Table(name = "HORARI")
 @Getter @Setter @NoArgsConstructor @ToString
 public class Horari {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "horari_seq")
+	@SequenceGenerator(name = "horari_seq", sequenceName = "HORARI_SEQ", allocationSize = 1)
 	private Long con;
 	private String dec;
 	private String dem;

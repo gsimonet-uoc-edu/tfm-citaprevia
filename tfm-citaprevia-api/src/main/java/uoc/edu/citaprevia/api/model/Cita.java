@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -24,8 +25,9 @@ import lombok.ToString;
 @Getter @Setter @NoArgsConstructor @ToString
 public class Cita {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cita_seq")
+	@SequenceGenerator(name = "cita_seq", sequenceName = "CITA_SEQ", allocationSize = 1)
 	private Long con;
 	@NotNull
 	private LocalDateTime dathorini;
