@@ -34,7 +34,7 @@ public class PublicController {
 		
 	}
 	
-	@GetMapping(value={"/calendaris/ subaplicacions/{subaplCoa}/tipus-cites/{tipCitCon}"})
+	@GetMapping(value={"/calendaris/subaplicacions/{subaplCoa}/tipus-cites/{tipCitCon}"})
 	@Operation(summary="Obté el calendari de cites")
 	public CalendariDto getCalendari(@PathVariable String subaplCoa,
 									 @PathVariable Long tipCitCon,

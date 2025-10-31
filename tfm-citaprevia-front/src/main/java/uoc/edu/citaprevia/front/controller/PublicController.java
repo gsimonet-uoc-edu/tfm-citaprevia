@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import uoc.edu.citaprevia.dto.CalendariDto;
 import uoc.edu.citaprevia.dto.SeleccioTipusCitaDto;
 import uoc.edu.citaprevia.dto.SubaplicacioDto;
 import uoc.edu.citaprevia.dto.generic.ErrorDto;
@@ -73,41 +74,36 @@ public class PublicController {
 		model.addAttribute("llistaTipusCites", llistaTipusCites);
 		return "index";
 	}
-	
-	
-	@PostMapping("/{subaplCoa}/Seleccio")
-    public String seleccionarTipusCita(@PathVariable String subaplCoa,
-                                       @RequestParam("tipcitCon") Long tipcitCon,
-                                       Model model,
-                                       Locale locale) {
 
-        // Guardar tipo de cita en sesión o modelo
-        model.addAttribute("subaplCoa", subaplCoa);
-        model.addAttribute("tipcitCon", tipcitCon);
-
-        // Cargar agendas disponibles para este tipo de cita
-        var agendas = citaPreviaPublicClient.getAgendasByTipusCita(subaplCoa, tipcitCon, locale);
-        model.addAttribute("agendas", agendas);
-
-        return "redirect:/public/" + subaplCoa + "/calendari?tipcitCon=" + tipcitCon;
-    }
-
-    @GetMapping("/{subaplCoa}/calendari")
-    public String mostrarCalendari(@PathVariable String subaplCoa,
-                                   @RequestParam Long tipcitCon,
-                                   Model model,
-                                   Locale locale) {
+	@GetMapping("/{subaplCoa}/calendari")
+    public String mostrarCalendari(
+            @PathVariable String subaplCoa,
+            @RequestParam Long tipcitCon,
+            Model model,
+            Locale locale) {
 
         model.addAttribute("subaplCoa", subaplCoa);
         model.addAttribute("tipcitCon", tipcitCon);
 
-        // Cargar datos del calendario (mes actual)
-        var calendari = citaPreviaPublicClient.getCalendariCites(subaplCoa, tipcitCon, locale);
+        // Cargar calendario desde el backend
+        CalendariDto calendari = citaPreviaPublicClient.getCalendariCites(subaplCoa, tipcitCon, locale);
         model.addAttribute("calendari", calendari);
 
-        return "calendari";
+        return "calendari"; // → calendari.html
     }
-}
+    
+    @PostMapping("/{subaplCoa}/seleccio")
+    public String procesarSeleccio(
+            @PathVariable String subaplCoa,
+            @RequestParam("tipcitCon") Long tipcitCon) {
+
+        if (tipcitCon == null) {
+            return "redirect:/public/" + subaplCoa; // vuelve si no hay selección
+        }
+
+        // REDIRECCIÓN AL CALENDARIO
+        return "redirect:/public/" + subaplCoa + "/calendari?tipcitCon=" + tipcitCon;
+    }
 
 
 	@PostMapping("/{subaplCoa}/lang")

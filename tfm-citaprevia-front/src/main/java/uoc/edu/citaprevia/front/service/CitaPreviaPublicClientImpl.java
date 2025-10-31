@@ -1,5 +1,7 @@
 package uoc.edu.citaprevia.front.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -24,6 +26,7 @@ public class CitaPreviaPublicClientImpl  implements CitaPreviaPublicClient{
 	private String getBaseApiUrl() { return citaPreviaApi; }
 	
 	private static final String PARAM_SUBAPL_COA = "subaplCoa";
+	private static final String PARAM_TIPCIT_CON = "tipCitCon";
 	private static final String PARAM_LOCALE = "locale";
 	private static final String PARAM_UBI_CON = "ubiCon";
 	
@@ -45,15 +48,24 @@ public class CitaPreviaPublicClientImpl  implements CitaPreviaPublicClient{
 	}
 
 	@Override
-	public List<AgendaDto> getAgendasByTipusCita(String subaplCoa, Long tipcitCon, Locale locale) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<AgendaDto> getAgendasByTipusCita(String subaplCoa, Long tipCitCon, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_SUBAPL_COA, subaplCoa);
+		params.put(PARAM_TIPCIT_CON, tipCitCon);		
+		params.put("lang", locale);
+		String url = getBaseApiUrl() + "/agendes/tipus-cites/{tipCitCon}/subaplicacions/{subaplCoa}?lang={lang}";	
+		AgendaDto[] list = restTemplate.getForObject(url, AgendaDto[].class, params);
+		return list == null ? new ArrayList<>() : Arrays.asList(list);
 	}
 
 	@Override
-	public CalendariDto getCalendariCites(String subaplCoa, Long tipcitCon, Locale locale) {
-		// TODO Auto-generated method stub
-		return null;
+	public CalendariDto getCalendariCites(String subaplCoa, Long tipCitCon, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_SUBAPL_COA, subaplCoa);
+		params.put(PARAM_TIPCIT_CON, tipCitCon);
+		params.put("lang", locale);
+		String url = getBaseApiUrl() + "/public/calendaris/subaplicacions/{subaplCoa}/tipus-cites/{tipCitCon}?lang={lang}";
+		return restTemplate.getForObject(url, CalendariDto.class, params);
 	}
 
 }

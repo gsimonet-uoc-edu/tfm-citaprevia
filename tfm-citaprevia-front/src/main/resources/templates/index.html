@@ -28,8 +28,8 @@
                         <!-- Errores -->
                         <th:block th:replace="~{common/errors :: errors(errors = ${errors})}" />
 
-                        <!-- Formulario -->
-                        <form th:action="@{'/public/' + ${subaplCoa} + '/Seleccio'}" method="get">
+                        <!-- Formulario: POST a /seleccio -->
+                        <form th:action="@{'/public/' + ${subaplCoa} + '/seleccio'}" method="post">
 
                             <!-- Más de 1 tipo de cita -->
                             <div th:if="${llistaTipusCites != null and #lists.size(llistaTipusCites.tipusCites) > 1}"
@@ -44,7 +44,7 @@
                                 </select>
                             </div>
 
-                            <!-- 1 solo tipo -->
+                            <!-- 1 solo tipo → campo oculto -->
                             <div th:if="${llistaTipusCites != null and #lists.size(llistaTipusCites.tipusCites) == 1}"
                                  th:with="tip = ${llistaTipusCites.tipusCites[0]}">
                                 <input type="hidden" name="tipcitCon" th:value="${tip.con}">
@@ -54,14 +54,14 @@
                                 </div>
                             </div>
 
-                            <!-- Sin tipos -->
+                            <!-- Sin tipos → mensaje -->
                             <div th:if="${llistaTipusCites == null or #lists.isEmpty(llistaTipusCites.tipusCites)}"
                                  class="alert alert-warning text-center">
                                 <i class="fas fa-exclamation-triangle me-2"></i>
                                 <span th:utext="#{no_tipus_disponibles}"></span>
                             </div>
 
-                            <!-- Botón continuar -->
+                            <!-- Botón Continuar -->
                             <button type="submit"
                                     class="btn btn-success btn-lg w-100 mt-3"
                                     th:disabled="${llistaTipusCites == null or #lists.isEmpty(llistaTipusCites.tipusCites)}"
