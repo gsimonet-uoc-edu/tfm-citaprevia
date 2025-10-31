@@ -16,7 +16,8 @@ INSERT INTO UBICACIO (con, nom, obs) VALUES
 -- TIPUS_CITA
 INSERT INTO TIPUS_CITA (con, dec, dem, notval, cap, gespri, tipcitmod, SUBAPL_COA) VALUES 
 (1, 'Consulta Inicial', 'Primera visita', 'S', 30, 'S', 'P', 'AP1'),
-(2, 'Seguiment', 'Control', 'N', 15, 'N', 'T', 'AP2');
+(2, 'Consulta Successiva', 'Segina visita', 'S', 30, 'S', 'P', 'AP1'),
+(3, 'Seguiment', 'Control', 'N', 15, 'N', 'T', 'AP2');
 
 -- HORARI
 INSERT INTO HORARI (con, dec, dem, notval, SUBAPL_COA, TIPCIT_CON) VALUES 
