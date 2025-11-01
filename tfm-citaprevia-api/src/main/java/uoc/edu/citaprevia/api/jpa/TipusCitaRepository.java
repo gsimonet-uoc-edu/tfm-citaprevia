@@ -9,6 +9,7 @@ import uoc.edu.citaprevia.api.model.TipusCita;
 public interface TipusCitaRepository extends PagingAndSortingRepository<TipusCita, Long>{
 	
 	List<TipusCita> findBySubaplicacioCoa(String coa);
+	TipusCita findByCon(Long con);
 
 
 }

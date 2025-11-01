@@ -18,5 +18,8 @@ public class TipusCitaDao {
 		return tipusCitaRepository.findBySubaplicacioCoa(coa);
 
 	}
+	public TipusCita findTipusCitaByCon(Long con) {
+		return tipusCitaRepository.findByCon(con);
+	}
 
 }

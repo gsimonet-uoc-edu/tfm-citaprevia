@@ -10,5 +10,6 @@ import uoc.edu.citaprevia.api.model.SetmanaTipusId;
 public interface SetmanaTipusRepository extends PagingAndSortingRepository<SetmanaTipus, SetmanaTipusId>{
 
 	List<SetmanaTipus> findByIdHorariConAndIdDiasetCon (Long horCon, Long diasetCon);
+	List<SetmanaTipus> findByIdHorariCon(Long horCon);
 
 }

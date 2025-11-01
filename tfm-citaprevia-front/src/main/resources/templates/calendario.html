@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{calendari} + ' - ' + ${tipusCita.dem}"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .franja-lliure {
+            background-color: #d4edda;
+            border: 1px solid #28a745;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .franja-lliure:hover {
+            background-color: #c3e6cb;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .franja-ocupada {
+            background-color: #f8d7da;
+            border: 1px solid #dc3545;
+            border-radius: 8px;
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        .franja-btn {
+            width: 100%;
+            text-align: left;
+            font-weight: 500;
+            padding: 12px 16px;
+            background: none;
+            border: none;
+            color: inherit;
+        }
+        .dia-header {
+            background-color: #e9ecef;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            color: #495057;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        .tecnic {
+            font-size: 0.85em;
+            color: #6c757d;
+            margin-top: 4px;
+        }
+        .card { border-radius: 12px; }
+        .no-franges {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+    <th:block th:replace="~{common/header :: header}"></th:block>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+
+                <!-- Título principal -->
+                <div class="text-center mb-4">
+                    <h3 class="text-primary" th:text="#{selecciona_data_hora} + ' - ' + ${tipusCita.dem}"></h3>
+                </div>
+
+                <!-- Errores -->
+                <th:block th:replace="~{common/errors :: errors(errors = ${errors})}" />
+
+                <!-- Calendario en tabla -->
+                <div class="card shadow">
+                    <div class="card-body p-4">
+
+                        <!-- RECORRER DÍAS AGRUPADOS -->
+                        <div th:each="diaGroup : ${frangesHorariesGrouped}">
+                            <div class="dia-header">
+                                [[${#temporals.format(diaGroup.key, 'EEEE, d MMMM yyyy', #locale)}]]
+                            </div>
+
+                            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+                                <div th:each="event : ${diaGroup.value}" class="col">
+                                    <form th:action="@{'/public/' + ${subaplCoa} + '/reserva'}" method="post"
+                                          th:classappend="${event.lliure} ? 'franja-lliure' : 'franja-ocupada'"
+                                          th:style="${!event.lliure} ? 'pointer-events: none; opacity: 0.7;' : ''">
+
+                                        <input type="hidden" name="tipcitCon" th:value="${tipusCita.con}">
+                                        <input type="hidden" name="dataHoraInici" th:value="${event.start}">
+                                        <input type="hidden" name="agendaCon" th:value="${event.agendaCon}">
+
+                                        <button type="submit" class="franja-btn"
+                                                th:disabled="${!event.lliure}"
+                                                th:text="${event.title}">
+                                        </button>
+                                        <small class="d-block text-center tecnic" th:text="${event.tecnic}"></small>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sin franjas -->
+                        <div th:if="${#maps.isEmpty(frangesHorariesGrouped)}" class="no-franges">
+                            <p>No hi ha franges horàries disponibles en aquest període.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botón volver -->
+                <div class="text-center mt-4">
+                    <a th:href="@{'/public/' + ${subaplCoa}}" 
+                       class="btn btn-outline-secondary btn-lg px-5" 
+                       th:text="#{tornar}">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block th:replace="~{common/footer :: footer}"></th:block>
+</body>
+</html>

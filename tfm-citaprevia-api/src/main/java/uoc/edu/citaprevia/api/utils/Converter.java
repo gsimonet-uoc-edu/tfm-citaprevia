@@ -3,6 +3,7 @@ package uoc.edu.citaprevia.api.utils;
 import uoc.edu.citaprevia.api.model.Agenda;
 import uoc.edu.citaprevia.api.model.Cita;
 import uoc.edu.citaprevia.api.model.Horari;
+import uoc.edu.citaprevia.api.model.SetmanaTipus;
 import uoc.edu.citaprevia.api.model.Subaplicacio;
 import uoc.edu.citaprevia.api.model.Tecnic;
 import uoc.edu.citaprevia.api.model.TipusCita;
@@ -10,6 +11,7 @@ import uoc.edu.citaprevia.api.model.Ubicacio;
 import uoc.edu.citaprevia.dto.AgendaDto;
 import uoc.edu.citaprevia.dto.CitaDto;
 import uoc.edu.citaprevia.dto.HorariDto;
+import uoc.edu.citaprevia.dto.SetmanaTipusDto;
 import uoc.edu.citaprevia.dto.SubaplicacioDto;
 import uoc.edu.citaprevia.dto.TecnicDto;
 import uoc.edu.citaprevia.dto.TipusCitaDto;
@@ -107,6 +109,20 @@ public class Converter {
 			dto.setDatfin(dao.getDatfin());
 			dto.setHorari(toDto(dao.getHorari()));
 			dto.setTecnic(toDto(dao.getTecnic()));
+		}
+		return dto;
+	}
+	
+	public static SetmanaTipusDto toDto(SetmanaTipus dao) {
+		SetmanaTipusDto dto = new SetmanaTipusDto();
+		if (dao != null) {
+			if (dao.getId() != null) {
+				dto.setHorari(toDto(dao.getId().getHorari()));
+				dto.setHorini(dao.getId().getHorini());
+				dto.setHorfin(dao.getId().getHorfin());
+				dto.setDiasetCon(dao.getId().getDiasetCon());
+			}
+			dto.setTipcit(toDto(dao.getTipcit()));
 		}
 		return dto;
 	}

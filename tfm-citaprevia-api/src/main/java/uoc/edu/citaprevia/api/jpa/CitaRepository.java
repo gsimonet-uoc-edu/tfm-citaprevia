@@ -11,4 +11,7 @@ public interface CitaRepository extends PagingAndSortingRepository<Cita, Long> {
     Cita findByCon(Long con);
 
 	boolean existsByAgendaConAndDathorini(Long con, LocalDateTime current);
+	
+	boolean existsByAgendaConAndDathoriniLessThanEqualAndDathorfinGreaterThanEqual(
+	        Long agendaCon, LocalDateTime fi, LocalDateTime inici);
 }

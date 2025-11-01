@@ -1,6 +1,6 @@
 package uoc.edu.citaprevia.api.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -24,8 +24,10 @@ public class SetmanaTipusId implements java.io.Serializable {
 	@Column(name = "DIASET_CON")
 	private Long diasetCon;
 	
-	private LocalDateTime horini;
-	
-	private LocalDateTime horfin;
+	@Column(name = "horini", columnDefinition = "TIME", nullable = false)
+    private LocalTime horini;
+
+    @Column(name = "horfin", columnDefinition = "TIME", nullable = false)
+    private LocalTime horfin;
 
 }

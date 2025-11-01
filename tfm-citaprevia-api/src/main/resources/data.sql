@@ -20,8 +20,9 @@ INSERT INTO TIPUS_CITA (con, dec, dem, notval, cap, gespri, tipcitmod, SUBAPL_CO
 (3, 'Seguiment', 'Control', 'N', 15, 'N', 'T', 'AP2');
 
 -- HORARI
-INSERT INTO HORARI (con, dec, dem, notval, SUBAPL_COA, TIPCIT_CON) VALUES 
-(1, 'Matí', '9-13h', 'S', 'AP1', 1),
+-- Horario: Matí (con = 1)
+INSERT INTO HORARI (con, dec, dem, notval, SUBAPL_COA, TIPCIT_CON) VALUES
+(1, 'Matí', 'Horari de matí', 'S', 'AP1', 1),
 (2, 'Tarda', '14-18h', 'N', 'AP2', 2);
 
 -- AGENDA
@@ -29,10 +30,11 @@ INSERT INTO AGENDA (con, datini, datfin, UBI_CON, TEC_COA, HORCIT_CON, gespri, u
 (1, '2025-11-01', '2025-11-30', 1, 'T1', 1, 'S', 'admin', 'admin', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1),
 (2, '2025-11-01', '2025-11-07', 2, 'T2', 2, 'N', 'admin', 'admin', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 2);
 
--- SETMANA_TIPUS
-INSERT INTO SETMANA_TIPUS (HORCIT_CON, DIASET_CON, horini, horfin, TIPCIT_CON) VALUES 
-(1, 1, '2025-11-03 09:00:00', '2025-11-03 10:00:00', 1),
-(2, 2, '2025-11-04 14:00:00', '2025-11-04 15:00:00', 2);
+-- SetmanaTipus: Lunes y Miércoles, 9-10 y 10-11
+INSERT INTO SETMANA_TIPUS (HORCIT_CON, DIASET_CON, horini, horfin, TIPCIT_CON) VALUES
+(1, 1, '09:00:00', '10:00:00', 1),  -- Lunes 9-10
+(1, 1, '10:00:00', '11:00:00', 1),  -- Lunes 10-11
+(1, 3, '09:00:00', '10:00:00', 1);  -- Miércoles 9-10
 
 -- CITA
 INSERT INTO CITA (con, dathorini, dathorfin, obs, TIPCIT_CON, AGE_CON, lit1er, nomcar, tel, ema) VALUES 

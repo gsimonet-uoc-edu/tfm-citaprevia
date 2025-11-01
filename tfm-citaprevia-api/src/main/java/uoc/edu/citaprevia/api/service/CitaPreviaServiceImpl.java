@@ -1,5 +1,6 @@
 package uoc.edu.citaprevia.api.service;
 
+import java.time.LocalDateTime;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,11 @@ public class CitaPreviaServiceImpl implements CitaPreviaService{
 	@Override
 	public CitaDto saveCita (CitaDto cita, Locale locale) {
 		return Converter.toDto(citaPreviaDao.saveCita(Converter.toDao(cita)));				
+	}
+	
+	@Override
+	public boolean existeixCita (Long agendaCon, LocalDateTime fi, LocalDateTime inici) {
+		return citaPreviaDao.existeixCita(agendaCon, fi, inici);	
 	}
 
 }

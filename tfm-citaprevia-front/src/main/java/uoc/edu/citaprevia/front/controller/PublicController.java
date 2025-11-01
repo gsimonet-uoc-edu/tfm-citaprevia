@@ -1,8 +1,13 @@
 package uoc.edu.citaprevia.front.controller;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,9 +24,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import uoc.edu.citaprevia.dto.CalendariDto;
+import uoc.edu.citaprevia.dto.AgendaDto;
 import uoc.edu.citaprevia.dto.SeleccioTipusCitaDto;
+import uoc.edu.citaprevia.dto.SetmanaTipusDto;
 import uoc.edu.citaprevia.dto.SubaplicacioDto;
+import uoc.edu.citaprevia.dto.TipusCitaDto;
 import uoc.edu.citaprevia.dto.generic.ErrorDto;
 import uoc.edu.citaprevia.front.service.CitaPreviaPublicClient;
 import uoc.edu.citaprevia.front.service.SubaplicacioClient;
@@ -75,51 +82,100 @@ public class PublicController {
 		return "index";
 	}
 
-	@GetMapping("/{subaplCoa}/calendari")
-    public String mostrarCalendari(
-            @PathVariable String subaplCoa,
-            @RequestParam Long tipcitCon,
-            Model model,
-            Locale locale) {
+	private void addError(Model model, Long codi, String msgKey, Locale locale) {
+	    // Obtiene la lista de errores existente (o crea una nueva)
+	    List<ErrorDto> errors = (List<ErrorDto>) model.getAttribute("errors");
+	    if (errors == null) {
+	        errors = new ArrayList<>();
+	    }
 
-        model.addAttribute("subaplCoa", subaplCoa);
-        model.addAttribute("tipcitCon", tipcitCon);
+	    // Añade el nuevo error
+	    errors.add(new ErrorDto(codi, "E", bundle.getMessage(msgKey, null, locale)));
 
-        // Cargar calendario desde el backend
-        CalendariDto calendari = citaPreviaPublicClient.getCalendariCites(subaplCoa, tipcitCon, locale);
-        model.addAttribute("calendari", calendari);
+	    // Vuelve a guardarlo en el modelo
+	    model.addAttribute("errors", errors);
+	}
+	
+	@PostMapping("/{subaplCoa}/seleccio")
+    public String seleccio(@PathVariable String subaplCoa,
+                           @RequestParam Long tipcitCon,
+                           Model model, Locale locale, HttpServletRequest request) throws Exception {
 
-        return "calendari"; // → calendari.html
-    }
-    
-    @PostMapping("/{subaplCoa}/seleccio")
-    public String procesarSeleccio(
-            @PathVariable String subaplCoa,
-            @RequestParam("tipcitCon") Long tipcitCon) {
+        setInModelCommonAttributes(request, model, locale, subaplCoa);
 
-        if (tipcitCon == null) {
-            return "redirect:/public/" + subaplCoa; // vuelve si no hay selección
+        TipusCitaDto tipusCita = citaPreviaPublicClient.getTipusCita(tipcitCon, locale);
+        if (tipusCita == null || !subaplCoa.equals(tipusCita.getSubapl().getCoa())) {
+            addError(model, 9998L, "tipus_cita_no_valid", locale);
+            return welcome(request, model, subaplCoa, locale);
         }
 
-        // REDIRECCIÓN AL CALENDARIO
-        return "redirect:/public/" + subaplCoa + "/calendari?tipcitCon=" + tipcitCon;
+        List<AgendaDto> agendes = citaPreviaPublicClient.getAgendasBySubaplicacioAndTipusCita(subaplCoa, tipcitCon, locale);
+        if (agendes.isEmpty()) {
+            addError(model, 9997L, "no_agenda_disponible", locale);
+            model.addAttribute("llistaTipusCites", new SeleccioTipusCitaDto(List.of(tipusCita)));
+            return "index";
+        }
+
+        // Generar eventos
+        List<Map<String, Object>> events = generarEvents(agendes, citaPreviaPublicClient, locale);
+        model.addAttribute("frangesHoraries", events);
+        model.addAttribute("tipusCita", tipusCita);
+        model.addAttribute("dataInici", LocalDate.now());
+        model.addAttribute("dataFi", LocalDate.now().plusDays(30));
+        
+
+	     // AGRUPAR POR DÍA
+	     Map<LocalDate, List<Map<String, Object>>> grouped = events.stream()
+	         .collect(Collectors.groupingBy(
+	             e -> ((LocalDateTime) e.get("start")).toLocalDate()
+	         ));
+	
+	     model.addAttribute("frangesHoraries", events); // para compatibilidad
+	     model.addAttribute("frangesHorariesGrouped", grouped);
+        
+
+        return "calendario";
     }
+	
+	private List<Map<String, Object>> generarEvents(List<AgendaDto> agendes, CitaPreviaPublicClient client, Locale locale) {
+	    List<Map<String, Object>> events = new ArrayList<>();
 
+	    for (AgendaDto agenda : agendes) {
+	        LocalDate dataInici = agenda.getDatini();
+	        LocalDate dataFi = agenda.getDatfin();
 
-	@PostMapping("/{subaplCoa}/lang")
-	public String changeLanguage(@PathVariable String subaplCoa,
-	                            @RequestParam String lang,
-	                            HttpServletRequest request) {
+	        // RECORRER CADA DÍA del rango (inclusive)
+	        for (LocalDate data = dataInici; !data.isAfter(dataFi); data = data.plusDays(1)) {
+	            int diaSetmana = data.getDayOfWeek().getValue(); // 1=lunes, 2=martes, ..., 7=domingo
 
-	    Locale locale = "ca".equals(lang) ? new Locale("ca") : new Locale("es");
-	    
-	    // Usa la constante oficial de Spring
-	    request.getSession().setAttribute(
-	        org.springframework.web.servlet.i18n.SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME,
-	        locale
-	    );
+	            // Obtener franjas horarias del horario asociado
+	            List<SetmanaTipusDto> franges = citaPreviaPublicClient.getSetmanesTipusByHorari(agenda.getHorari().getCon(), locale);
 
-	    return "redirect:/public/" + subaplCoa;
+	            for (SetmanaTipusDto franja : franges) {
+	                // Solo si coincide el día de la semana
+	                if (franja.getDiasetCon() == diaSetmana) {
+
+	                    // COMBINAR fecha del día + hora de la franja
+	                    LocalDateTime inici = LocalDateTime.of(data, franja.getHorini());
+	                    LocalDateTime fi = LocalDateTime.of(data, franja.getHorfin());
+
+	                    // Verificar si ya hay cita (solapamiento)
+	                    boolean ocupada = false;//client.existeixCita(inici, fi, agenda.getCon());
+
+	                    // Crear evento FullCalendar
+	                    Map<String, Object> event = new HashMap<>();
+	                    event.put("title", franja.getHorini() + " - " + franja.getHorfin());
+	                    event.put("start", inici); // ISO 8601
+	                    event.put("classNames", ocupada ? "hora-ocupada" : "hora-lliure");
+	                    event.put("lliure", !ocupada);
+	                    event.put("tecnic", agenda.getTecnic().getNom());
+	                    event.put("agendaCon", agenda.getCon());
+	                    events.add(event);
+	                }
+	            }
+	        }
+	    }
+
+	    return events;
 	}
-
 }

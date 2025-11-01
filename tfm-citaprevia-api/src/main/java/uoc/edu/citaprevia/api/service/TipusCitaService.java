@@ -9,4 +9,6 @@ public interface TipusCitaService {
 
 	List<TipusCitaDto> getAllTipusCitaBySubaplCoa(String subaplCoa, Locale locale);
 
+	TipusCitaDto getTipusCitaByCon(Long con, Locale locale);
+
 }

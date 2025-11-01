@@ -18,4 +18,8 @@ public class SetmanaTipusDao {
 		return setmanaTipusRepository.findByIdHorariConAndIdDiasetCon(horCon, diasetCon);
 	}
 
+	public List<SetmanaTipus> findSetmanaTipusByHorari (Long horCon){
+		return setmanaTipusRepository.findByIdHorariCon(horCon);
+	}
+
 }

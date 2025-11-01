@@ -29,5 +29,13 @@ public class TipusCitaServiceImpl implements TipusCitaService{
 		}	
 		return dtos;
 	}
-
+	
+	@Override
+	public TipusCitaDto getTipusCitaByCon (Long con, Locale locale) {
+		TipusCitaDto dto = new TipusCitaDto();
+		if (!Utils.isEmpty(con)) {
+			dto = Converter.toDto(tipusCitaDao.findTipusCitaByCon(con));
+		}
+		return dto;
+	}
 }
