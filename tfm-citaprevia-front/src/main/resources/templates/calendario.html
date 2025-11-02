@@ -45,6 +45,7 @@
             font-size: 0.85em;
             color: #6c757d;
             margin-top: 4px;
+            text-align: center;
         }
         .card { border-radius: 12px; }
         .no-franges {
@@ -57,6 +58,7 @@
 </head>
 <body class="bg-light">
 
+    <!-- HEADER OFICIAL -->
     <th:block th:replace="~{common/header :: header}"></th:block>
 
     <div class="container py-5">
@@ -68,14 +70,14 @@
                     <h3 class="text-primary" th:text="#{selecciona_data_hora} + ' - ' + ${tipusCita.dem}"></h3>
                 </div>
 
-                <!-- Errores -->
+                <!-- ERRORES OFICIALES -->
                 <th:block th:replace="~{common/errors :: errors(errors = ${errors})}" />
 
                 <!-- Calendario en tabla -->
                 <div class="card shadow">
                     <div class="card-body p-4">
 
-                        <!-- RECORRER DÍAS AGRUPADOS -->
+                        <!-- RECORRER DÍAS EN ORDEN ASCENDENTE (TreeMap natural) -->
                         <div th:each="diaGroup : ${frangesHorariesGrouped}">
                             <div class="dia-header">
                                 [[${#temporals.format(diaGroup.key, 'EEEE, d MMMM yyyy', #locale)}]]
@@ -95,7 +97,7 @@
                                                 th:disabled="${!event.lliure}"
                                                 th:text="${event.title}">
                                         </button>
-                                        <small class="d-block text-center tecnic" th:text="${event.tecnic}"></small>
+                                        <small class="d-block tecnic" th:text="${event.tecnic}"></small>
                                     </form>
                                 </div>
                             </div>
@@ -103,7 +105,7 @@
 
                         <!-- Sin franjas -->
                         <div th:if="${#maps.isEmpty(frangesHorariesGrouped)}" class="no-franges">
-                            <p>No hi ha franges horàries disponibles en aquest període.</p>
+                            <p th:text="#{no_franges_disponibles}">No hi ha franges horàries disponibles.</p>
                         </div>
                     </div>
                 </div>
@@ -119,6 +121,10 @@
         </div>
     </div>
 
+    <!-- FOOTER OFICIAL -->
     <th:block th:replace="~{common/footer :: footer}"></th:block>
+
+    <!-- Bootstrap JS (para el dropdown del header) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

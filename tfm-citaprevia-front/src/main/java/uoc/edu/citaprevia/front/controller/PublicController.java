@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -125,13 +126,15 @@ public class PublicController {
         
 
 	     // AGRUPAR POR DÍA
-	     Map<LocalDate, List<Map<String, Object>>> grouped = events.stream()
-	         .collect(Collectors.groupingBy(
-	             e -> ((LocalDateTime) e.get("start")).toLocalDate()
-	         ));
-	
-	     model.addAttribute("frangesHoraries", events); // para compatibilidad
-	     model.addAttribute("frangesHorariesGrouped", grouped);
+        Map<LocalDate, List<Map<String, Object>>> grouped = events.stream()
+        	    .collect(Collectors.groupingBy(
+        	        e -> ((LocalDateTime) e.get("start")).toLocalDate(),
+        	        TreeMap::new, // ← ASCENDENTE (por defecto)
+        	        Collectors.toList()
+        	    ));
+
+        model.addAttribute("frangesHorariesGrouped", grouped);	
+	    model.addAttribute("frangesHoraries", events); // para compatibilidad
         
 
         return "calendario";
