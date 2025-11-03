@@ -9,4 +9,6 @@ public interface AgendaService {
 
 	List<AgendaDto> getAgendesByTipusCitaAndSubaplicacio(Long tipCitCon, String subaplCoa, Locale locale);
 
+	AgendaDto getAgenda(Long con, Locale locale);
+
 }

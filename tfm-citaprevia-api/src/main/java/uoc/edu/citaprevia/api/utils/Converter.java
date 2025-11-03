@@ -26,6 +26,24 @@ public class Converter {
 			dto.setDathorini(dao.getDathorini());
 			dto.setDathorfin(dao.getDathorfin());
 			dto.setObs(dao.getObs());
+			dto.setAgenda(toDto(dao.getAgenda()));
+			dto.setEma(dao.getEma());
+			dto.setLit05e(dao.getLit05e());
+			dto.setLit06e(dao.getLit06e());
+			dto.setLit07e(dao.getLit07e());
+			dto.setLit08e(dao.getLit08e());
+			dto.setLit09e(dao.getLit09e());
+			dto.setLit10e(dao.getLit10e());
+			dto.setLit1er(dao.getLit1er());
+			dto.setLit2on(dao.getLit2on());
+			dto.setLit3er(dao.getLit3er());
+			dto.setLit4rt(dao.getLit4rt());
+			dto.setNomcar(dao.getNomcar());
+			dto.setNom(dao.getNom());
+			dto.setLli(dao.getLlis());
+			dto.setTel(dao.getTel());
+			dto.setTipusCita(toDto(dao.getTipcit()));
+			dto.setNumdoc(dao.getNumdoc());
 		}
 		return dto;
 	}
@@ -37,6 +55,24 @@ public class Converter {
 			dao.setDathorini(dto.getDathorini());
 			dao.setDathorfin(dto.getDathorfin());
 			dao.setObs(dto.getObs());
+			dao.setAgenda(toDao(dto.getAgenda()));
+			dao.setEma(dto.getEma());
+			dao.setLit05e(dto.getLit05e());
+			dao.setLit06e(dto.getLit06e());
+			dao.setLit07e(dto.getLit07e());
+			dao.setLit08e(dto.getLit08e());
+			dao.setLit09e(dto.getLit09e());
+			dao.setLit10e(dto.getLit10e());
+			dao.setLit1er(dto.getLit1er());
+			dao.setLit2on(dto.getLit2on());
+			dao.setLit3er(dto.getLit3er());
+			dao.setLit4rt(dto.getLit4rt());
+			dao.setNom(dto.getNom());
+			dao.setNomcar(dto.getNomcar());
+			dao.setLlis(dao.getLlis());
+			dao.setTel(dto.getTel());
+			dao.setTipcit(toDao(dto.getTipusCita()));
+			dao.setNumdoc(dao.getNumdoc());
 		}
 		
 		return dao;
@@ -52,6 +88,17 @@ public class Converter {
 		return dto;
 	}
 	
+	public static Subaplicacio toDao(SubaplicacioDto dto) {
+		Subaplicacio dao = new Subaplicacio();
+		if (dao != null) {
+			dao.setCoa(dto.getCoa());
+			dao.setDec(dto.getDec());
+			dao.setDem(dto.getDem());
+		}
+		return dao;
+	}
+	
+	
 	
 	public static TipusCitaDto toDto(TipusCita dao) {
 		TipusCitaDto dto = new TipusCitaDto();
@@ -64,6 +111,17 @@ public class Converter {
 		return dto;
 	}
 	
+	public static TipusCita toDao(TipusCitaDto dto) {
+		TipusCita dao = new TipusCita();
+		if (dto != null) {
+			dao.setCon(dto.getCon());
+			dao.setDec(dto.getDec());
+			dao.setDem(dto.getDem());
+			dao.setSubaplicacio(toDao(dto.getSubapl()));
+		}
+		return dao;
+	}
+	
 	public static UbicacioDto toDto(Ubicacio dao) {
 		UbicacioDto dto = new UbicacioDto();
 		if (dao != null) {
@@ -72,6 +130,16 @@ public class Converter {
 			dto.setObs(dao.getObs());
 		}
 		return dto;
+	}
+	
+	public static Ubicacio toDao(UbicacioDto dto) {
+		Ubicacio dao = new Ubicacio();
+		if (dto != null) {
+			dao.setCon(dto.getCon());
+			dao.setNom(dto.getNom());
+			dao.setObs(dto.getObs());
+		}
+		return dao;
 	}
 	
 	public static HorariDto toDto(Horari dao) {
@@ -87,6 +155,19 @@ public class Converter {
 		return dto;
 	}
 	
+	public static Horari toDao(HorariDto dto) {
+		Horari dao = new Horari();
+		if (dto != null) {
+			dao.setCon(dto.getCon());
+			dao.setDec(dto.getDec());
+			dao.setDem(dto.getDem());
+			dao.setNotval(dto.getNotval());
+			dao.setSubapl(toDao(dto.getSubapl()));
+			dao.setTipusCita(toDao(dto.getTipusCita()));
+		}
+		return dao;
+	}
+	
 	public static TecnicDto toDto(Tecnic dao) {
 		TecnicDto dto = new TecnicDto();
 		if (dao != null) {
@@ -97,6 +178,18 @@ public class Converter {
 			dto.setNotval(dao.getNotval());
 		}
 		return dto;
+	}
+	
+	public static Tecnic toDao(TecnicDto dto) {
+		Tecnic dao = new Tecnic();
+		if (dto != null) {
+			dao.setCoa(dto.getCoa());
+			dao.setLl1(dto.getLl1());
+			dao.setLl2(dto.getLl2());
+			dao.setNom(dto.getNom());
+			dao.setNotval(dto.getNotval());
+		}
+		return dao;
 	}
 	
 	
@@ -113,6 +206,20 @@ public class Converter {
 		return dto;
 	}
 	
+	public static Agenda toDao(AgendaDto dto) {
+		Agenda dao = new Agenda();
+		if (dao != null) {
+			dao.setCentre(toDao(dto.getCentre()));
+			dao.setCon(dto.getCon());
+			dao.setDatini(dto.getDatini());
+			dao.setDatfin(dto.getDatfin());
+			dao.setHorari(toDao(dto.getHorari()));
+			dao.setTecnic(toDao(dto.getTecnic()));
+		}
+		return dao;
+	}
+	
+
 	public static SetmanaTipusDto toDto(SetmanaTipus dao) {
 		SetmanaTipusDto dto = new SetmanaTipusDto();
 		if (dao != null) {

@@ -31,5 +31,15 @@ public class AgendaServiceImpl implements AgendaService{
 		
 		return dtos;
 	}
+	
+	@Override
+	public AgendaDto getAgenda(Long con, Locale locale) {
+		AgendaDto dto = new AgendaDto();
+		if (!Utils.isEmpty(con)) {
+			Agenda dao = agendaDao.findByCon(con);
+			dto = Converter.toDto(dao);
+		}
+		return dto;
+	}
 
 }

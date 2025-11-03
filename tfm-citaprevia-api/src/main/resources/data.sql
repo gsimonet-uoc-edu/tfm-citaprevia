@@ -36,11 +36,95 @@ INSERT INTO SETMANA_TIPUS (HORCIT_CON, DIASET_CON, horini, horfin, TIPCIT_CON) V
 (1, 1, '10:00:00', '11:00:00', 1),  -- Lunes 10-11
 (1, 3, '09:00:00', '10:00:00', 1);  -- Miércoles 9-10
 
--- CITA
-INSERT INTO CITA (con, dathorini, dathorfin, obs, TIPCIT_CON, AGE_CON, lit1er, nomcar, tel, ema) VALUES 
-(1, '2025-11-03 09:30:00', '2025-11-03 10:00:00', 'Primera visita', 1, 1, 'Pacient A', 'Cardiologia', 123456789, 'a@ex.com'),
-(2, '2025-11-04 14:30:00', '2025-11-04 15:00:00', 'Seguiment', 2, 2, 'Pacient B', 'General', 987654321, 'b@ex.com');
+-- src/main/resources/data.sql
 
+-- ===================================================================
+-- INSERTS CORREGIDOS PARA CITA (H2) - 22 COLUMNAS
+-- ===================================================================
+
+-- Cita 1
+INSERT INTO CITA (
+    con, dathorini, dathorfin, obs, nom, llis, numdoc,
+    tipcit_con, age_con,
+    lit1er, lit2on, lit3er, lit4rt, lit05e, lit06e, lit07e, lit08e, lit09e, lit10e,
+    nomcar, tel, ema
+) VALUES (
+    1,
+    '2025-11-03 09:00:00', '2025-11-03 09:30:00',
+    'Paciente con dolor de cabeza recurrente',
+    'Maria Pérez García', 'S', '43186268L',
+    1, 1,
+    '12345678A', '1985-03-15', 'C/ Major, 123', '934567890', 'maria@email.com',
+    NULL, NULL, NULL, NULL, NULL,
+    'Pérez', 934567890, 'maria@email.com'
+);
+
+-- Cita 2 (CORREGIDA: 22 valores)
+INSERT INTO CITA (
+    con, dathorini, dathorfin, obs, nom, llis, numdoc,
+    tipcit_con, age_con,
+    lit1er, lit2on, lit3er, lit4rt, lit05e, lit06e, lit07e, lit08e, lit09e, lit10e,
+    nomcar, tel, ema
+) VALUES (
+    2,
+    '2025-11-04 10:00:00', '2025-11-04 10:30:00',
+    'Paciente necesita receta de insulina. Traer informe médico anterior.',
+    'Joan Torres Vila', 'S', '12341234Z',
+    1, 2,
+    '87654321B', '1978-07-22', 'Av. Diagonal 456', '933221100', 'joan.torres@email.com',
+    'Diabetes tipo 2', 'Metformina 850mg', 'Control glucosa', NULL, NULL,
+    'Torres', 933221100, 'joan.torres@email.com'
+);
+
+-- Cita 3
+INSERT INTO CITA (
+    con, dathorini, dathorfin, obs, nom, llis, numdoc,
+    tipcit_con, age_con,
+    lit1er, lit2on, lit3er, lit4rt, lit05e, lit06e, lit07e, lit08e, lit09e, lit10e,
+    nomcar, tel, ema
+) VALUES (
+    3,
+    '2025-11-05 11:00:00', '2025-11-05 11:30:00',
+    'Trámite de renovación de DNI. Traer foto reciente.',
+    'Laura Gómez Ruiz', 'S', '431762319S',
+    2, 1,
+    '11223344C', NULL, NULL, NULL, 'laura.alt@email.com',
+    'Renovación DNI', 'Foto 3x4', 'Impreso cumplimentado', NULL, NULL,
+    'Gómez', 932112233, 'laura.gomez@email.com'
+);
+
+-- Cita 4
+INSERT INTO CITA (
+    con, dathorini, dathorfin, obs, nom, llis, numdoc,
+    tipcit_con, age_con,
+    lit1er, lit2on, lit3er, lit4rt, lit05e, lit06e, lit07e, lit08e, lit09e, lit10e,
+    nomcar, tel, ema
+) VALUES (
+    4,
+    '2025-11-06 14:00:00', '2025-11-06 14:30:00',
+    'Primera visita. Paciente nuevo.',
+    'Carlos Sánchez López', 'S', '45423464Y',
+    1, 1,
+    '55667788D', '1990-11-30', 'C/ Gran Via 789', '931234567', 'carlos.sanchez@email.com',
+    'Seguro privado', 'Alergia a penicilina', 'Toma ibuprofeno', 'Peso: 78kg', 'Altura: 178cm',
+    'Sánchez', 931234567, 'carlos.sanchez@email.com'
+);
+
+-- Cita 5
+INSERT INTO CITA (
+    con, dathorini, dathorfin, obs, nom, llis, numdoc,
+    tipcit_con, age_con,
+    lit1er, lit2on, lit3er, lit4rt, lit05e, lit06e, lit07e, lit08e, lit09e, lit10e,
+    nomcar, tel, ema
+) VALUES (
+    5,
+    '2025-11-07 15:00:00', '2025-11-07 15:30:00',
+    NULL,
+    'Ana Martínez Díaz', 'S', '12334123W',
+    2, 2,
+    '99887766E', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+    'Martínez', 934567123, 'ana.martinez@email.com'
+);
 -- ========================================
 -- SINCRONIZAR SECUENCIAS PARA H2
 -- ========================================

@@ -35,6 +35,9 @@ public class Cita {
 	private LocalDateTime dathorfin;
 	@Size(max=2000)
 	private String obs;
+	private String nom;
+	private String llis;
+	private String numdoc;
 	@ManyToOne
 	@JoinColumn(name = "TIPCIT_CON")
 	@NotNull

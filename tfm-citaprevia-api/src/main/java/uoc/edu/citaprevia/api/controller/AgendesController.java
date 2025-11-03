@@ -27,5 +27,13 @@ public class AgendesController {
 																Locale locale) {
 		return agendaService.getAgendesByTipusCitaAndSubaplicacio(tipCitCon, subaplCoa, locale);
 	}
+	
+	@GetMapping(value="/{con}")
+	@Operation(summary="obtenir una genda")
+	public AgendaDto getAgenda(@PathVariable Long con,
+							Locale locale) {
+		return agendaService.getAgenda(con, locale);
+	}
+
 
 }
