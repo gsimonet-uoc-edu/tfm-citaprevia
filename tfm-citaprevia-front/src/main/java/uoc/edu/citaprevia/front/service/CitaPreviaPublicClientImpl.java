@@ -9,14 +9,19 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import uoc.edu.citaprevia.dto.AgendaDto;
 import uoc.edu.citaprevia.dto.CalendariDto;
+import uoc.edu.citaprevia.dto.CitaDto;
 import uoc.edu.citaprevia.dto.SeleccioTipusCitaDto;
 import uoc.edu.citaprevia.dto.SetmanaTipusDto;
 import uoc.edu.citaprevia.dto.TipusCitaDto;
+import uoc.edu.citaprevia.front.util.HttpUtil;
 import uoc.edu.citaprevia.front.util.RestTemplateResponseErrorHandler;
 
 @Service("citprePublicService")
@@ -29,6 +34,7 @@ public class CitaPreviaPublicClientImpl  implements CitaPreviaPublicClient{
 	
 	private static final String PARAM_SUBAPL_COA = "subaplCoa";
 	private static final String PARAM_TIPCIT_CON = "tipCitCon";
+	private static final String PARAM_AGE_CON = "ageCon";
 	private static final String PARAM_HOR_CON = "horCon";
 	private static final String PARAM_LOCALE = "locale";
 	private static final String PARAM_UBI_CON = "ubiCon";
@@ -88,6 +94,25 @@ public class CitaPreviaPublicClientImpl  implements CitaPreviaPublicClient{
 		params.put("lang", locale);
 		String url = getBaseApiUrl() + "/tipus-cites/{tipCitCon}?lang={lang}";
 		return restTemplate.getForObject(url, TipusCitaDto.class, params);
+	}
+	
+	@Override
+	public AgendaDto getAgenda (Long ageCon, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_AGE_CON, ageCon);
+		params.put("lang", locale);
+		String url = getBaseApiUrl() + "/agendes/{ageCon}?lang={lang}";
+		return restTemplate.getForObject(url, AgendaDto.class, params);
+	}
+	
+	@Override
+	public CitaDto saveCita(CitaDto cita, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("lang", locale);
+		String url = getBaseApiUrl() + "/cites?lang={lang}";
+	    ResponseEntity<CitaDto> response = restTemplate.postForEntity(url, cita, CitaDto.class, params
+	        );
+		return response.getBody() == null ? new CitaDto() : response.getBody();
 	}
 
 }

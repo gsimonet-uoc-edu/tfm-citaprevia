@@ -85,6 +85,7 @@
 
                             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
                                 <div th:each="event : ${diaGroup.value}" class="col">
+                                    <!-- Botón que abre el modal (solo si está libre) -->
                                     <form th:action="@{'/public/' + ${subaplCoa} + '/reserva'}" method="post"
                                           th:classappend="${event.lliure} ? 'franja-lliure' : 'franja-ocupada'"
                                           th:style="${!event.lliure} ? 'pointer-events: none; opacity: 0.7;' : ''">
@@ -93,9 +94,10 @@
                                         <input type="hidden" name="dataHoraInici" th:value="${event.start}">
                                         <input type="hidden" name="agendaCon" th:value="${event.agendaCon}">
 
-                                        <button type="submit" class="franja-btn"
+                                        <button type="button" class="franja-btn"
                                                 th:disabled="${!event.lliure}"
-                                                th:text="${event.title}">
+                                                th:text="${event.title}"
+                                                th:onclick="${event.lliure} ? 'openReservaModal(this)' : ''">
                                         </button>
                                         <small class="d-block tecnic" th:text="${event.tecnic}"></small>
                                     </form>
@@ -117,6 +119,86 @@
                        th:text="#{tornar}">
                     </a>
                 </div>
+
+                <!-- ==================== MODAL DE RESERVA ==================== -->
+                <div class="modal fade" id="reservaModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <form id="formCita" th:action="@{'/public/' + ${subaplCoa} + '/reserva'}" method="post">
+                                <div class="modal-header bg-primary text-white">
+                                    <h5 class="modal-title" th:text="#{reserva_cita} + ' - ' + ${tipusCita.dem}"></h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+
+                                    <!-- CAMPOS OCULTOS -->
+                                    <input type="hidden" name="tipcitCon" th:value="${tipusCita.con}">
+                                    <input type="hidden" name="dataHoraInici" id="modalDataHoraInici">
+                                    <input type="hidden" name="agendaCon" id="modalAgendaCon">
+
+                                    <!-- CAMPOS ESTÁTICOS (siempre visibles) -->
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label" th:text="#{nom}">Nom</label>
+                                            <input type="text" name="nom" class="form-control" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" th:text="#{lli}">Llinatges</label>
+                                            <input type="text" name="lli" class="form-control" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" th:text="#{nomcar}">Carrer</label>
+                                            <input type="text" name="nomcar" class="form-control" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" th:text="#{tel}">Telèfon</label>
+                                            <input type="tel" name="tel" class="form-control" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" th:text="#{ema}">Email</label>
+                                            <input type="email" name="ema" class="form-control" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" th:text="#{obs}">Observacions</label>
+                                            <textarea name="obs" class="form-control" rows="2"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <!-- CAMPOS DINÁMICOS (lit1er → lit10e) -->
+                                    <div class="row g-3" th:if="${!#lists.isEmpty(camposCita)}">
+                                        <div th:each="campo, iter : ${camposCita}" 
+                                             th:class="'col-md-' + (${iter.index % 2 == 0} ? '6' : '6')">
+                                            <label class="form-label" th:text="${campo.label}"></label>
+                                            <div th:switch="${campo.type}">
+                                                <input th:case="*" th:type="${campo.type}" th:name="${campo.name}" 
+                                                       class="form-control"
+                                                       th:required="${#strings.contains(campo.validation, 'required')}"
+                                                       th:pattern="${#strings.contains(campo.validation, 'pattern') ? 
+                                                                    #strings.substringAfter(campo.validation, 'pattern=') : null}">
+                                                <textarea th:case="textarea" th:name="${campo.name}" class="form-control" rows="3"
+                                                          th:required="${#strings.contains(campo.validation, 'required')}"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Hora seleccionada -->
+                                    <div class="mt-3">
+                                        <small class="text-muted">
+                                            <span th:text="#{hora_seleccionada}"></span>:
+                                            <strong id="horaSeleccionada"></strong>
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{cancelar}">Cancel·lar</button>
+                                    <button type="submit" class="btn btn-success" th:text="#{reservar}">Reservar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- ==================== FIN MODAL ==================== -->
+
             </div>
         </div>
     </div>
@@ -124,7 +206,25 @@
     <!-- FOOTER OFICIAL -->
     <th:block th:replace="~{common/footer :: footer}"></th:block>
 
-    <!-- Bootstrap JS (para el dropdown del header) -->
+    <!-- Bootstrap JS + script para abrir el modal -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const modal = new bootstrap.Modal(document.getElementById('reservaModal'));
+
+        function openReservaModal(btn) {
+            const form = btn.closest('form');
+            const hora = btn.textContent.trim();
+            const dataHora = form.querySelector('input[name="dataHoraInici"]').value;
+            const agendaCon = form.querySelector('input[name="agendaCon"]').value;
+
+            document.getElementById('modalDataHoraInici').value = dataHora;
+            document.getElementById('modalAgendaCon').value = agendaCon;
+            document.getElementById('horaSeleccionada').textContent = hora;
+
+            modal.show();
+        }
+        /*]]>*/
+    </script>
 </body>
 </html>

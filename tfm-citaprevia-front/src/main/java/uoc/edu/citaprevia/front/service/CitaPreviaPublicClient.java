@@ -5,6 +5,7 @@ import java.util.Locale;
 
 import uoc.edu.citaprevia.dto.AgendaDto;
 import uoc.edu.citaprevia.dto.CalendariDto;
+import uoc.edu.citaprevia.dto.CitaDto;
 import uoc.edu.citaprevia.dto.SeleccioTipusCitaDto;
 import uoc.edu.citaprevia.dto.SetmanaTipusDto;
 import uoc.edu.citaprevia.dto.TipusCitaDto;
@@ -21,6 +22,10 @@ public interface CitaPreviaPublicClient {
 	TipusCitaDto getTipusCita(Long tipCitCon, Locale locale);
 
 	List<SetmanaTipusDto> getSetmanesTipusByHorari(Long horCon, Locale locale);
+
+	AgendaDto getAgenda(Long ageCon, Locale locale);
+
+	CitaDto saveCita(CitaDto cita, Locale locale);
 	
 
 }

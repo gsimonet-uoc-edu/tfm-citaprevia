@@ -1,0 +1,13 @@
+package uoc.edu.citaprevia.dto.front;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class CampConfigDto {
+    private String name;       // lit1er, lit2n, lit6d...
+    private String label;      // Nom, DNI, Telèfon...
+    private String type;       // text, email, tel, textarea, date...
+    private String validation; // required, pattern="[0-9]{8}[A-Z]", ...
+}

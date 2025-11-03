@@ -19,19 +19,26 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import uoc.edu.citaprevia.dto.AgendaDto;
+import uoc.edu.citaprevia.dto.CitaDto;
 import uoc.edu.citaprevia.dto.SeleccioTipusCitaDto;
 import uoc.edu.citaprevia.dto.SetmanaTipusDto;
 import uoc.edu.citaprevia.dto.SubaplicacioDto;
 import uoc.edu.citaprevia.dto.TipusCitaDto;
+import uoc.edu.citaprevia.dto.front.CampConfigDto;
+import uoc.edu.citaprevia.dto.front.CitaFormDto;
 import uoc.edu.citaprevia.dto.generic.ErrorDto;
 import uoc.edu.citaprevia.front.service.CitaPreviaPublicClient;
+import uoc.edu.citaprevia.front.service.MetacamapService;
 import uoc.edu.citaprevia.front.service.SubaplicacioClient;
 import uoc.edu.citaprevia.util.Utils;
 
@@ -50,6 +57,9 @@ public class PublicController {
 	
 	@Autowired
 	private SubaplicacioClient subaplicacioClient;
+	
+	@Autowired
+	private MetacamapService metacamapService;
 	
 	@Autowired
 	private MessageSource bundle;
@@ -135,6 +145,9 @@ public class PublicController {
 
         model.addAttribute("frangesHorariesGrouped", grouped);	
 	    model.addAttribute("frangesHoraries", events); // para compatibilidad
+	    
+	    List<CampConfigDto> campos = metacamapService.getCampos(subaplCoa, locale);
+	    model.addAttribute("camposCita", campos);
         
 
         return "calendario";
@@ -180,5 +193,67 @@ public class PublicController {
 	    }
 
 	    return events;
+	}
+	
+	@PostMapping("/{subaplCoa}/reserva")
+	public String reserva(
+	        @PathVariable String subaplCoa,
+	        @ModelAttribute CitaFormDto form,
+	        BindingResult result,
+	        Model model,
+	        RedirectAttributes redirect,
+	        Locale locale) throws Exception {
+
+	    // === VALIDACIÓN ===
+	    /*if (result.hasErrors()) {
+	        model.addAttribute("camposCita", metacamapService.getCampos(subaplCoa, locale));
+	        model.addAttribute("tipusCita", citaPreviaPublicClient.getTipusCita(form.getTipcitCon(), locale));
+	        model.addAttribute("subaplCoa", subaplCoa);
+	        // Necesitas volver a generar frangesHorariesGrouped si quieres mostrar el calendario
+	        // O redirigir con errores
+	        redirect.addFlashAttribute("errors", result.getAllErrors());
+	        return "redirect:/public/" + subaplCoa + "/seleccio";
+	    }*/
+
+	    // === CREAR CITA ===
+	    CitaDto cita = new CitaDto();
+	   // cita.setDathorini(form.getDataHoraInici());
+	  //  cita.setDathorfin(form.getDataHoraInici().plusMinutes(30)); // o duración desde TipusCita
+
+	    // === CAMPOS ESTÁTICOS ===
+	    cita.setNom(form.getNom());
+	    cita.setTel(form.getTel());
+	    cita.setEma(form.getEma());
+	    cita.setObs(form.getObs());
+
+	    // === CAMPOS DINÁMICOS (lit1er → lit10e) ===
+	    form.getLit().forEach((name, value) -> {
+	        switch (name) {
+	            case "lit1er" -> cita.setLit1er(value);
+	            case "lit2n"  -> cita.setLit2on(value);
+	            case "lit3n"  -> cita.setLit3er(value);
+	            case "lit4t"  -> cita.setLit4rt(value);
+	            case "lit5e"  -> cita.setLit05e(value);
+	            case "lit6d"  -> cita.setLit06e(value);
+	            case "lit7o"  -> cita.setLit07e(value);
+	            case "lit8c"  -> cita.setLit08e(value);
+	            case "lit9p"  -> cita.setLit09e(value);
+	            case "lit10e" -> cita.setLit10e(value);
+	            default -> {
+	                // Opcional: log de campo desconocido
+	            }
+	        }
+	    });
+
+	    // === RELACIONES ===
+	    cita.setAgenda(citaPreviaPublicClient.getAgenda(form.getAgendaCon(), locale));
+	    cita.setTipusCita(citaPreviaPublicClient.getTipusCita(form.getTipcitCon(), locale));
+
+	    // === GUARDAR EN BBDD ===
+	    CitaDto insertCita = citaPreviaPublicClient.saveCita(cita, locale);
+
+	    // === REDIRECCIÓN CON ÉXITO ===
+	    redirect.addFlashAttribute("success", "Cita reservada correctamente");
+	    return "redirect:/public/" + subaplCoa + "/confirmacio?con=" + insertCita.getCon();
 	}
 }
