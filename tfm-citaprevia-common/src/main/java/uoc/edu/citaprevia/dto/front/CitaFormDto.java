@@ -11,11 +11,13 @@ import lombok.Setter;
 public class CitaFormDto {
     private Long tipcitCon;
     private LocalDateTime dataHoraInici;
+    private LocalDateTime dataHoraFin;
     private Long agendaCon;
 
     // ESTÁTICOS
     private String nom;
-    private String lli;
+    private String llis;
+    private String numdoc;
     private String nomcar;
     private Long tel;
     private String ema;
@@ -26,7 +28,7 @@ public class CitaFormDto {
 
     //@JsonAnySetter
     public void setLit(String name, String value) {
-        if (name.matches("lit[1-9][0-9]?[a-z]")) {
+        if (name.matches("lit[0-9]{1,2}[a-z]{1,2}")) {
             lit.put(name, value);
         }
     }
