@@ -21,7 +21,7 @@ public class Subaplicacio {
 	private String coa;
 	
 	@NotNull
-	@Size(max=15)
+	@Size(max=100)
 	private String dec;
 	
 	@Size(max=240)

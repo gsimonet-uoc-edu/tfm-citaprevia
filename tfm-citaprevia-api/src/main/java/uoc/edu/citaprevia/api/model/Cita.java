@@ -29,9 +29,9 @@ public class Cita {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cita_seq")
 	@SequenceGenerator(name = "cita_seq", sequenceName = "CITA_SEQ", allocationSize = 1)
 	private Long con;
-	@NotNull
+	//@NotNull
 	private LocalDateTime dathorini;
-	@NotNull
+	//@NotNull
 	private LocalDateTime dathorfin;
 	@Size(max=2000)
 	private String obs;

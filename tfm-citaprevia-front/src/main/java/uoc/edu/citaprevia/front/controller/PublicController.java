@@ -182,6 +182,7 @@ public class PublicController {
 	                    Map<String, Object> event = new HashMap<>();
 	                    event.put("title", franja.getHorini() + " - " + franja.getHorfin());
 	                    event.put("start", inici); // ISO 8601
+	                    event.put("end", fi);
 	                    event.put("classNames", ocupada ? "hora-ocupada" : "hora-lliure");
 	                    event.put("lliure", !ocupada);
 	                    event.put("tecnic", agenda.getTecnic().getNom());
@@ -217,12 +218,12 @@ public class PublicController {
 
 	    // === CREAR CITA ===
 	    CitaDto cita = new CitaDto();
-	   // cita.setDathorini(form.getDataHoraInici());
-	  //  cita.setDathorfin(form.getDataHoraInici().plusMinutes(30)); // o duración desde TipusCita
+	    cita.setDathorini(form.getDataHoraInici());
+	    cita.setDathorfin(form.getDataHoraFin()); // o duración desde TipusCita
 
 	    // === CAMPOS ESTÁTICOS ===
 	    cita.setNom(form.getNom());
-	    cita.setTel(form.getTel());
+	    cita.setTel(Long.valueOf(form.getTel()));
 	    cita.setEma(form.getEma());
 	    cita.setObs(form.getObs());
 
