@@ -174,7 +174,9 @@ public class PublicController {
 	                    // COMBINAR fecha del día + hora de la franja
 	                    LocalDateTime inici = LocalDateTime.of(data, franja.getHorini());
 	                    LocalDateTime fi = LocalDateTime.of(data, franja.getHorfin());
-
+	                    inici = inici.plusSeconds(1);
+	                    fi = fi.plusSeconds(1);
+	                    
 	                    // Verificar si ya hay cita (solapamiento)
 	                    boolean ocupada = false;//client.existeixCita(inici, fi, agenda.getCon());
 
@@ -218,8 +220,8 @@ public class PublicController {
 
 	    // === CREAR CITA ===
 	    CitaDto cita = new CitaDto();
-	    cita.setDathorini(form.getDataHoraInici());
-	    cita.setDathorfin(form.getDataHoraFin()); // o duración desde TipusCita
+	    cita.setDathorini(form.getDataHoraInici().minusSeconds(1));
+	    cita.setDathorfin(form.getDataHoraFin().minusSeconds(1)); // o duración desde TipusCita
 
 	    // === CAMPOS ESTÁTICOS ===
 	    cita.setNom(form.getNom());

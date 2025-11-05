@@ -9,14 +9,20 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
 public class CitaFormDto {
     @NotNull private Long tipcitCon;
-    @NotNull private LocalDateTime dataHoraInici;
-    @NotNull private LocalDateTime dataHoraFin;
+    @NotNull 
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private LocalDateTime dataHoraInici;
+    @NotNull
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private LocalDateTime dataHoraFin;
     @NotNull private Long agendaCon;
 
     @NotBlank private String nom;
