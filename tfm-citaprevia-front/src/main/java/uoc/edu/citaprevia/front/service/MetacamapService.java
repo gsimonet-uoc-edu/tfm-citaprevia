@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import uoc.edu.citaprevia.dto.front.CampConfigDto;
+import uoc.edu.citaprevia.front.dto.CampConfigDto;
 
 @Service
 @RequiredArgsConstructor

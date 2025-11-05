@@ -1,4 +1,4 @@
-package uoc.edu.citaprevia.dto.front;
+package uoc.edu.citaprevia.front.dto;
 
 import lombok.Getter;
 import lombok.Setter;
