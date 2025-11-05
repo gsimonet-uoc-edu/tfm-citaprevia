@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
-import uoc.edu.citaprevia.api.service.CitaPreviaService;
+import uoc.edu.citaprevia.api.service.CitaService;
 import uoc.edu.citaprevia.dto.CitaDto;
 import uoc.edu.citaprevia.dto.generic.ErrorDto;
 import uoc.edu.citaprevia.model.TipusError;
@@ -27,10 +28,10 @@ import uoc.edu.citaprevia.util.Utils;
 
 @RestController
 @RequestMapping(value="/cites")
-public class CitaPreviaController {
+public class CitaController {
 	
 	@Autowired
-	private CitaPreviaService citaPreviaService;
+	private CitaService citaService;
 	
 	@Autowired
 	MessageSource messageSource;
@@ -39,7 +40,17 @@ public class CitaPreviaController {
 	@Operation(summary="obtenir una cita pel seu identificador")
 	public CitaDto getCita(@PathVariable Long con
 						  ,Locale locale) {
-		return citaPreviaService.getCita(con);
+		return citaService.getCita(con);
+	}
+	
+	@DeleteMapping("/{con}/documents-identificatius/{numdoc}")
+	@Operation(summary="eliminar una cita assignada a un número de document d'una persona")
+	public ErrorDto deleteCitaPersona(@PathVariable Long con,
+										 @PathVariable String numdoc,
+				 			 		     Locale locale) {
+		
+		return  citaService.deleteCitaPersona(con, numdoc, locale);
+		 
 	}
 	
 	@PostMapping("")
@@ -58,9 +69,11 @@ public class CitaPreviaController {
 			return dto;
 		}
 		
-		return citaPreviaService.saveCita(dto, locale);
+		return citaService.saveCita(dto, locale);
 		
 	}
+	
+
 	
 	@GetMapping(value="/exists/agendes/{ageCon}/tipus-cites/{tipCitCon}")
 	@Operation(summary="comprovar si existeix una cita ja ocupada")
@@ -73,7 +86,7 @@ public class CitaPreviaController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Constants.PATTERN_FORMAT_LOCAL_DATE_TIME);
         LocalDateTime datini = LocalDateTime.parse(dathorini, formatter);
         LocalDateTime datfin = LocalDateTime.parse(dathorfin, formatter);
-        return citaPreviaService.existeixCitaAgenda(ageCon, datini, datfin, tipCitCon, locale);
+        return citaService.existeixCitaAgenda(ageCon, datini, datfin, tipCitCon, locale);
 	}
         
 }

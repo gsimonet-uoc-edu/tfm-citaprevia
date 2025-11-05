@@ -10,6 +10,7 @@ import uoc.edu.citaprevia.dto.CitaDto;
 import uoc.edu.citaprevia.dto.SeleccioTipusCitaDto;
 import uoc.edu.citaprevia.dto.SetmanaTipusDto;
 import uoc.edu.citaprevia.dto.TipusCitaDto;
+import uoc.edu.citaprevia.dto.generic.ErrorDto;
 
 public interface CitaPreviaPublicClient {
 
@@ -31,6 +32,8 @@ public interface CitaPreviaPublicClient {
 	CitaDto existeixCitaAgenda(Long ageCon, LocalDateTime inici, LocalDateTime fi, Long tipcitCon, Locale locale);
 
 	CitaDto getCita(Long citCon, Locale locale);
+
+	ErrorDto deleteCitaPersona(Long citCon, String numdoc, Locale locale);
 	
 
 }

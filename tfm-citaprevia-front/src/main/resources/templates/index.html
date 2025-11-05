@@ -30,8 +30,7 @@
 
                         <!-- Formulario: POST a /seleccio -->
                         <form th:action="@{'/public/' + ${subaplCoa} + '/seleccio'}" method="post">
-
-                            <!-- Más de 1 tipo de cita -->
+                            <!-- ... (tu código actual de selección de tipo) ... -->
                             <div th:if="${llistaTipusCites != null and #lists.size(llistaTipusCites.tipusCites) > 1}"
                                  class="mb-4">
                                 <label class="form-label fw-bold" th:utext="#{selecciona_tipus_cita}"></label>
@@ -44,7 +43,6 @@
                                 </select>
                             </div>
 
-                            <!-- 1 solo tipo → campo oculto -->
                             <div th:if="${llistaTipusCites != null and #lists.size(llistaTipusCites.tipusCites) == 1}"
                                  th:with="tip = ${llistaTipusCites.tipusCites[0]}">
                                 <input type="hidden" name="tipcitCon" th:value="${tip.con}">
@@ -54,14 +52,12 @@
                                 </div>
                             </div>
 
-                            <!-- Sin tipos → mensaje -->
                             <div th:if="${llistaTipusCites == null or #lists.isEmpty(llistaTipusCites.tipusCites)}"
                                  class="alert alert-warning text-center">
                                 <i class="fas fa-exclamation-triangle me-2"></i>
                                 <span th:utext="#{no_tipus_disponibles}"></span>
                             </div>
 
-                            <!-- Botón Continuar -->
                             <button type="submit"
                                     class="btn btn-success btn-lg w-100 mt-3"
                                     th:disabled="${llistaTipusCites == null or #lists.isEmpty(llistaTipusCites.tipusCites)}"
@@ -69,12 +65,12 @@
                             </button>
                         </form>
 
-                        <!-- Cancelar cita -->
-                        <div class="text-center mt-3">
-                            <a th:href="@{'/public/' + ${subaplCoa} + '/CancelarCita'}"
-                               class="btn btn-outline-danger"
-                               th:utext="#{cancelar_cita}">
-                            </a>
+                        <!-- BOTÓN CANCELAR CITA (abre modal) -->
+                        <div class="text-center mt-4">
+                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelarCitaModal">
+                                <i class="fas fa-trash-alt me-2"></i>
+                                <span th:utext="#{cancelar_cita}">Cancel·lar cita</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -82,8 +78,62 @@
         </div>
     </div>
 
+    <!-- MODAL DE CANCELACIÓN -->
+    <div class="modal fade" id="cancelarCitaModal" tabindex="-1" aria-labelledby="cancelarCitaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form th:action="@{'/public/' + ${subaplCoa} + '/cancelar'}" method="post" id="formCancelarCita">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title" id="cancelarCitaModalLabel">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <span th:utext="#{cancelar_cita}">Cancel·lar cita</span>
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p th:utext="#{introduir_dades_cancelacio}">Introduïu les dades per cancel·lar la cita:</p>
+
+                        <!-- Código de cita -->
+                        <div class="mb-3">
+                            <label for="codiCita" class="form-label" th:utext="#{codi_cita}"></label>
+                            <input type="text" class="form-control" id="codiCita" name="con" required
+                                   placeholder="Ex: 12345" pattern="[0-9]+" />
+                        </div>
+
+                        <!-- Número de documento -->
+                        <div class="mb-3">
+                            <label for="numdoc" class="form-label" th:utext="#{numdoc}"></label>
+                            <input type="text" class="form-control" id="numdoc" name="numdoc" required
+                                   placeholder="Ex: 12345678A" />
+                        </div>
+
+                        <!-- Mensaje de éxito o error (Flash) -->
+                        <div th:if="${param.success}" class="alert alert-success mt-3">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <span th:utext="#{cita_cancelada_correctament}">La cita ha estat cancel·lada correctament.</span>
+                        </div>
+                        <div th:if="${param.error}" class="alert alert-danger mt-3">
+                            <i class="fas fa-times-circle me-2"></i>
+                            <span th:utext="#{cita_inexistent}">No s'ha trobat cap cita amb aquest codi i document.</span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:utext="#{tancar}">Tancar</button>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash-alt me-2"></i>
+                            <span th:utext="#{confirmar_cancelacio}">Confirmar cancel·lació</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer común -->
     <th:block th:replace="~{common/footer :: footer}"></th:block>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

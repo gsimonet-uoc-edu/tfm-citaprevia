@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,7 +116,7 @@ public class PublicController {
         setInModelCommonAttributes(request, model, locale, subaplCoa);
 
         TipusCitaDto tipusCita = citaPreviaPublicClient.getTipusCita(tipcitCon, locale);
-        if (tipusCita == null || !subaplCoa.equals(tipusCita.getSubapl().getCoa())) {
+        if (tipusCita == null || !subaplCoa.equals(tipusCita.getSubapl().getCoa()) || Utils.isEmpty(tipusCita.getCon())) {
             addError(model, 9998L, "tipus_cita_no_valid", locale);
             return welcome(request, model, subaplCoa, locale);
         }
@@ -285,5 +286,34 @@ public class PublicController {
 	    model.addAttribute("tipusCita", citaPreviaPublicClient.getTipusCita(cita.getTipusCita().getCon(), locale));
 
 	    return "confirmacio";
+	}
+	
+	@PostMapping("/{subaplCoa}/cancelar")
+	public String cancelarCita(@PathVariable String subaplCoa,
+	                           @RequestParam Long con,
+	                           @RequestParam String numdoc,
+	                           RedirectAttributes redirect,
+	                           Locale locale) {
+
+	    try {
+	        CitaDto cita = citaPreviaPublicClient.getCita(con, locale);
+	        if (cita == null || !StringUtils.upperCase(cita.getNumdoc()).equals(StringUtils.upperCase(numdoc))) {
+	            redirect.addFlashAttribute("error", true);
+	            return "redirect:/public/" + subaplCoa + "?error";
+	        }
+
+	        ErrorDto eliminada = citaPreviaPublicClient.deleteCitaPersona(con, numdoc, locale);
+	        
+	        if (eliminada == null) {
+	            redirect.addFlashAttribute("success", true);
+	        } else {
+	            redirect.addFlashAttribute("error", true);
+	        }
+	    } catch (Exception e) {
+	    	e.printStackTrace();
+	        redirect.addFlashAttribute("error", true);
+	    }
+
+	    return "redirect:/public/" + subaplCoa + (redirect.getFlashAttributes().containsKey("success") ? "?success" : "?error");
 	}
 }

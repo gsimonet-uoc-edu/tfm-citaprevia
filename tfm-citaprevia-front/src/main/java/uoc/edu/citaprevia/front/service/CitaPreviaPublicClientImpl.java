@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -21,6 +22,7 @@ import uoc.edu.citaprevia.dto.CitaDto;
 import uoc.edu.citaprevia.dto.SeleccioTipusCitaDto;
 import uoc.edu.citaprevia.dto.SetmanaTipusDto;
 import uoc.edu.citaprevia.dto.TipusCitaDto;
+import uoc.edu.citaprevia.dto.generic.ErrorDto;
 import uoc.edu.citaprevia.front.util.RestTemplateResponseErrorHandler;
 
 @Service("citprePublicService")
@@ -141,4 +143,23 @@ public class CitaPreviaPublicClientImpl  implements CitaPreviaPublicClient{
 		return restTemplate.getForObject(url, CitaDto.class, params);
 	}
 
+	
+	@Override
+	public ErrorDto deleteCitaPersona(Long citCon, String numdoc, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_CIT_CON, citCon);
+		params.put("numdoc", numdoc);
+		params.put(PARAM_LOCALE, locale);
+		//params.put("lang", locale == null ? "es" : locale.toString());
+		String url = getBaseApiUrl() + "/cites/{citCon}/documents-identificatius/{numdoc}?lang={lang}";
+	    // Ejecutamos la petición DELETE usando exchange, que permite obtener la respuesta
+	    ResponseEntity<ErrorDto> response = restTemplate.exchange(url, 
+	        HttpMethod.DELETE, 
+	        null,               
+	        ErrorDto.class,     
+	        params             
+	    );
+
+	    return response.getBody();
+	}
 }

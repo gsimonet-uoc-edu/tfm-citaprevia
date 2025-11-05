@@ -9,7 +9,7 @@ import uoc.edu.citaprevia.api.jpa.CitaRepository;
 import uoc.edu.citaprevia.api.model.Cita;
 
 @Component
-public class CitaPreviaDao {
+public class CitaDao {
 	
 	@Autowired
 	private CitaRepository citaRepository;
