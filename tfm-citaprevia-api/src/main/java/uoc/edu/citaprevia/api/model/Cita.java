@@ -77,13 +77,4 @@ public class Cita {
 	private Long tel;
 	@Size(max = 240)
 	private String ema;
-	/*@Length(max = 20000)
-	private String urlreu;*/
-/*
-	@Column(name="UBICRE_CON")
-	private Long ubicreCon;
-	@Column(name="WEBUSUCRE_COA")
-	private String webusucreCoa;	
-	private Long seqmod;
-*/
 }

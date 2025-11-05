@@ -38,5 +38,9 @@ public class CitaPreviaDao {
 	public boolean existeixCita(Long agendaCon, LocalDateTime fi, LocalDateTime inici) {
 		return citaRepository.existsByAgendaConAndDathoriniLessThanEqualAndDathorfinGreaterThanEqual(agendaCon, fi, inici);
 	}
+	
+	public Cita existeixCitaAgenda (Long ageCon, LocalDateTime inici, LocalDateTime fi, Long tipcitCon) {
+		return citaRepository.findByAgendaConAndDathoriniAndDathorfinAndTipcitCon(ageCon, inici, fi, tipcitCon);
+	}
 
 }

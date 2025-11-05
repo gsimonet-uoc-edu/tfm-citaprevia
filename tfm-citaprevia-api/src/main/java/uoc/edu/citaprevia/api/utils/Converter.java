@@ -208,7 +208,7 @@ public class Converter {
 	
 	public static Agenda toDao(AgendaDto dto) {
 		Agenda dao = new Agenda();
-		if (dao != null) {
+		if (dto != null) {
 			dao.setCentre(toDao(dto.getCentre()));
 			dao.setCon(dto.getCon());
 			dao.setDatini(dto.getDatini());

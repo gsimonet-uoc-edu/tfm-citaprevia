@@ -13,4 +13,6 @@ public interface CitaPreviaService {
 
 	boolean existeixCita(Long agendaCon, LocalDateTime fi, LocalDateTime inici);
 
+	CitaDto existeixCitaAgenda(Long ageCon, LocalDateTime inici, LocalDateTime fi, Long tipcitCon);
+
 }

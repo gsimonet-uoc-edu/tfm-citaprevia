@@ -38,5 +38,16 @@ public class CitaPreviaServiceImpl implements CitaPreviaService{
 	public boolean existeixCita (Long agendaCon, LocalDateTime fi, LocalDateTime inici) {
 		return citaPreviaDao.existeixCita(agendaCon, fi, inici);	
 	}
+	
+	@Override
+	public CitaDto existeixCitaAgenda (Long ageCon, LocalDateTime inici, LocalDateTime fi, Long tipcitCon) {
+		
+		CitaDto cita = new CitaDto();
+		
+		if (!Utils.isEmpty(ageCon) && inici != null && fi != null && !Utils.isEmpty(tipcitCon)) {
+			cita = Converter.toDto(citaPreviaDao.existeixCitaAgenda(ageCon, inici, fi, tipcitCon));
+		}
+		return cita;			
+	}
 
 }

@@ -1,5 +1,7 @@
 package uoc.edu.citaprevia.api.controller;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import javax.validation.Valid;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -58,5 +61,19 @@ public class CitaPreviaController {
 		return citaPreviaService.saveCita(dto, locale);
 		
 	}
-
+	
+	@GetMapping(value="/exists/agendes/{ageCon}/tipus-cites/{tipcitCon}")
+	@Operation(summary="comprovar si existeix una cita ja ocupada")
+	public CitaDto existCitaAgenda(@PathVariable Long ageCon,
+								   @PathVariable Long tipcitCon,
+								   @RequestParam(required = true) String dathorini,
+								   @RequestParam(required = true) String dathorfin,
+									Locale locale) { // Exemple format: 2024-03-14T01:00:00
+		
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Constants.PATTERN_FORMAT_LOCAL_DATE_TIME);
+        LocalDateTime datini = LocalDateTime.parse(dathorini, formatter);
+        LocalDateTime datfin = LocalDateTime.parse(dathorfin, formatter);
+        return citaPreviaService.existeixCitaAgenda(ageCon, datini, datfin, tipcitCon);
+	}
+        
 }
