@@ -7,42 +7,65 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <style>
         .confirmacio-card { 
-            max-width: 600px; 
+            max-width: 650px; 
             margin: 0 auto; 
             border-radius: 12px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         .success-icon { 
-            font-size: 4rem; 
+            font-size: 3rem; 
             color: #28a745; 
-            margin-bottom: 1.5rem; 
+            margin-bottom: 1rem; 
         }
         .info-item {
+            margin-bottom: 1rem;
+            padding: 0.75rem 1rem;
             background: #f8f9fa;
             border-radius: 8px;
-            padding: 12px 16px;
-            margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         .info-label {
-            font-weight: 600;
+            font-weight: bold;
             color: #495057;
+            flex: 0 0 40%;
         }
         .info-value {
             color: #212529;
-            font-weight: 500;
+            flex: 1;
+            text-align: right;
+            word-break: break-word;
+        }
+        .codigo-cita {
+            font-family: 'Courier New', monospace;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #28a745;
+            background: #e9f7ef;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            margin: 1.5rem 0;
         }
         .btn-volver {
+            background-color: #28a745;
+            border-color: #28a745;
+            font-weight: bold;
             padding: 12px 40px;
             font-size: 1.1rem;
-            border-radius: 50px;
         }
-        .card-header {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            color: white;
-            border-radius: 12px 12px 0 0 !important;
+        .btn-volver:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #495057;
+            margin: 1.5rem 0 0.75rem;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 0.5rem;
         }
     </style>
 </head>
@@ -55,55 +78,82 @@
         <div class="row justify-content-center">
             <div class="col-lg-8">
 
-                <div class="card confirmacio-card">
-                    <div class="card-header text-center py-4">
+                <div class="card confirmacio-card shadow">
+                    <div class="card-body p-4 text-center">
+
+                        <!-- Icono de éxito -->
                         <i class="fas fa-check-circle success-icon"></i>
-                        <h4 class="mb-0" th:text="#{cita_reservada_correctament}">
-                            La teva cita ha estat reservada correctament
-                        </h4>
-                    </div>
-                    <div class="card-body p-5">
 
-                        <!-- Información de la cita -->
-                        <div class="info-item">
-                            <span class="info-label" th:text="#{tipus_cita} + ':'">Tipus de cita:</span>
-                            <span class="info-value" th:text="${cita.tipusCita.dem}">Consulta inicial</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label" th:text="#{data_hora} + ':'">Data i hora:</span>
-                            <span class="info-value">
-                                [[${#temporals.format(cita.dathorini, 'dd/MM/yyyy HH:mm', #locale)}]] 
-                                - 
-                                [[${#temporals.format(cita.dathorfin, 'HH:mm', #locale)}]]
-                            </span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label" th:text="#{tecnic} + ':'">Tècnic:</span>
-                            <span class="info-value" th:text="${cita.agenda.tecnic.nom}">Dr. Joan García</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label" th:text="#{centre} + ':'">Centre:</span>
-                            <span class="info-value" th:text="${cita.agenda.centre.nom}">Centre Mèdic A</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label" th:text="#{nom} + ':'">Nom:</span>
-                            <span class="info-value" th:text="${cita.nom}">Maria Pérez</span>
-                        </div>
-                        <div class="info-item" th:if="${cita.ema}">
-                            <span class="info-label" th:text="#{email} + ':'">Email:</span>
-                            <span class="info-value" th:text="${cita.ema}">maria@example.com</span>
-                        </div>
-                        <div class="info-item" th:if="${cita.obs}">
-                            <span class="info-label" th:text="#{obs} + ':'">Observacions:</span>
-                            <span class="info-value" th:text="${cita.obs}">Primera visita</span>
+                        <h4 class="mb-3 text-success" th:text="#{cita_reservada_correctament}">Cita reservada correctament</h4>
+
+                        <!-- CÓDIGO DE LA CITA -->
+                        <div class="codigo-cita">
+                            <span th:text="#{codi_cita} + ':'"></span>
+                            <span th:text="${cita.con}"></span>
                         </div>
 
-                        <!-- Botón volver -->
-                        <div class="text-center mt-5">
-                            <a th:href="@{'/public/' + ${subaplCoa}}" 
-                               class="btn btn-primary btn-lg btn-volver px-5"
-                               th:text="#{tornar_inici}">
-                               Tornar a l'inici
+                        <!-- INFORMACIÓN DE LA CITA -->
+                        <div class="section-title" th:text="#{dades_cita}">Dades de la cita</div>
+
+                        <div class="info-item">
+                            <span class="info-label" th:text="#{tipus_cita}"></span>
+                            <span class="info-value" th:text="${cita.tipusCita.dem}"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label" th:text="#{data_hora_inici}"></span>
+                            <span class="info-value" th:text="${#temporals.format(cita.dathorini, 'dd/MM/yyyy HH:mm', #locale)}"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label" th:text="#{data_hora_fin}"></span>
+                            <span class="info-value" th:text="${#temporals.format(cita.dathorfin, 'dd/MM/yyyy HH:mm', #locale)}"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label" th:text="#{tecnic}"></span>
+                            <span class="info-value" th:text="${cita.agenda.tecnic.nom}"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label" th:text="#{centre}"></span>
+                            <span class="info-value" th:text="${cita.agenda.centre.nom}"></span>
+                        </div>
+
+                        <!-- CAMPOS DE CitaFormDto (FIJOS) -->
+                        <div class="section-title" th:text="#{dades_personals}">Dades personals</div>
+
+                        <div class="info-item">
+                            <span class="info-label" th:text="#{nom}"></span>
+                            <span class="info-value" th:text="${cita.nom}"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label" th:text="#{llis}"></span>
+                            <span class="info-value" th:text="${cita.llis}"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label" th:text="#{numdoc}"></span>
+                            <span class="info-value" th:text="${cita.numdoc}"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label" th:text="#{nomcar}"></span>
+                            <span class="info-value" th:text="${cita.nomcar}"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label" th:text="#{tel}"></span>
+                            <span class="info-value" th:text="${cita.tel}"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label" th:text="#{ema}"></span>
+                            <span class="info-value" th:text="${cita.ema}"></span>
+                        </div>
+                        <div class="info-item" th:if="${cita.obs != null and cita.obs.trim() != ''}">
+                            <span class="info-label" th:text="#{obs}"></span>
+                            <span class="info-value" th:text="${cita.obs}"></span>
+                        </div>
+
+                        <!-- BOTÓN VOLVER -->
+                        <div class="mt-5">
+                            <a th:href="@{'/public/' + ${subaplCoa}}"
+                               class="btn btn-success btn-lg btn-volver px-5">
+                                <i class="fas fa-home me-2"></i>
+                                <span th:text="#{tornar_index}">Tornar a l'inici</span>
                             </a>
                         </div>
 

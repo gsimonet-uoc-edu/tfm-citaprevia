@@ -231,8 +231,11 @@ public class PublicController {
 
 	    // === CAMPOS ESTÁTICOS ===
 	    cita.setNom(form.getNom());
-	    cita.setTel(Long.valueOf(form.getTel()));
+	    cita.setLlis(form.getLlis());
+	    cita.setNumdoc(form.getNumdoc());
 	    cita.setEma(form.getEma());
+	    cita.setTel(Long.valueOf(form.getTel()));    
+	    cita.setNomcar(form.getNomcar());	       
 	    cita.setObs(form.getObs());
 
 	    // === CAMPOS DINÁMICOS (lit1er → lit10e) ===

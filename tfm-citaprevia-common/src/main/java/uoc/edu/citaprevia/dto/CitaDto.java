@@ -17,7 +17,7 @@ public class CitaDto extends ErrorsDto{
 	private LocalDateTime dathorfin;
 	private String obs;
 	private String nom;
-	private String lli;
+	private String llis;
 	private String nomcar;
 	private Long tel;
 	private String ema;

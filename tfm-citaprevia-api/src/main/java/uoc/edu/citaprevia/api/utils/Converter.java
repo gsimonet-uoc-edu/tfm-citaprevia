@@ -40,7 +40,7 @@ public class Converter {
 			dto.setLit4rt(dao.getLit4rt());
 			dto.setNomcar(dao.getNomcar());
 			dto.setNom(dao.getNom());
-			dto.setLli(dao.getLlis());
+			dto.setLlis(dao.getLlis());
 			dto.setTel(dao.getTel());
 			dto.setTipusCita(toDto(dao.getTipcit()));
 			dto.setNumdoc(dao.getNumdoc());
@@ -69,10 +69,10 @@ public class Converter {
 			dao.setLit4rt(dto.getLit4rt());
 			dao.setNom(dto.getNom());
 			dao.setNomcar(dto.getNomcar());
-			dao.setLlis(dao.getLlis());
+			dao.setLlis(dto.getLlis());
 			dao.setTel(dto.getTel());
 			dao.setTipcit(toDao(dto.getTipusCita()));
-			dao.setNumdoc(dao.getNumdoc());
+			dao.setNumdoc(dto.getNumdoc());
 		}
 		
 		return dao;
