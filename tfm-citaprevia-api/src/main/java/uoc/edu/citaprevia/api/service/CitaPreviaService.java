@@ -11,8 +11,6 @@ public interface CitaPreviaService {
 
 	CitaDto saveCita(CitaDto cita, Locale locale);
 
-	boolean existeixCita(Long agendaCon, LocalDateTime fi, LocalDateTime inici);
-
-	CitaDto existeixCitaAgenda(Long ageCon, LocalDateTime inici, LocalDateTime fi, Long tipcitCon);
+	CitaDto existeixCitaAgenda(Long ageCon, LocalDateTime inici, LocalDateTime fi, Long tipcitCon, Locale locale);
 
 }

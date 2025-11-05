@@ -178,8 +178,14 @@ public class PublicController {
 	                    fi = fi.plusSeconds(1);
 	                    
 	                    // Verificar si ya hay cita (solapamiento)
-	                    boolean ocupada = false;//client.existeixCita(inici, fi, agenda.getCon());
+	                    boolean ocupada = false;
+	                    		
+	                    CitaDto existeixCita = citaPreviaPublicClient.existeixCitaAgenda(agenda.getCon(), inici.minusSeconds(1), fi.minusSeconds(1), agenda.getHorari().getTipusCita().getCon(), locale);
 
+	                    if (existeixCita != null && !Utils.isEmpty(existeixCita.getCon())) {
+	                    	ocupada = true;
+	                    }
+	                    
 	                    // Crear evento FullCalendar
 	                    Map<String, Object> event = new HashMap<>();
 	                    event.put("title", franja.getHorini() + " - " + franja.getHorfin());

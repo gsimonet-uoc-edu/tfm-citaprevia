@@ -62,10 +62,10 @@ public class CitaPreviaController {
 		
 	}
 	
-	@GetMapping(value="/exists/agendes/{ageCon}/tipus-cites/{tipcitCon}")
+	@GetMapping(value="/exists/agendes/{ageCon}/tipus-cites/{tipCitCon}")
 	@Operation(summary="comprovar si existeix una cita ja ocupada")
-	public CitaDto existCitaAgenda(@PathVariable Long ageCon,
-								   @PathVariable Long tipcitCon,
+	public CitaDto existeixCitaAgenda(@PathVariable Long ageCon,
+								   @PathVariable Long tipCitCon,
 								   @RequestParam(required = true) String dathorini,
 								   @RequestParam(required = true) String dathorfin,
 									Locale locale) { // Exemple format: 2024-03-14T01:00:00
@@ -73,7 +73,7 @@ public class CitaPreviaController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Constants.PATTERN_FORMAT_LOCAL_DATE_TIME);
         LocalDateTime datini = LocalDateTime.parse(dathorini, formatter);
         LocalDateTime datfin = LocalDateTime.parse(dathorfin, formatter);
-        return citaPreviaService.existeixCitaAgenda(ageCon, datini, datfin, tipcitCon);
+        return citaPreviaService.existeixCitaAgenda(ageCon, datini, datfin, tipCitCon, locale);
 	}
         
 }

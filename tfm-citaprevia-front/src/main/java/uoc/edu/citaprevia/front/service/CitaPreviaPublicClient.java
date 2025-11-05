@@ -1,5 +1,6 @@
 package uoc.edu.citaprevia.front.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 
@@ -26,6 +27,8 @@ public interface CitaPreviaPublicClient {
 	AgendaDto getAgenda(Long ageCon, Locale locale);
 
 	CitaDto saveCita(CitaDto cita, Locale locale);
+
+	CitaDto existeixCitaAgenda(Long ageCon, LocalDateTime inici, LocalDateTime fi, Long tipcitCon, Locale locale);
 	
 
 }
