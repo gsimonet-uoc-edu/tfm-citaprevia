@@ -265,4 +265,22 @@ public class PublicController {
 	    redirect.addFlashAttribute("success", "Cita reservada correctamente");
 	    return "redirect:/public/" + subaplCoa + "/confirmacio?con=" + insertCita.getCon();
 	}
+	
+	@GetMapping("/{subaplCoa}/confirmacio")
+	public String confirmacio(@PathVariable String subaplCoa,
+	                          @RequestParam Long con,
+	                          Model model, Locale locale) throws Exception {
+
+	    CitaDto cita = citaPreviaPublicClient.getCita(con, locale);
+	    if (cita == null || Utils.isEmpty(cita.getCon())) {
+	        addError(model, 9999L, "cita_no_trobada", locale);
+	        return "redirect:/public/" + subaplCoa;
+	    }
+
+	    model.addAttribute("cita", cita);
+	    model.addAttribute("subaplCoa", subaplCoa);
+	    model.addAttribute("tipusCita", citaPreviaPublicClient.getTipusCita(cita.getTipusCita().getCon(), locale));
+
+	    return "confirmacio";
+	}
 }

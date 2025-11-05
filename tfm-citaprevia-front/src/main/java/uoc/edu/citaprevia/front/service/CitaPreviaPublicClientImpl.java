@@ -38,6 +38,7 @@ public class CitaPreviaPublicClientImpl  implements CitaPreviaPublicClient{
 	private static final String DATA_HORA_INICI = "dathorini";
 	private static final String DATA_HORA_FINAL = "dathorfin";
 	private static final String PARAM_LOCALE = "lang";
+	private static final String PARAM_CIT_CON = "citCon";
 
 	
 	
@@ -128,6 +129,15 @@ public class CitaPreviaPublicClientImpl  implements CitaPreviaPublicClient{
 		params.put(DATA_HORA_FINAL, datfin);
 		params.put(PARAM_LOCALE, locale);
 		String url = getBaseApiUrl() + "/cites/exists/agendes/{ageCon}/tipus-cites/{tipCitCon}?dathorini={dathorini}&dathorfin={dathorfin}&lang={lang}";
+		return restTemplate.getForObject(url, CitaDto.class, params);
+	}
+	
+	@Override
+	public CitaDto getCita (Long citCon,  Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_CIT_CON, citCon);
+		params.put(PARAM_LOCALE, locale);
+		String url = getBaseApiUrl() + "/cites/{citCon}?lang={lang}";
 		return restTemplate.getForObject(url, CitaDto.class, params);
 	}
 

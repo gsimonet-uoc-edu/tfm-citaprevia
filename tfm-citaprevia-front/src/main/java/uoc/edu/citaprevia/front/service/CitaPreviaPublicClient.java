@@ -29,6 +29,8 @@ public interface CitaPreviaPublicClient {
 	CitaDto saveCita(CitaDto cita, Locale locale);
 
 	CitaDto existeixCitaAgenda(Long ageCon, LocalDateTime inici, LocalDateTime fi, Long tipcitCon, Locale locale);
+
+	CitaDto getCita(Long citCon, Locale locale);
 	
 
 }
