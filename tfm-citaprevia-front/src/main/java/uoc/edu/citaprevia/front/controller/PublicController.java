@@ -297,7 +297,8 @@ public class PublicController {
 
 	    try {
 	        CitaDto cita = citaPreviaPublicClient.getCita(con, locale);
-	        if (cita == null || !StringUtils.upperCase(cita.getNumdoc()).equals(StringUtils.upperCase(numdoc))) {
+	        // Comprovar que la cita pertany a la subaplicació i persona que vol cancelarla
+	        if (cita == null || !StringUtils.upperCase(cita.getNumdoc()).equals(StringUtils.upperCase(numdoc)) || !subaplCoa.equals(cita.getAgenda().getHorari().getSubapl().getCoa())) {
 	            redirect.addFlashAttribute("error", true);
 	            return "redirect:/public/" + subaplCoa + "?error";
 	        }
