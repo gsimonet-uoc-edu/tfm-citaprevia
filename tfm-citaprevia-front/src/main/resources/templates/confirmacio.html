@@ -23,6 +23,9 @@
                 <div class="card confirmacio-card shadow">
                     <div class="card-body p-4 text-center">
 
+                        <!-- ERRORES (NUEVO) -->
+                        <th:block th:replace="~{common/errors :: errors(errors = ${errors})}" />
+
                         <!-- Icono de éxito -->
                         <i class="fas fa-check-circle success-icon"></i>
 
