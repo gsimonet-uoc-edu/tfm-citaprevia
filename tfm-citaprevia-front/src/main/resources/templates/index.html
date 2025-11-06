@@ -52,21 +52,38 @@
                                 </div>
                             </div>
 
+                            <!-- SIN TIPOS DE CITA -->
                             <div th:if="${llistaTipusCites == null or #lists.isEmpty(llistaTipusCites.tipusCites)}"
-                                 class="alert alert-warning text-center">
+                                 class="alert alert-warning text-center mb-4">
                                 <i class="fas fa-exclamation-triangle me-2"></i>
                                 <span th:utext="#{no_tipus_disponibles}"></span>
                             </div>
 
-                            <button type="submit"
-                                    class="btn btn-success btn-lg w-100 mt-3"
-                                    th:disabled="${llistaTipusCites == null or #lists.isEmpty(llistaTipusCites.tipusCites)}"
-                                    th:utext="#{continuar}">
-                            </button>
+                            <!-- SIN AGENDAS (NUEVO) -->
+                            <div th:if="${noAgendas}" class="text-center">
+                                <div class="alert alert-danger mb-4">
+                                    <i class="fas fa-calendar-times me-2"></i>
+                                    <span th:utext="#{no_existeixen_agendes}">No existeixen agendes disponibles per a aquest tipus de cita.</span>
+                                </div>
+                                <a th:href="@{'/public/' + ${subaplCoa}}"
+                                   class="btn btn-primary btn-lg">
+                                    <i class="fas fa-home me-2"></i>
+                                    <span th:utext="#{tornar_index}">Tornar a l'inici</span>
+                                </a>
+                            </div>
+
+                            <!-- Botón Continuar (solo si hay tipos) -->
+                            <div th:unless="${noAgendas}">
+                                <button type="submit"
+                                        class="btn btn-success btn-lg w-100 mt-3"
+                                        th:disabled="${llistaTipusCites == null or #lists.isEmpty(llistaTipusCites.tipusCites)}"
+                                        th:utext="#{continuar}">
+                                </button>
+                            </div>
                         </form>
 
-                        <!-- BOTÓN ABRIR MODAL -->
-                        <div class="text-center mt-3">
+                        <!-- BOTÓN ABRIR MODAL CANCELAR -->
+                        <div class="text-center mt-3" th:unless="${noAgendas}">
                             <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelarCitaModal">
                                 <i class="fas fa-trash-alt me-2"></i>
                                 <span th:utext="#{cancelar_cita}">Cancel·lar cita</span>
@@ -111,7 +128,6 @@
                                    placeholder="Ex: 12345678A" />
                         </div>
 
-                        <!-- Mensaje de éxito o error (Flash) -->
                         <div th:if="${param.success}" class="alert alert-success mt-3">
                             <i class="fas fa-check-circle me-2"></i>
                             <span th:utext="#{cita_cancelada_correctament}">La cita ha estat cancel·lada correctament.</span>

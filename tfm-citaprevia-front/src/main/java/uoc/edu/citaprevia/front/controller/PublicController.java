@@ -123,8 +123,7 @@ public class PublicController {
 
         List<AgendaDto> agendes = citaPreviaPublicClient.getAgendasBySubaplicacioAndTipusCita(subaplCoa, tipcitCon, locale);
         if (agendes.isEmpty()) {
-            addError(model, 9997L, "no_agenda_disponible", locale);
-            model.addAttribute("llistaTipusCites", new SeleccioTipusCitaDto(List.of(tipusCita)));
+        	model.addAttribute("noAgendas", true);
             return "index";
         }
 
