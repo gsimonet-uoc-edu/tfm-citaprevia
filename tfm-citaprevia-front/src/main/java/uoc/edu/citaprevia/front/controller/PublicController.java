@@ -214,7 +214,7 @@ public class PublicController {
 	        Locale locale) throws Exception {
 
 	    // === VALIDACIÓN ===
-	    /*if (result.hasErrors()) {
+	    if (result.hasErrors()) {
 	        model.addAttribute("camposCita", metacamapService.getCampos(subaplCoa, locale));
 	        model.addAttribute("tipusCita", citaPreviaPublicClient.getTipusCita(form.getTipcitCon(), locale));
 	        model.addAttribute("subaplCoa", subaplCoa);
@@ -222,7 +222,7 @@ public class PublicController {
 	        // O redirigir con errores
 	        redirect.addFlashAttribute("errors", result.getAllErrors());
 	        return "redirect:/public/" + subaplCoa + "/seleccio";
-	    }*/
+	    }
 
 	    // === CREAR CITA ===
 	    CitaDto cita = new CitaDto();
@@ -241,16 +241,16 @@ public class PublicController {
 	    // === CAMPOS DINÁMICOS (lit1er → lit10e) ===
 	    form.getLit().forEach((name, value) -> {
 	        switch (name) {
-	            case "lit1er" -> cita.setLit1er(value);
-	            case "lit2n"  -> cita.setLit2on(value);
-	            case "lit3n"  -> cita.setLit3er(value);
-	            case "lit4t"  -> cita.setLit4rt(value);
-	            case "lit5e"  -> cita.setLit05e(value);
-	            case "lit6d"  -> cita.setLit06e(value);
-	            case "lit7o"  -> cita.setLit07e(value);
-	            case "lit8c"  -> cita.setLit08e(value);
-	            case "lit9p"  -> cita.setLit09e(value);
-	            case "lit10e" -> cita.setLit10e(value);
+	            case "lit1" -> cita.setLit1er(value);
+	            case "lit2"  -> cita.setLit2on(value);
+	            case "lit3"  -> cita.setLit3er(value);
+	            case "lit4"  -> cita.setLit4rt(value);
+	            case "lit5"  -> cita.setLit05e(value);
+	            case "lit6"  -> cita.setLit06e(value);
+	            case "lit7"  -> cita.setLit07e(value);
+	            case "lit8"  -> cita.setLit08e(value);
+	            case "lit9"  -> cita.setLit09e(value);
+	            case "lit10" -> cita.setLit10e(value);
 	            default -> {
 	                // Opcional: log de campo desconocido
 	            }

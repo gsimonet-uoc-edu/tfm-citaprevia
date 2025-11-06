@@ -36,7 +36,7 @@ public class CitaFormDto {
     private Map<String, String> lit = new HashMap<>();
 
     public void setLit(String name, String value) {
-        if (name.matches("lit[0-9]{1,2}[a-z]{1,2}")) {
+        if (name.matches("lit([1-9]|10)")) {
             lit.put(name, value);
         }
     }

@@ -57,7 +57,9 @@ public class MetacamapService {
 
         props.forEach((key, value) -> {
             String k = key.toString();
-            if (!k.matches("lit[1-9][0-9]?[a-z]_" + Pattern.quote(subaplCoa))) return;
+            if (!k.matches("lit([1-9]|10)_" + Pattern.quote(subaplCoa))) {
+                return;
+            }
 
             String camp = k.substring(0, k.indexOf("_"));
             String[] parts = value.toString().split("\\|", 4);
