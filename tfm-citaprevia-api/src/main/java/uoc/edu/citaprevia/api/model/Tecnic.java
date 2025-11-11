@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import uoc.edu.citaprevia.model.Perfil;
 import uoc.edu.citaprevia.model.SiNo;
 
 @Entity
@@ -21,10 +22,13 @@ public class Tecnic {
 	@Id
 	@Size(max=3)
     private String coa;
+	private String pass;
 	private String nom;
 	private String ll1;
 	private String ll2;
 	@Enumerated(EnumType.STRING)
 	private SiNo notval;
+    @Enumerated(EnumType.STRING)
+    private Perfil prf;
 
 }

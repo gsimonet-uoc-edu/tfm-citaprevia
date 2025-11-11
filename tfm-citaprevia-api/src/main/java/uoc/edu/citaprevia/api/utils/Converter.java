@@ -172,10 +172,12 @@ public class Converter {
 		TecnicDto dto = new TecnicDto();
 		if (dao != null) {
 			dto.setCoa(dao.getCoa());
+			dto.setPass(dao.getPass());
 			dto.setLl1(dao.getLl1());
 			dto.setLl2(dao.getLl2());
 			dto.setNom(dao.getNom());
 			dto.setNotval(dao.getNotval());
+			dto.setPrf(dao.getPrf());
 		}
 		return dto;
 	}
@@ -184,10 +186,12 @@ public class Converter {
 		Tecnic dao = new Tecnic();
 		if (dto != null) {
 			dao.setCoa(dto.getCoa());
+			dao.setPass(dto.getPass());
 			dao.setLl1(dto.getLl1());
 			dao.setLl2(dto.getLl2());
 			dao.setNom(dto.getNom());
 			dao.setNotval(dto.getNotval());
+			dao.setPrf(dto.getPrf());
 		}
 		return dao;
 	}
