@@ -126,22 +126,26 @@
                                 <textarea name="obs" class="form-control" rows="3"></textarea>
                             </div>
                         </div>
-
-                        <!-- CAMPOS DINÁMICOS (lit) -->
-                        <div class="row g-3 mt-4" th:if="${camposCita != null and !#lists.isEmpty(camposCita)}">
-                            <h6 class="mt-3" th:text="#{dades_adicionals}">Datos adicionales</h6>
-                            <div th:each="campo : ${camposCita}" class="col-md-6">
-                                <label class="form-label" th:text="${campo.label}"></label>
-                                <div th:switch="${campo.type}">
-                                    <input th:case="*" th:type="${campo.type}" th:name="${campo.name}" 
-                                           class="form-control"
-                                           th:required="${#strings.contains(campo.validation, 'required')}"
-                                           th:pattern="${#strings.contains(campo.validation, 'pattern') ? #strings.substringAfter(campo.validation, 'pattern=') : null}">
-                                    <textarea th:case="textarea" th:name="${campo.name}" class="form-control" rows="3"
-                                              th:required="${#strings.contains(campo.validation, 'required')}"></textarea>
-                                </div>
-                            </div>
-                        </div>
+                        
+						<!-- CAMPOS DINÁMICOS -->
+						<div class="row g-3 mt-4" th:if="${camposCita != null and !#lists.isEmpty(camposCita)}">
+						    <h6 class="mt-3" th:text="#{dades_adicionals}">Dades addicionals</h6>
+						    <div th:each="campo : ${camposCita}" class="col-md-6">
+						        <label class="form-label" th:text="${campo.label}"></label>
+						        <div th:switch="${campo.type}">
+						            <input th:case="*" 
+						                   th:type="${campo.type}" 
+						                   th:name="'lit' + ${campoStat.count}"
+						                   class="form-control"
+						                   th:required="${#strings.contains(campo.validation, 'required')}"
+						                   th:pattern="${#strings.contains(campo.validation, 'pattern') ? #strings.substringAfter(campo.validation, 'pattern=') : null}">
+						            <textarea th:case="textarea" 
+						                      th:name="'lit' + ${campoStat.count}"
+						                      class="form-control" rows="3"
+						                      th:required="${#strings.contains(campo.validation, 'required')}"></textarea>
+						        </div>
+						    </div>
+						</div>
 
                         <!-- Hora seleccionada -->
                         <div class="mt-4">

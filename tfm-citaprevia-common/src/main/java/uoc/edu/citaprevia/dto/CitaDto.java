@@ -22,16 +22,17 @@ public class CitaDto extends ErrorsDto{
 	private Long tel;
 	private String ema;
 	private String numdoc;
-	private String lit1er;
-	private String lit2on;
-	private String lit3er;
-	private String lit4rt;
-	private String lit05e;
-	private String lit06e;
-	private String lit07e;
-	private String lit08e;
-	private String lit09e;
-	private String lit10e;
+	// Camps dinàmics
+    private String lit1;
+    private String lit2;
+    private String lit3;
+    private String lit4;
+    private String lit5;
+    private String lit6;
+    private String lit7;
+    private String lit8;
+    private String lit9;
+    private String lit10;
 	private AgendaDto agenda;
 	private TipusCitaDto tipusCita;
 }

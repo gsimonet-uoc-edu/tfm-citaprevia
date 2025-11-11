@@ -238,24 +238,17 @@ public class PublicController {
 	    cita.setNomcar(form.getNomcar());	       
 	    cita.setObs(form.getObs());
 
-	    // === CAMPOS DINÁMICOS (lit1er → lit10e) ===
-	    form.getLit().forEach((name, value) -> {
-	        switch (name) {
-	            case "lit1" -> cita.setLit1er(value);
-	            case "lit2"  -> cita.setLit2on(value);
-	            case "lit3"  -> cita.setLit3er(value);
-	            case "lit4"  -> cita.setLit4rt(value);
-	            case "lit5"  -> cita.setLit05e(value);
-	            case "lit6"  -> cita.setLit06e(value);
-	            case "lit7"  -> cita.setLit07e(value);
-	            case "lit8"  -> cita.setLit08e(value);
-	            case "lit9"  -> cita.setLit09e(value);
-	            case "lit10" -> cita.setLit10e(value);
-	            default -> {
-	                // Opcional: log de campo desconocido
-	            }
-	        }
-	    });
+	    // Camps dinàmics
+	    cita.setLit1(form.getLit1());
+	    cita.setLit2(form.getLit2());
+	    cita.setLit3(form.getLit3());
+	    cita.setLit4(form.getLit4());
+	    cita.setLit5(form.getLit5());
+	    cita.setLit6(form.getLit6());
+	    cita.setLit7(form.getLit7());
+	    cita.setLit8(form.getLit8());
+	    cita.setLit9(form.getLit9());
+	    cita.setLit10(form.getLit10());
 
 	    // === RELACIONES ===
 	    cita.setAgenda(citaPreviaPublicClient.getAgenda(form.getAgendaCon(), locale));

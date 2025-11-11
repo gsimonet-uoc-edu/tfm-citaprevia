@@ -33,11 +33,15 @@ public class CitaFormDto {
     @NotBlank @Email private String ema;
     private String obs;
 
-    private Map<String, String> lit = new HashMap<>();
-
-    public void setLit(String name, String value) {
-        if (name.matches("lit([1-9]|10)")) {
-            lit.put(name, value);
-        }
-    }
+    private String lit1;
+    private String lit2;
+    private String lit3;
+    private String lit4;
+    private String lit5;
+    private String lit6;
+    private String lit7;
+    private String lit8;
+    private String lit9;
+    private String lit10;
+    
 }
