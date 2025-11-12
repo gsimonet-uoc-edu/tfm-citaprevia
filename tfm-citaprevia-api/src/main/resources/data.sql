@@ -6,7 +6,8 @@ INSERT INTO SUBAPLICACIO (coa, dec, dem) VALUES
 -- TECNIC
 INSERT INTO TECNIC (coa, pass, nom, ll1, ll2, notval, prf) VALUES 
 ('T1', '1234', 'Joan', 'Garcia', 'Marqués', 'S', 'TECNIC_AP1'),
-('T2', '1234', 'Maria', 'Ginard', 'Torres', 'S', 'ADMINISTRADOR_AP1');
+('T2', '1234', 'Maria', 'Ginard', 'Torres', 'S', 'ADMINISTRADOR_AP1'),
+('T3', '1234', 'Guillem', 'Simonet', 'Ramon', 'S', 'TECNIC_AP1');
 
 -- UBICACIO
 INSERT INTO UBICACIO (con, nom, obs) VALUES 
@@ -23,19 +24,24 @@ INSERT INTO TIPUS_CITA (con, dec, dem, notval, cap, gespri, tipcitmod, SUBAPL_CO
 -- Horario: Matí (con = 1)
 INSERT INTO HORARI (con, dec, dem, notval, SUBAPL_COA, TIPCIT_CON) VALUES
 (1, 'Matí', 'Horari de matí', 'S', 'AP1', 1),
-(2, 'Tarda', '14-18h', 'N', 'AP2', 2);
+(2, 'Tarda', '13-18h', 'N', 'AP1', 1);
 
 -- AGENDA
 INSERT INTO AGENDA (con, datini, datfin, UBI_CON, TEC_COA, HORCIT_CON, gespri, usucre, usumod, datcre, datmod, seqmod) VALUES 
 (1, '2025-11-01', '2025-11-30', 1, 'T1', 1, 'S', 'admin', 'admin', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1),
 (2, '2025-11-01', '2025-11-07', 2, 'T2', 2, 'N', 'admin', 'admin', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 2),
-(3, '2025-12-01', '2025-12-15', 1, 'T1', 1, 'S', 'admin', 'admin', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1);
+(3, '2025-12-01', '2025-12-15', 1, 'T3', 2, 'S', 'admin', 'admin', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1);
+
 -- SetmanaTipus: Lunes y Miércoles, 9-10 y 10-11
 INSERT INTO SETMANA_TIPUS (HORCIT_CON, DIASET_CON, horini, horfin, TIPCIT_CON) VALUES
-(1, 1, '09:00:00', '10:00:00', 1),  -- Lunes 9-10
-(1, 1, '10:00:00', '11:00:00', 1),  -- Lunes 10-11
-(1, 3, '09:00:00', '10:00:00', 1);  -- Miércoles 9-10
-
+(1, 1, '09:00:00', '10:00:00', 1),  -- horari 1 dilluns 9-10
+(1, 1, '10:00:00', '11:00:00', 1),  -- horari 1 dilluns 10-11
+(1, 3, '09:00:00', '10:00:00', 1),  -- horari 1 dimecres 10-11
+(2, 1, '13:00:00', '14:00:00', 1),  -- horari 2 dilluns 13-14
+(2, 2, '13:00:00', '14:00:00', 1),	-- horari 2 dimarts 13-14
+(2, 3, '13:00:00', '14:00:00', 1),	-- horari 2 dimecres 13-14
+(2, 4, '13:00:00', '14:00:00', 1),	-- horari 2 dijous 13-14
+(2, 5, '13:00:00', '14:00:00', 1);	-- horari 2 divendres 13-14
 -- src/main/resources/data.sql
 
 -- ===================================================================
@@ -84,10 +90,10 @@ INSERT INTO CITA (
     nomcar, tel, ema
 ) VALUES (
     3,
-    '2025-11-05 11:00:00', '2025-11-05 11:30:00',
+    '2025-12-02 13:00:00', '2025-12-02 14:00:00',
     'Trámite de renovación de DNI. Traer foto reciente.',
     'Laura Gómez Ruiz', 'S', '431762319S',
-    2, 1,
+    1, 3,
     '11223344C', NULL, NULL, NULL, 'laura.alt@email.com',
     'Renovación DNI', 'Foto 3x4', 'Impreso cumplimentado', NULL, NULL,
     'Gómez', 932112233, 'laura.gomez@email.com'
@@ -118,10 +124,10 @@ INSERT INTO CITA (
     nomcar, tel, ema
 ) VALUES (
     5,
-    '2025-11-07 15:00:00', '2025-11-07 15:30:00',
+    '2025-12-04 13:00:00', '2025-12-04 14:00:00',
     NULL,
     'Ana Martínez Díaz', 'S', '12334123W',
-    2, 2,
+    1, 3,
     '99887766E', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
     'Martínez', 934567123, 'ana.martinez@email.com'
 );
