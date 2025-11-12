@@ -15,7 +15,7 @@ import uoc.edu.citaprevia.dto.AgendaDto;
 
 @RestController
 @RequestMapping(value="/agendes")
-public class AgendesController {
+public class AgendaController {
 	
 	@Autowired
 	private AgendaService agendaService;
@@ -26,6 +26,13 @@ public class AgendesController {
 																@PathVariable String subaplCoa,
 																Locale locale) {
 		return agendaService.getAgendesByTipusCitaAndSubaplicacio(tipCitCon, subaplCoa, locale);
+	}
+	
+	@GetMapping(value="/subaplicacions/{subaplCoa}")
+	@Operation(summary="obtenir agendes donada una subaplicació")
+	public List<AgendaDto> getAgendesBySubaplicacio(@PathVariable String subaplCoa,
+																Locale locale) {
+		return agendaService.getAgendesBySubaplicacio(subaplCoa, locale);
 	}
 	
 	@GetMapping(value="/{con}")

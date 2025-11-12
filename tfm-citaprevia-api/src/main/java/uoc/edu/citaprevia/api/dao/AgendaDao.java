@@ -28,4 +28,9 @@ public class AgendaDao {
 		return agendaRepository.findByCon(con);
 	}
 
+    public List<Agenda> findAgendesBySubaplicacio(String subaplCoa) {
+        return agendaRepository.findByHorariSubaplCoa(subaplCoa);
+    }
+
+    
 }

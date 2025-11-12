@@ -11,4 +11,6 @@ public interface AgendaService {
 
 	AgendaDto getAgenda(Long con, Locale locale);
 
+	List<AgendaDto> getAgendesBySubaplicacio(String subaplCoa, Locale locale);
+
 }
