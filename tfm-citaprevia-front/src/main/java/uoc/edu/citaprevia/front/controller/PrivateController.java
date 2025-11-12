@@ -83,10 +83,9 @@ public class PrivateController {
 		model.addAttribute("dataFi", LocalDate.now().plusDays(30));
 		model.addAttribute("tecnic", tecnic);
 
-		return "calendario"; // El mismo HTML
+		return "/private/calendari-private";
 	}
 
-	// COPIADO DE PUBLIC CONTROLLER (adaptado a private, sin subaplCoa)
 	private Map<LocalDate, List<Map<String, Object>>> generarEvents(List<AgendaDto> agendes, CitaPreviaPublicClient client, Locale locale) {
 	    Map<LocalDate, List<Map<String, Object>>> grouped = new TreeMap<>();
 

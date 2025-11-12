@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8">
+	<title th:text="#{calendari} + (${tipusCita != null ? ' - ' + tipusCita.dem : ' - Àrea Privada'})"></title>    
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome (si se usa en header/footer) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <!-- Estilos personalizados -->
+    <link th:href="@{/css/style.css}" rel="stylesheet" type="text/css">
+</head>
+<body class="bg-light">
+
+    <!-- HEADER OFICIAL -->
+    <th:block th:replace="~{common/header :: header}"></th:block>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+
+                <div class="text-center mb-4">
+                    <h3 class="text-primary" th:text="#{selecciona_data_hora} + ' - ' + ${tipusCita.dem}"></h3>
+                </div>
+
+                <th:block th:replace="~{common/errors :: errors(errors = ${errors})}" />
+
+                <div class="card shadow">
+                    <div class="card-body p-4">
+
+                        <!-- RECORRER DÍAS -->
+                        <div th:each="diaGroup : ${frangesHorariesGrouped}">
+                            <div class="dia-header"
+                                 th:text="${#temporals.format(diaGroup.key, 'EEEE, d MMMM yyyy', #locale)}">
+                            </div>
+
+                            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+                                <div th:each="event : ${diaGroup.value}" class="col">
+
+                                    <!-- FRANJA LIBRE -->
+                                    <div th:if="${event.lliure}" class="franja-lliure">
+                                        <button type="button" class="franja-btn"
+                                                th:attr="data-agenda=${event.get('agendaCon')},
+                                                         data-start=${event.get('start')},
+                                                         data-end=${event.get('end')},
+                                                         data-title=${event.get('title')}"
+                                                onclick="openReservaModal(this)">
+                                            <strong th:text="${event.get('title')}"></strong>
+                                        </button>
+                                        <small class="tecnic" th:text="${event.get('tecnic')}"></small>
+                                    </div>
+
+                                    <!-- FRANJA OCUPADA -->
+                                    <div th:if="${!event.lliure}" class="franja-ocupada">
+                                        <div class="franja-btn">
+                                            <strong th:text="${event.get('title')}"></strong>
+                                        </div>
+                                        <small class="tecnic" th:text="${event.get('tecnic')}"></small>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SIN FRANJAS -->
+                        <div th:if="${#maps.isEmpty(frangesHorariesGrouped)}" class="no-franges">
+                            <p th:text="#{no_franges_disponibles}"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <a th:href="@{'/public/' + ${subaplCoa}}" class="btn btn-outline-secondary btn-lg px-5" th:text="#{tornar}"></a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE RESERVA -->
+    <div class="modal fade" id="reservaModal" tabindex="-1" aria-labelledby="reservaModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form th:action="@{'/public/' + ${subaplCoa} + '/reserva'}" method="post" id="formCita">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="reservaModalLabel" th:text="#{reserva_cita} + ' - ' + ${tipusCita.dem}"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+
+                        <!-- CAMPOS OCULTOS -->
+                        <input type="hidden" name="tipcitCon" th:value="${tipusCita.con}">
+                        <input type="hidden" name="dataHoraInici" id="modalDataHoraInici">
+                        <input type="hidden" name="dataHoraFin" id="modalDataHoraFin">
+                        <input type="hidden" name="agendaCon" id="modalAgendaCon">
+
+                        <!-- CAMPOS FIJOS DE CitaFormDto -->
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label" th:text="#{nom}">Nombre</label>
+                                <input type="text" name="nom" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" th:text="#{llis}">Apellidos</label>
+                                <input type="text" name="llis" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" th:text="#{numdoc}">Número de documento</label>
+                                <input type="text" name="numdoc" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" th:text="#{nomcar}">Nombre carrera</label>
+                                <input type="text" name="nomcar" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" th:text="#{tel}">Teléfono</label>
+                                <input type="text" name="tel" class="form-control" pattern="[0-9]{9}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" th:text="#{ema}">Email</label>
+                                <input type="email" name="ema" class="form-control" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label" th:text="#{obs}">Observaciones</label>
+                                <textarea name="obs" class="form-control" rows="3"></textarea>
+                            </div>
+                        </div>
+                        
+						<!-- CAMPOS DINÁMICOS -->
+						<div class="row g-3 mt-4" th:if="${camposCita != null and !#lists.isEmpty(camposCita)}">
+						    <h6 class="mt-3" th:text="#{dades_adicionals}">Dades addicionals</h6>
+						    <div th:each="campo : ${camposCita}" class="col-md-6">
+						        <label class="form-label" th:text="${campo.label}"></label>
+						        <div th:switch="${campo.type}">
+						            <input th:case="*" 
+						                   th:type="${campo.type}" 
+						                   th:name="'lit' + ${campoStat.count}"
+						                   class="form-control"
+						                   th:required="${#strings.contains(campo.validation, 'required')}"
+						                   th:pattern="${#strings.contains(campo.validation, 'pattern') ? #strings.substringAfter(campo.validation, 'pattern=') : null}">
+						            <textarea th:case="textarea" 
+						                      th:name="'lit' + ${campoStat.count}"
+						                      class="form-control" rows="3"
+						                      th:required="${#strings.contains(campo.validation, 'required')}"></textarea>
+						        </div>
+						    </div>
+						</div>
+
+                        <!-- Hora seleccionada -->
+                        <div class="mt-4">
+                            <small class="text-muted">
+                                <span th:text="#{hora_seleccionada}"></span>:
+                                <strong id="horaSeleccionada"></strong>
+                            </small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{cancelar}">Cancel·lar</button>
+                        <button type="submit" class="btn btn-success" th:text="#{reservar}">Reservar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const modal = new bootstrap.Modal(document.getElementById('reservaModal'));
+
+        function openReservaModal(btn) {
+            const agendaCon = btn.getAttribute('data-agenda');
+            const start = btn.getAttribute('data-start');
+            const end = btn.getAttribute('data-end');
+            const hora = btn.querySelector('strong').textContent.trim();
+
+            document.getElementById('modalDataHoraInici').value = start;
+            document.getElementById('modalDataHoraFin').value = end;
+            document.getElementById('modalAgendaCon').value = agendaCon;
+            document.getElementById('horaSeleccionada').textContent = hora;
+
+            modal.show();
+        }
+        /*]]>*/
+    </script>
+</body>
+</html>

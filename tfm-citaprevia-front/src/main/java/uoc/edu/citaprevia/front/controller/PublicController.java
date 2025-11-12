@@ -150,7 +150,7 @@ public class PublicController {
 	    model.addAttribute("camposCita", campos);
         
 
-        return "calendario";
+        return "calendari";
     }
 	
 	private List<Map<String, Object>> generarEvents(List<AgendaDto> agendes, CitaPreviaPublicClient client, Locale locale) {
