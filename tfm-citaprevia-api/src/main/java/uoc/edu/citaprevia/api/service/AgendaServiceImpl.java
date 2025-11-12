@@ -61,7 +61,7 @@ public class AgendaServiceImpl implements AgendaService{
 		List<AgendaDto> dtos = new ArrayList<AgendaDto>();
 		
 		if (!Utils.isEmpty(tecCoa)) {
-			List<Agenda> daos = agendaDao.findAgendesBySubaplicacio(tecCoa);
+			List<Agenda> daos = agendaDao.findAgendesByTecnicCoa(tecCoa);
 			daos.forEach(item->dtos.add(Converter.toDto(item)));
 		}
 		

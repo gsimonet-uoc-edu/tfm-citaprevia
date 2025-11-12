@@ -28,8 +28,8 @@ INSERT INTO HORARI (con, dec, dem, notval, SUBAPL_COA, TIPCIT_CON) VALUES
 -- AGENDA
 INSERT INTO AGENDA (con, datini, datfin, UBI_CON, TEC_COA, HORCIT_CON, gespri, usucre, usumod, datcre, datmod, seqmod) VALUES 
 (1, '2025-11-01', '2025-11-30', 1, 'T1', 1, 'S', 'admin', 'admin', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1),
-(2, '2025-11-01', '2025-11-07', 2, 'T2', 2, 'N', 'admin', 'admin', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 2);
-
+(2, '2025-11-01', '2025-11-07', 2, 'T2', 2, 'N', 'admin', 'admin', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 2),
+(3, '2025-12-01', '2025-12-15', 1, 'T1', 1, 'S', 'admin', 'admin', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1);
 -- SetmanaTipus: Lunes y Miércoles, 9-10 y 10-11
 INSERT INTO SETMANA_TIPUS (HORCIT_CON, DIASET_CON, horini, horfin, TIPCIT_CON) VALUES
 (1, 1, '09:00:00', '10:00:00', 1),  -- Lunes 9-10
@@ -50,7 +50,7 @@ INSERT INTO CITA (
     nomcar, tel, ema
 ) VALUES (
     1,
-    '2025-11-03 09:00:00', '2025-11-03 09:30:00',
+    '2025-11-03 09:00:00', '2025-11-03 10:00:00',
     'Paciente con dolor de cabeza recurrente',
     'Maria Pérez García', 'S', '43186268L',
     1, 1,
@@ -67,10 +67,10 @@ INSERT INTO CITA (
     nomcar, tel, ema
 ) VALUES (
     2,
-    '2025-11-04 10:00:00', '2025-11-04 10:30:00',
+    '2025-11-05 09:00:00', '2025-11-05 10:00:00',
     'Paciente necesita receta de insulina. Traer informe médico anterior.',
     'Joan Torres Vila', 'S', '12341234Z',
-    1, 2,
+    1, 1,
     '87654321B', '1978-07-22', 'Av. Diagonal 456', '933221100', 'joan.torres@email.com',
     'Diabetes tipo 2', 'Metformina 850mg', 'Control glucosa', NULL, NULL,
     'Torres', 933221100, 'joan.torres@email.com'
@@ -101,7 +101,7 @@ INSERT INTO CITA (
     nomcar, tel, ema
 ) VALUES (
     4,
-    '2025-11-06 14:00:00', '2025-11-06 14:30:00',
+    '2025-11-12 09:00:00', '2025-11-12 10:00:00',
     'Primera visita. Paciente nuevo.',
     'Carlos Sánchez López', 'S', '45423464Y',
     1, 1,

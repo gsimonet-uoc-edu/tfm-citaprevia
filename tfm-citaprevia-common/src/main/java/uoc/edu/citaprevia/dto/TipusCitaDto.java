@@ -11,6 +11,8 @@ import uoc.edu.citaprevia.model.SiNo;
 @Getter @Setter @NoArgsConstructor @ToString
 public class TipusCitaDto extends ErrorsDto{
 
+	public TipusCitaDto(String dec, String dem) {
+	}
 	private Long con;
 	private String dec;
 	private String dem;

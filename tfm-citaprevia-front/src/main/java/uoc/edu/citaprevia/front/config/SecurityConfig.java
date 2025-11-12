@@ -1,21 +1,26 @@
 package uoc.edu.citaprevia.front.config;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import lombok.RequiredArgsConstructor;
-//import uoc.edu.citaprevia.api.service.TecnicService;
+import uoc.edu.citaprevia.dto.TecnicDto;
+import uoc.edu.citaprevia.front.service.CitaPreviaPrivateClient;
 
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    //private final TecnicService tecnicService; //TODO:
 
+	@Autowired
+	private CitaPreviaPrivateClient citaPreviaPrivateClient;
+	
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 	    http
@@ -43,21 +48,30 @@ public class SecurityConfig {
 	    return http.build();
 	}
 
-	// TODO tecnicService
-    /*@Bean
-    public UserDetailsService userDetailsService() {
-        return username -> tecnicService.findByCoa(username)
-            .map(tecnic -> org.springframework.security.core.userdetails.User
-                .withUsername(tecnic.getCoa())
-                .password(tecnic.getPass())
-                .authorities(tecnic.getPrf().name())
-                .build()
-            )
-            .orElseThrow(() -> new UsernameNotFoundException("Tècnic no trobat: " + username));
-    }*/
+	@Bean
+	public UserDetailsService userDetailsService() {
+	    return username -> {
+	        TecnicDto tecnic = citaPreviaPrivateClient.getTecnic(username, null);
 
-    @Bean
+	        return User.withUsername(tecnic.getCoa())
+	            .password(tecnic.getPass())
+	            .authorities(tecnic.getPrf())
+	            .build();
+	    };
+	}
+
+	@Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new PasswordEncoder() {
+            @Override
+            public String encode(CharSequence rawPassword) {
+                return rawPassword.toString();
+            }
+
+            @Override
+            public boolean matches(CharSequence rawPassword, String encodedPassword) {
+                return rawPassword.toString().equals(encodedPassword);
+            }
+        };
     }
 }

@@ -34,9 +34,9 @@ public class TecnicController {
 	
 	@GetMapping(value="/{coa}/agendes")
 	@Operation(summary="obtenir agendes d'un tècnic")
-	public List<AgendaDto> getAgendesByTecnic(@PathVariable String tecCoa,
+	public List<AgendaDto> getAgendesByTecnic(@PathVariable String coa,
 											   Locale locale) {
-		return agendaService.getAgendesByTecnic(tecCoa, locale);
+		return agendaService.getAgendesByTecnic(coa, locale);
 	}
 	
 }
