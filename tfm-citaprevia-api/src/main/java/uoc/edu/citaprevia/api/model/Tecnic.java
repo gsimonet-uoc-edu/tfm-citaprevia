@@ -28,7 +28,6 @@ public class Tecnic {
 	private String ll2;
 	@Enumerated(EnumType.STRING)
 	private SiNo notval;
-    @Enumerated(EnumType.STRING)
-    private Perfil prf;
+    private String prf;
 
 }

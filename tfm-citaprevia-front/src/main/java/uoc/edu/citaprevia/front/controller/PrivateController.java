@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.springframework.security.core.Authentication;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -54,13 +55,16 @@ public class PrivateController {
         }
 
         List<AgendaDto> agendes;
-        if (tecnic.getPrf() == Perfil.ADMINISTRADOR) {
-            agendes = citaPreviaPrivateClient.getAgendasBySubaplicacio(tecnic.getSubaplicacio().getCoa()); // Asumiendo Tecnic tiene subaplicacio
+        String subaplCoa = StringUtils.substringAfter(tecnic.getPrf(), "_"); // Extreim el codi de la subaplicació a partir sufixe del perfil.
+        String prefixePerfil = StringUtils.substringBefore(tecnic.getPrf(), "_");
+        
+        if (Perfil.ADMINISTRADOR.getValor().equals(prefixePerfil)) {
+            agendes = citaPreviaPrivateClient.getAgendasBySubaplicacio(subaplCoa, locale);
         } else {
-            agendes = agendaService.findByTecnicCoa(coa);
+            agendes = citaPreviaPrivateClient.getAgendasByTecnic(tecnic.getCoa(), locale);    
         }
 
-        model.addAttribute("subaplCoa", tecnic.getSubaplicacio().getCoa());
+        model.addAttribute("subaplCoa", subaplCoa);
         model.addAttribute("tipusCita", null); // Adaptar si es necesario, o dejar para el template
         model.addAttribute("frangesHorariesGrouped", generarFrangesHorariesGrouped(agendes)); // Reutiliza la lógica
 

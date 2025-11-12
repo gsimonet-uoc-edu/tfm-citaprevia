@@ -31,6 +31,10 @@ public class AgendaDao {
     public List<Agenda> findAgendesBySubaplicacio(String subaplCoa) {
         return agendaRepository.findByHorariSubaplCoa(subaplCoa);
     }
+    
+    public List<Agenda> findAgendesByTecnicCoa(String tecCoa) {
+        return agendaRepository.findByTecnicCoa(tecCoa);
+    }
 
     
 }

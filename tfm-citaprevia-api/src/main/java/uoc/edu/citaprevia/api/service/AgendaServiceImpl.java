@@ -55,5 +55,18 @@ public class AgendaServiceImpl implements AgendaService{
 		return dtos;
 	}
 	
+	@Override
+	public List<AgendaDto> getAgendesByTecnic (String tecCoa, Locale locale) {
+		
+		List<AgendaDto> dtos = new ArrayList<AgendaDto>();
+		
+		if (!Utils.isEmpty(tecCoa)) {
+			List<Agenda> daos = agendaDao.findAgendesBySubaplicacio(tecCoa);
+			daos.forEach(item->dtos.add(Converter.toDto(item)));
+		}
+		
+		return dtos;
+	}
+	
 
 }

@@ -13,4 +13,6 @@ public interface AgendaService {
 
 	List<AgendaDto> getAgendesBySubaplicacio(String subaplCoa, Locale locale);
 
+	List<AgendaDto> getAgendesByTecnic(String tecCoa, Locale locale);
+
 }

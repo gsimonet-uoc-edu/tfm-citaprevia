@@ -45,7 +45,7 @@ public class CitaPreviaPrivateClientImpl implements CitaPreviaPrivateClient{
 	@Override
 	public TecnicDto getTecnic (String tecCoa, Locale locale) {
 		Map<String, Object> params = new HashMap<>();
-		params.put(PARAM_AGE_CON, tecCoa);
+		params.put(PARAM_TEC_COA, tecCoa);
 		params.put(PARAM_LOCALE, locale);
 		String url = getBaseApiUrl() + "/tecnics/{tecCoa}?lang={lang}";
 		return restTemplate.getForObject(url, TecnicDto.class, params);
@@ -57,6 +57,16 @@ public class CitaPreviaPrivateClientImpl implements CitaPreviaPrivateClient{
 		params.put(PARAM_SUBAPL_COA, subaplCoa);		
 		params.put(PARAM_LOCALE, locale);
 		String url = getBaseApiUrl() + "/agendes/subaplicacions/{subaplCoa}?lang={lang}";	
+		AgendaDto[] list = restTemplate.getForObject(url, AgendaDto[].class, params);
+		return list == null ? new ArrayList<>() : Arrays.asList(list);
+	}
+	
+	@Override
+	public List<AgendaDto> getAgendasByTecnic(String tecCoa, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_TEC_COA, tecCoa);		
+		params.put(PARAM_LOCALE, locale);
+		String url = getBaseApiUrl() + "/tecnics/{tecCoa}/agendes?lang={lang}";	
 		AgendaDto[] list = restTemplate.getForObject(url, AgendaDto[].class, params);
 		return list == null ? new ArrayList<>() : Arrays.asList(list);
 	}

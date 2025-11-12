@@ -1,5 +1,6 @@
 package uoc.edu.citaprevia.api.controller;
 
+import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
+import uoc.edu.citaprevia.api.service.AgendaService;
 import uoc.edu.citaprevia.api.service.TecnicService;
+import uoc.edu.citaprevia.dto.AgendaDto;
 import uoc.edu.citaprevia.dto.TecnicDto;
 
 @RestController
@@ -19,11 +22,21 @@ public class TecnicController {
 	@Autowired
 	private TecnicService tecnicService;
 	
+	@Autowired
+	private AgendaService agendaService;
+	
 	@GetMapping(value="/{coa}")
 	@Operation(summary="obtenir un tècnic pel seu identificador")
 	public TecnicDto getTecnic(@PathVariable String coa, 
 											Locale locale) {
 		return tecnicService.getTecnicByCoa(coa);
+	}
+	
+	@GetMapping(value="/{coa}/agendes")
+	@Operation(summary="obtenir agendes d'un tècnic")
+	public List<AgendaDto> getAgendesByTecnic(@PathVariable String tecCoa,
+											   Locale locale) {
+		return agendaService.getAgendesByTecnic(tecCoa, locale);
 	}
 	
 }

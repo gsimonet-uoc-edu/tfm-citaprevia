@@ -5,8 +5,8 @@ INSERT INTO SUBAPLICACIO (coa, dec, dem) VALUES
 
 -- TECNIC
 INSERT INTO TECNIC (coa, pass, nom, ll1, ll2, notval, prf) VALUES 
-('T1', '1234', 'Joan', 'Garcia', 'Marqués', 'S', 'TECNIC'),
-('T2', '1234', 'Maria', 'Ginard', 'Torres', 'S', 'ADMINISTRADOR');
+('T1', '1234', 'Joan', 'Garcia', 'Marqués', 'S', 'TECNIC_AP1'),
+('T2', '1234', 'Maria', 'Ginard', 'Torres', 'S', 'ADMINISTRADOR_AP1');
 
 -- UBICACIO
 INSERT INTO UBICACIO (con, nom, obs) VALUES 

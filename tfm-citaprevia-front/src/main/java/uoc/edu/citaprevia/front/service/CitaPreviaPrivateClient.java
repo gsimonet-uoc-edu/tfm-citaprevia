@@ -12,4 +12,6 @@ public interface CitaPreviaPrivateClient {
 
 	List<AgendaDto> getAgendasBySubaplicacio(String subaplCoa, Locale locale);
 
+	List<AgendaDto> getAgendasByTecnic(String tecCoa, Locale locale);
+
 }
