@@ -31,6 +31,7 @@ import uoc.edu.citaprevia.dto.CitaDto;
 import uoc.edu.citaprevia.dto.SetmanaTipusDto;
 import uoc.edu.citaprevia.dto.TecnicDto;
 import uoc.edu.citaprevia.dto.TipusCitaDto;
+import uoc.edu.citaprevia.dto.generic.ErrorDto;
 import uoc.edu.citaprevia.front.dto.CampConfigDto;
 import uoc.edu.citaprevia.front.dto.CitaFormDto;
 import uoc.edu.citaprevia.front.service.CitaPreviaPrivateClient;
@@ -194,6 +195,84 @@ public class PrivateController {
 	    return "private/confirmacio-private";
 	}
 	
+	@PostMapping("/cita/actualitzar")
+	public String actualitzarCita(
+	        @ModelAttribute CitaFormDto form,
+	        BindingResult result,
+	        RedirectAttributes redirect,
+	        Authentication authentication,
+	        Locale locale) throws Exception {
+
+	    if (result.hasErrors()) {
+	        redirect.addFlashAttribute("error", "Dades incorrectes");
+	        return "redirect:/private/calendari";
+	    }
+
+	    String coa = authentication.getName();
+	    TecnicDto tecnic = citaPreviaPrivateClient.getTecnic(coa, locale);
+	    if (tecnic == null) return "redirect:/private/login";
+
+	    String subaplCoa = StringUtils.substringAfter(tecnic.getPrf(), "_");
+
+	    CitaDto cita = citaPreviaPublicClient.getCita(form.getCitaCon(), locale);
+	    if (cita == null || !subaplCoa.equals(cita.getAgenda().getHorari().getSubapl().getCoa())) {
+	        redirect.addFlashAttribute("error", "Cita no vàlida");
+	        return "redirect:/private/calendari";
+	    }
+
+	    // Actualitzar camps
+	    cita.setDathorini(form.getDataHoraInici().minusSeconds(1));
+	    cita.setDathorfin(form.getDataHoraFin().minusSeconds(1));
+	    cita.setNom(form.getNom());
+	    cita.setLlis(form.getLlis());
+	    cita.setNumdoc(form.getNumdoc());
+	    cita.setNomcar(form.getNomcar());
+	    cita.setTel(Long.valueOf(form.getTel()));
+	    cita.setEma(form.getEma());
+	    cita.setObs(form.getObs());
+	    cita.setLit1(form.getLit1()); cita.setLit2(form.getLit2());
+	    cita.setLit3(form.getLit3()); cita.setLit4(form.getLit4());
+	    cita.setLit5(form.getLit5()); cita.setLit6(form.getLit6());
+	    cita.setLit7(form.getLit7()); cita.setLit8(form.getLit8());
+	    cita.setLit9(form.getLit9()); cita.setLit10(form.getLit10());
+
+	    CitaDto updated = null; //citaPreviaPrivateClient.updateCita(cita, locale); TODO
+	    if (updated == null) {
+	        redirect.addFlashAttribute("error", "Error al actualitzar");
+	    } else {
+	        return "redirect:/private/cita/confirmacio?con=" + updated.getCon() + "&accion=actualitzada";
+	    }
+	    return "redirect:/private/calendari";
+	}
+
+	@PostMapping("/cita/cancelar")
+	public String cancelarCita(
+	        @RequestParam Long citaCon,
+	        Authentication authentication,
+	        RedirectAttributes redirect,
+	        Locale locale) throws Exception {
+
+	    String coa = authentication.getName();
+	    TecnicDto tecnic = citaPreviaPrivateClient.getTecnic(coa, locale);
+	    if (tecnic == null) return "redirect:/private/login";
+
+	    String subaplCoa = StringUtils.substringAfter(tecnic.getPrf(), "_");
+
+	    CitaDto cita = citaPreviaPublicClient.getCita(citaCon, locale);
+	    if (cita == null || !subaplCoa.equals(cita.getAgenda().getHorari().getSubapl().getCoa())) {
+	        redirect.addFlashAttribute("error", "Cita no vàlida");
+	        return "redirect:/private/calendari";
+	    }
+
+	    ErrorDto error = null; //citaPreviaPrivateClient.deleteCita(citaCon, locale); TODO
+	    if (error == null) {
+	        return "redirect:/private/cita/confirmacio?con=" + citaCon + "&accion=cancelada";
+	    } else {
+	        redirect.addFlashAttribute("error", "Error al cancel·lar");
+	        return "redirect:/private/calendari";
+	    }
+	}
+	
 	private Map<LocalDate, List<Map<String, Object>>> generarEvents(List<AgendaDto> agendes, CitaPreviaPublicClient client, Locale locale) {
 	    Map<LocalDate, List<Map<String, Object>>> grouped = new TreeMap<>();
 
@@ -233,6 +312,9 @@ public class PrivateController {
 	                    event.put("lliure", !ocupada);
 	                    event.put("tecnic", agenda.getTecnic().getNom());
 	                    event.put("agendaCon", agenda.getCon());
+	                    if (ocupada) {
+	                    	event.put("citaCon", existeixCita.getCon());
+	                    }
 	                    dayEvents.add(event);
 	                }
 	            }

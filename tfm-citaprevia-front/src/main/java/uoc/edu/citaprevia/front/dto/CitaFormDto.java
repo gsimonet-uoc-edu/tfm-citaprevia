@@ -16,6 +16,7 @@ import lombok.Setter;
 
 @Getter @Setter
 public class CitaFormDto {
+	private Long citaCon;
     @NotNull private Long tipcitCon;
     @NotNull 
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
