@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import uoc.edu.citaprevia.dto.AgendaDto;
@@ -159,13 +160,40 @@ public class PrivateController {
 	    CitaDto insertCita = citaPreviaPublicClient.saveCita(cita, locale);
 	    if (insertCita == null || Utils.isEmpty(insertCita.getCon())) {
 	        redirect.addFlashAttribute("error", "Error al guardar la cita");
-	    } else {
-	        redirect.addFlashAttribute("success", "Cita creada correctament");
+	        return "redirect:/private/calendari";
 	    }
 
-	    return "redirect:/private/calendari";
+	    return "redirect:/private/cita/confirmacio?con=" + insertCita.getCon() + "&accion=creada";
 	}
 
+	@GetMapping("/cita/confirmacio")
+	public String confirmacioCita(
+	        @RequestParam Long con,
+	        @RequestParam String accion,
+	        Model model,
+	        Authentication authentication,
+	        Locale locale) throws Exception {
+
+	    String coa = authentication.getName();
+	    TecnicDto tecnic = citaPreviaPrivateClient.getTecnic(coa, locale);
+	    if (tecnic == null) {
+	        return "redirect:/private/login";
+	    }
+
+	    String subaplCoa = StringUtils.substringAfter(tecnic.getPrf(), "_");
+
+	    CitaDto cita = citaPreviaPublicClient.getCita(con, locale);
+	    if (cita == null || !subaplCoa.equals(cita.getAgenda().getHorari().getSubapl().getCoa())) {
+	        return "redirect:/private/calendari?error";
+	    }
+
+	    model.addAttribute("cita", cita);
+	    model.addAttribute("subaplCoa", subaplCoa);
+	    model.addAttribute("accion", accion); // "creada", "actualitzada", "cancelada"
+
+	    return "private/confirmacio-private";
+	}
+	
 	private Map<LocalDate, List<Map<String, Object>>> generarEvents(List<AgendaDto> agendes, CitaPreviaPublicClient client, Locale locale) {
 	    Map<LocalDate, List<Map<String, Object>>> grouped = new TreeMap<>();
 
