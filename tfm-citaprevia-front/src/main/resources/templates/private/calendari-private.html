@@ -40,6 +40,17 @@
                         </div>
                     </div>
                     <div class="card-body p-3">
+
+                        <!-- ALERTAS FLASH -->
+                        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                            <span th:text="#{cita_creada_ok}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <span th:text="#{error_guardar_cita}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+
                         <div id="calendar"></div>
                     </div>
                 </div>
@@ -47,14 +58,92 @@
         </div>
     </div>
 
+    <!-- MODAL DE RESERVA -->
+    <div class="modal fade" id="reservaModalPrivate" tabindex="-1" aria-labelledby="reservaModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form th:action="@{'/private/cita/reserva'}" method="post" id="formCitaPrivate">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="reservaModalLabel" th:text="#{reserva_cita}"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="agendaCon" id="modalAgendaConPrivate">
+                        <input type="hidden" name="dataHoraInici" id="modalDataHoraIniciPrivate">
+                        <input type="hidden" name="dataHoraFin" id="modalDataHoraFinPrivate">
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label" th:text="#{nom} + ' *'"></label>
+                                <input type="text" name="nom" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" th:text="#{llis} + ' *'"></label>
+                                <input type="text" name="llis" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" th:text="#{numdoc} + ' *'"></label>
+                                <input type="text" name="numdoc" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" th:text="#{nomcar} + ' *'"></label>
+                                <input type="text" name="nomcar" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" th:text="#{tel} + ' *'"></label>
+                                <input type="text" name="tel" class="form-control" pattern="[0-9]{9}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" th:text="#{ema} + ' *'"></label>
+                                <input type="email" name="ema" class="form-control" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label" th:text="#{obs}"></label>
+                                <textarea name="obs" class="form-control" rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- CAMPOS DINÁMICOS -->
+                        <div class="row g-3 mt-4" th:if="${camposCita != null and !#lists.isEmpty(camposCita)}">
+                            <h6 th:text="#{dades_adicionals}"></h6>
+                            <div th:each="campo : ${camposCita}" class="col-md-6">
+                                <label class="form-label" th:text="${campo.label}"></label>
+                                <div th:switch="${campo.type}">
+                                    <input th:case="*" th:type="${campo.type}" th:name="'lit' + ${campoStat.count}" class="form-control"
+                                           th:required="${#strings.contains(campo.validation, 'required')}"
+                                           th:pattern="${#strings.contains(campo.validation, 'pattern') ? #strings.substringAfter(campo.validation, 'pattern=') : null}">
+                                    <textarea th:case="textarea" th:name="'lit' + ${campoStat.count}" class="form-control" rows="3"
+                                              th:required="${#strings.contains(campo.validation, 'required')}"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 p-3 bg-light rounded">
+                            <small class="text-muted">
+                                <i class="fas fa-clock me-1"></i>
+                                <span th:text="#{hora_seleccionada}"></span>: <strong id="horaSeleccionadaPrivate"></strong>
+                            </small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{cancelar}"></button>
+                        <button type="submit" class="btn btn-success" th:text="#{reservar}"></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <th:block th:replace="~{common/footer :: footer}"></th:block>
 
+    <!-- SCRIPTS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
     <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', function() {
             const calendarEl = document.getElementById('calendar');
             const events = /*[[${frangesHorariesGrouped}]]*/ [];
+            const modal = new bootstrap.Modal(document.getElementById('reservaModalPrivate'));
 
             const calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'timeGridWeek',
@@ -72,7 +161,6 @@
                 nowIndicator: true,
                 height: 'auto',
 
-                // === GENERAR EVENTOS ===
                 events: Object.keys(events).flatMap(date => {
                     return events[date].map(event => {
                         const isLliure = event.lliure === true;
@@ -112,7 +200,6 @@
                     });
                 }),
 
-                // === RENDERIZADO PERSONALIZADO ===
                 eventContent: function(info) {
                     const props = info.event.extendedProps;
                     if (props.lliure) {
@@ -126,7 +213,6 @@
                     }
                 },
 
-                // === TOOLTIP ===
                 eventDidMount: function(info) {
                     const props = info.event.extendedProps;
                     let tooltip = '';
@@ -153,14 +239,25 @@
                     });
                 },
 
-                // === CLIC EN EVENTO ===
                 eventClick: function(info) {
                     const props = info.event.extendedProps;
-                    if (props.lliure) {
-                        window.location.href = `/private/cita/alta?agendaCon=${props.agendaCon}&start=${encodeURIComponent(info.event.start.toISOString())}`;
-                    } else {
-                        window.location.href = `/private/cita/detalle/${props.citaCon}`;
+                    if (!props.lliure) {
+                        if (props.citaCon) {
+                            window.location.href = `/private/cita/detalle/${props.citaCon}`;
+                        }
+                        return;
                     }
+
+                    // FRANJA LIBRE → ABRIR MODAL
+                    const offset = info.event.start.getTimezoneOffset() * 60000;
+                    const startLocal = new Date(info.event.start.getTime() - offset).toISOString().slice(0, 19);
+
+                    document.getElementById('modalAgendaConPrivate').value = props.agendaCon;
+                    document.getElementById('modalDataHoraIniciPrivate').value = startLocal;
+                    document.getElementById('modalDataHoraFinPrivate').value = startLocal; // Puedes calcular el fin
+                    document.getElementById('horaSeleccionadaPrivate').textContent = info.event.title;
+
+                    modal.show();
                 },
 
                 loading: function(isLoading) {
@@ -169,7 +266,6 @@
             });
             calendar.render();
         });
-    lint
     </script>
 </body>
 </html>

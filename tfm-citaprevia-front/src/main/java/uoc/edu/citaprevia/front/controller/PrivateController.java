@@ -18,16 +18,23 @@ import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import uoc.edu.citaprevia.dto.AgendaDto;
 import uoc.edu.citaprevia.dto.CitaDto;
 import uoc.edu.citaprevia.dto.SetmanaTipusDto;
 import uoc.edu.citaprevia.dto.TecnicDto;
 import uoc.edu.citaprevia.dto.TipusCitaDto;
+import uoc.edu.citaprevia.front.dto.CampConfigDto;
+import uoc.edu.citaprevia.front.dto.CitaFormDto;
 import uoc.edu.citaprevia.front.service.CitaPreviaPrivateClient;
 import uoc.edu.citaprevia.front.service.CitaPreviaPublicClient;
+import uoc.edu.citaprevia.front.service.MetacamapService;
 import uoc.edu.citaprevia.model.Perfil;
 import uoc.edu.citaprevia.util.Utils;
 
@@ -46,6 +53,9 @@ public class PrivateController {
     
     @Autowired
     private CitaPreviaPrivateClient citaPreviaPrivateClient;
+    
+    @Autowired
+    private MetacamapService metacamapService;
     
 	@Autowired
 	private MessageSource bundle;
@@ -83,7 +93,77 @@ public class PrivateController {
 		model.addAttribute("dataFi", LocalDate.now().plusDays(30));
 		model.addAttribute("tecnic", tecnic);
 
+		// AÑADIR CAMPOS DINÁMICOS
+	    List<CampConfigDto> campos = metacamapService.getCampos(subaplCoa, locale);
+	    model.addAttribute("camposCita", campos);
+	    
 		return "/private/calendari-private";
+	}
+	
+	@PostMapping("/cita/reserva")
+	public String reservaCitaPrivada(
+	        @ModelAttribute CitaFormDto form,
+	        BindingResult result,
+	        Model model,
+	        RedirectAttributes redirect,
+	        Authentication authentication,
+	        Locale locale) throws Exception {
+
+	    if (result.hasErrors()) {
+	        redirect.addFlashAttribute("error", "Dades incorrectes");
+	        return "redirect:/private/calendari";
+	    }
+
+	    String coa = authentication.getName();
+	    TecnicDto tecnic = citaPreviaPrivateClient.getTecnic(coa, locale);
+	    if (tecnic == null) {
+	        return "redirect:/private/login";
+	    }
+
+	    String subaplCoa = StringUtils.substringAfter(tecnic.getPrf(), "_");
+
+	    // Obtener agenda y tipo de cita
+	    AgendaDto agenda = citaPreviaPublicClient.getAgenda(form.getAgendaCon(), locale);
+	    if (agenda == null || !subaplCoa.equals(agenda.getHorari().getSubapl().getCoa())) {
+	        redirect.addFlashAttribute("error", "Agenda no vàlida");
+	        return "redirect:/private/calendari";
+	    }
+
+	    TipusCitaDto tipusCita = agenda.getHorari().getTipusCita();
+
+	    // Crear cita
+	    CitaDto cita = new CitaDto();
+	    cita.setDathorini(form.getDataHoraInici().minusSeconds(1));
+	    cita.setDathorfin(form.getDataHoraFin().minusSeconds(1));
+	    cita.setNom(form.getNom());
+	    cita.setLlis(form.getLlis());
+	    cita.setNumdoc(form.getNumdoc());
+	    cita.setNomcar(form.getNomcar());
+	    cita.setTel(Long.valueOf(form.getTel()));
+	    cita.setEma(form.getEma());
+	    cita.setObs(form.getObs());
+	    cita.setLit1(form.getLit1());
+	    cita.setLit2(form.getLit2());
+	    cita.setLit3(form.getLit3());
+	    cita.setLit4(form.getLit4());
+	    cita.setLit5(form.getLit5());
+	    cita.setLit6(form.getLit6());
+	    cita.setLit7(form.getLit7());
+	    cita.setLit8(form.getLit8());
+	    cita.setLit9(form.getLit9());
+	    cita.setLit10(form.getLit10());
+	    cita.setAgenda(agenda);
+	    cita.setTipusCita(tipusCita);
+
+	    // Guardar TODO
+	    CitaDto insertCita = citaPreviaPublicClient.saveCita(cita, locale);
+	    if (insertCita == null || Utils.isEmpty(insertCita.getCon())) {
+	        redirect.addFlashAttribute("error", "Error al guardar la cita");
+	    } else {
+	        redirect.addFlashAttribute("success", "Cita creada correctament");
+	    }
+
+	    return "redirect:/private/calendari";
 	}
 
 	private Map<LocalDate, List<Map<String, Object>>> generarEvents(List<AgendaDto> agendes, CitaPreviaPublicClient client, Locale locale) {
