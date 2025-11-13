@@ -170,6 +170,7 @@
 
                         return {
                             start: event.start,
+                            end: event.end, // ← IMPORTANTE: incluye end
                             classNames: isLliure ? 'hora-lliure' : 'hora-ocupada',
                             extendedProps: {
                                 lliure: isLliure,
@@ -239,6 +240,7 @@
                     });
                 },
 
+                // EVENTCLICK CORREGIDO: USA info.event.end
                 eventClick: function(info) {
                     const props = info.event.extendedProps;
                     if (!props.lliure) {
@@ -252,9 +254,15 @@
                     const offset = info.event.start.getTimezoneOffset() * 60000;
                     const startLocal = new Date(info.event.start.getTime() - offset).toISOString().slice(0, 19);
 
+                    // USAR end SI EXISTE
+                    let endLocal = startLocal;
+                    if (info.event.end) {
+                        endLocal = new Date(info.event.end.getTime() - offset).toISOString().slice(0, 19);
+                    }
+
                     document.getElementById('modalAgendaConPrivate').value = props.agendaCon;
                     document.getElementById('modalDataHoraIniciPrivate').value = startLocal;
-                    document.getElementById('modalDataHoraFinPrivate').value = startLocal; // Puedes calcular el fin
+                    document.getElementById('modalDataHoraFinPrivate').value = endLocal;
                     document.getElementById('horaSeleccionadaPrivate').textContent = info.event.title;
 
                     modal.show();

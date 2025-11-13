@@ -228,6 +228,7 @@ public class PrivateController {
 	                    Map<String, Object> event = new HashMap<>();
 	                    event.put("title", franja.getHorini() + " - " + franja.getHorfin());
 	                    event.put("start", inici);
+	                    event.put("end", fi);
 	                    event.put("classNames", ocupada ? "hora-ocupada" : "hora-lliure");
 	                    event.put("lliure", !ocupada);
 	                    event.put("tecnic", agenda.getTecnic().getNom());
