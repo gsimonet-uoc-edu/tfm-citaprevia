@@ -18,10 +18,10 @@ import lombok.Setter;
 public class CitaFormDto {
     @NotNull private Long tipcitCon;
     @NotNull 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dataHoraInici;
     @NotNull
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dataHoraFin;
     @NotNull private Long agendaCon;
 

@@ -2,82 +2,49 @@
 <html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
 <head>
     <meta charset="UTF-8">
-	<title th:text="#{calendari} + (${tipusCita != null ? ' - ' + tipusCita.dem : ' - Àrea Privada'})"></title>    
-    <!-- Bootstrap -->
+    <title th:text="#{calendari} + (${tipusCita != null ? ' - ' + tipusCita.dem : ' - Àrea Pública'})"></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome (si se usa en header/footer) -->
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css' rel='stylesheet' />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-    <!-- Estilos personalizados -->
-    <link th:href="@{/css/style.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
 </head>
 <body class="bg-light">
-
-    <!-- HEADER OFICIAL -->
     <th:block th:replace="~{common/header :: header}"></th:block>
 
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-10">
-
-                <div class="text-center mb-4">
-                    <h3 class="text-primary" th:text="#{selecciona_data_hora} + ' - ' + ${tipusCita.dem}"></h3>
-                </div>
-
-                <th:block th:replace="~{common/errors :: errors(errors = ${errors})}" />
-
-                <div class="card shadow">
-                    <div class="card-body p-4">
-
-                        <!-- RECORRER DÍAS -->
-                        <div th:each="diaGroup : ${frangesHorariesGrouped}">
-                            <div class="dia-header"
-                                 th:text="${#temporals.format(diaGroup.key, 'EEEE, d MMMM yyyy', #locale)}">
-                            </div>
-
-                            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
-                                <div th:each="event : ${diaGroup.value}" class="col">
-
-                                    <!-- FRANJA LIBRE -->
-                                    <div th:if="${event.lliure}" class="franja-lliure">
-                                        <button type="button" class="franja-btn"
-                                                th:attr="data-agenda=${event.get('agendaCon')},
-                                                         data-start=${event.get('start')},
-                                                         data-end=${event.get('end')},
-                                                         data-title=${event.get('title')}"
-                                                onclick="openReservaModal(this)">
-                                            <strong th:text="${event.get('title')}"></strong>
-                                        </button>
-                                        <small class="tecnic" th:text="${event.get('tecnic')}"></small>
-                                    </div>
-
-                                    <!-- FRANJA OCUPADA -->
-                                    <div th:if="${!event.lliure}" class="franja-ocupada">
-                                        <div class="franja-btn">
-                                            <strong th:text="${event.get('title')}"></strong>
-                                        </div>
-                                        <small class="tecnic" th:text="${event.get('tecnic')}"></small>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- SIN FRANJAS -->
-                        <div th:if="${#maps.isEmpty(frangesHorariesGrouped)}" class="no-franges">
-                            <p th:text="#{no_franges_disponibles}"></p>
-                        </div>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <!-- Sidebar (leyenda) -->
+            <div class="col-lg-2 d-none d-lg-block">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h6 class="mb-0" th:text="#{filtres}"></h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-success"><i class="fas fa-square me-2"></i><span th:text="#{franja_lliure}"></span></p>
+                        <p class="text-danger"><i class="fas fa-square me-2"></i><span th:text="#{franja_ocupada}"></span></p>
                     </div>
                 </div>
+            </div>
 
-                <div class="text-center mt-4">
-                    <a th:href="@{'/public/' + ${subaplCoa}}" class="btn btn-outline-secondary btn-lg px-5" th:text="#{tornar}"></a>
+            <!-- Calendario -->
+            <div class="col-lg-10">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0" th:text="#{selecciona_data_hora} + ' - ' + ${tipusCita.dem}"></h5>
+                        <a th:href="@{'/public/' + ${subaplCoa}}" class="btn btn-sm btn-outline-light">
+                            <i class="fas fa-home me-1"></i> <span th:text="#{tornar_index}"></span>
+                        </a>
+                    </div>
+                    <div class="card-body p-3">
+                        <div id="calendar"></div>
+                    </div>
                 </div>
-
             </div>
         </div>
     </div>
 
-    <!-- MODAL DE RESERVA -->
+    <!-- Modal de reserva -->
     <div class="modal fade" id="reservaModal" tabindex="-1" aria-labelledby="reservaModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -87,71 +54,34 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-
-                        <!-- CAMPOS OCULTOS -->
                         <input type="hidden" name="tipcitCon" th:value="${tipusCita.con}">
                         <input type="hidden" name="dataHoraInici" id="modalDataHoraInici">
                         <input type="hidden" name="dataHoraFin" id="modalDataHoraFin">
                         <input type="hidden" name="agendaCon" id="modalAgendaCon">
-
-                        <!-- CAMPOS FIJOS DE CitaFormDto -->
                         <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label" th:text="#{nom}">Nombre</label>
-                                <input type="text" name="nom" class="form-control" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" th:text="#{llis}">Apellidos</label>
-                                <input type="text" name="llis" class="form-control" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" th:text="#{numdoc}">Número de documento</label>
-                                <input type="text" name="numdoc" class="form-control" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" th:text="#{nomcar}">Nombre carrera</label>
-                                <input type="text" name="nomcar" class="form-control" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" th:text="#{tel}">Teléfono</label>
-                                <input type="text" name="tel" class="form-control" pattern="[0-9]{9}" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" th:text="#{ema}">Email</label>
-                                <input type="email" name="ema" class="form-control" required>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label" th:text="#{obs}">Observaciones</label>
-                                <textarea name="obs" class="form-control" rows="3"></textarea>
+                            <div class="col-md-6"><label class="form-label" th:text="#{nom} + ' *'">Nom</label><input type="text" name="nom" class="form-control" required></div>
+                            <div class="col-md-6"><label class="form-label" th:text="#{llis} + ' *'">Cognoms</label><input type="text" name="llis" class="form-control" required></div>
+                            <div class="col-md-6"><label class="form-label" th:text="#{numdoc} + ' *'">DNI</label><input type="text" name="numdoc" class="form-control" required></div>
+                            <div class="col-md-6"><label class="form-label" th:text="#{nomcar} + ' *'">Carrera</label><input type="text" name="nomcar" class="form-control" required></div>
+                            <div class="col-md-6"><label class="form-label" th:text="#{tel} + ' *'">Telèfon</label><input type="text" name="tel" class="form-control" pattern="[0-9]{9}" required></div>
+                            <div class="col-md-6"><label class="form-label" th:text="#{ema} + ' *'">Email</label><input type="email" name="ema" class="form-control" required></div>
+                            <div class="col-12"><label class="form-label" th:text="#{obs}">Observacions</label><textarea name="obs" class="form-control" rows="3"></textarea></div>
+                        </div>
+                        <div class="row g-3 mt-4" th:if="${camposCita != null and !#lists.isEmpty(camposCita)}">
+                            <h6 th:text="#{dades_adicionals}">Dades addicionals</h6>
+                            <div th:each="campo : ${camposCita}" class="col-md-6">
+                                <label class="form-label" th:text="${campo.label}"></label>
+                                <div th:switch="${campo.type}">
+                                    <input th:case="*" th:type="${campo.type}" th:name="'lit' + ${campoStat.count}" class="form-control"
+                                           th:required="${#strings.contains(campo.validation, 'required')}"
+                                           th:pattern="${#strings.contains(campo.validation, 'pattern') ? #strings.substringAfter(campo.validation, 'pattern=') : null}">
+                                    <textarea th:case="textarea" th:name="'lit' + ${campoStat.count}" class="form-control" rows="3"
+                                              th:required="${#strings.contains(campo.validation, 'required')}"></textarea>
+                                </div>
                             </div>
                         </div>
-                        
-						<!-- CAMPOS DINÁMICOS -->
-						<div class="row g-3 mt-4" th:if="${camposCita != null and !#lists.isEmpty(camposCita)}">
-						    <h6 class="mt-3" th:text="#{dades_adicionals}">Dades addicionals</h6>
-						    <div th:each="campo : ${camposCita}" class="col-md-6">
-						        <label class="form-label" th:text="${campo.label}"></label>
-						        <div th:switch="${campo.type}">
-						            <input th:case="*" 
-						                   th:type="${campo.type}" 
-						                   th:name="'lit' + ${campoStat.count}"
-						                   class="form-control"
-						                   th:required="${#strings.contains(campo.validation, 'required')}"
-						                   th:pattern="${#strings.contains(campo.validation, 'pattern') ? #strings.substringAfter(campo.validation, 'pattern=') : null}">
-						            <textarea th:case="textarea" 
-						                      th:name="'lit' + ${campoStat.count}"
-						                      class="form-control" rows="3"
-						                      th:required="${#strings.contains(campo.validation, 'required')}"></textarea>
-						        </div>
-						    </div>
-						</div>
-
-                        <!-- Hora seleccionada -->
-                        <div class="mt-4">
-                            <small class="text-muted">
-                                <span th:text="#{hora_seleccionada}"></span>:
-                                <strong id="horaSeleccionada"></strong>
-                            </small>
+                        <div class="mt-4 p-3 bg-light rounded">
+                            <small class="text-muted"><i class="fas fa-clock me-1"></i><span th:text="#{hora_seleccionada}"></span>: <strong id="horaSeleccionada"></strong></small>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -163,26 +93,67 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
+    <th:block th:replace="~{common/footer :: footer}"></th:block>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
     <script th:inline="javascript">
-        /*<![CDATA[*/
-        const modal = new bootstrap.Modal(document.getElementById('reservaModal'));
+        document.addEventListener('DOMContentLoaded', function() {
+            const calendarEl = document.getElementById('calendar');
+            const events = /*[[${frangesHorariesGrouped}]]*/ [];
+            const modal = new bootstrap.Modal(document.getElementById('reservaModal'));
 
-        function openReservaModal(btn) {
-            const agendaCon = btn.getAttribute('data-agenda');
-            const start = btn.getAttribute('data-start');
-            const end = btn.getAttribute('data-end');
-            const hora = btn.querySelector('strong').textContent.trim();
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek',
+                locale: /*[[${#locale.language}]]*/ 'ca',
+                headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
+                slotMinTime: '08:00:00', slotMaxTime: '20:00:00', slotDuration: '00:30:00', slotLabelInterval: '00:30',
+                allDaySlot: false, nowIndicator: true, height: 'auto',
+                events: Object.keys(events).flatMap(date => {
+                    return events[date].map(event => {
+                        const isLliure = event.lliure;
+                        return {
+                            start: event.start,
+                            end: event.end || null,
+                            classNames: isLliure ? 'hora-lliure' : 'hora-ocupada',
+                            extendedProps: { lliure: isLliure, agendaCon: event.agendaCon, title: event.title, tecnic: event.tecnic },
+                            title: isLliure ? event.title : 'Ocupada'
+                        };
+                    });
+                }),
+                eventContent: function(info) {
+                    const props = info.event.extendedProps;
+                    if (props.lliure) {
+                        return { html: `<div class="event-title">${info.event.title}</div><div class="event-subtitle">${props.tecnic}</div>` };
+                    } else {
+                        return { html: `<div class="event-title">Ocupada</div>` };
+                    }
+                },
+                eventDidMount: function(info) {
+                    const props = info.event.extendedProps;
+                    let tooltip = props.lliure 
+                        ? `<strong>${info.event.title}</strong><br><small>${props.tecnic}</small>`
+                        : `<em>Ocupada</em>`;
+                    new bootstrap.Tooltip(info.el, { title: tooltip, html: true, placement: 'top', trigger: 'hover', container: 'body' });
+                },
+                eventClick: function(info) {
+                    if (!info.event.extendedProps.lliure) return;
 
-            document.getElementById('modalDataHoraInici').value = start;
-            document.getElementById('modalDataHoraFin').value = end;
-            document.getElementById('modalAgendaCon').value = agendaCon;
-            document.getElementById('horaSeleccionada').textContent = hora;
+                    // ENVIAR EN HORA LOCAL (NO UTC)
+                    const offset = info.event.start.getTimezoneOffset() * 60000;
+                    const startLocal = new Date(info.event.start.getTime() - offset).toISOString().slice(0, 19);
+                    const endLocal = info.event.end ? new Date(info.event.end.getTime() - offset).toISOString().slice(0, 19) : '';
 
-            modal.show();
-        }
-        /*]]>*/
+                    document.getElementById('modalDataHoraInici').value = startLocal;
+                    document.getElementById('modalDataHoraFin').value = endLocal;
+                    document.getElementById('modalAgendaCon').value = info.event.extendedProps.agendaCon;
+                    document.getElementById('horaSeleccionada').textContent = info.event.title;
+                    modal.show();
+                },
+                loading: function(isLoading) { calendarEl.classList.toggle('opacity-50', isLoading); }
+            });
+            calendar.render();
+        });
     </script>
 </body>
 </html>

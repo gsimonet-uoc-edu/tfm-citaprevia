@@ -2,300 +2,174 @@
 <html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
 <head>
     <meta charset="UTF-8">
-    <title th:text="#{calendari} + ' - Àrea Privada'"></title>
-
-    <!-- Bootstrap 5 -->
+    <title th:text="#{calendari_privat}"></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css' rel='stylesheet' />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-    <!-- Estilos personalizados -->
-    <link th:href="@{/css/style.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
 </head>
 <body class="bg-light">
-
-    <!-- HEADER -->
     <th:block th:replace="~{common/header :: header}"></th:block>
 
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-11">
-
-                <!-- Título -->
-                <div class="text-center mb-4">
-                    <h2 class="text-primary">
-                        <i class="fas fa-calendar-alt me-2"></i>
-                        <span th:text="#{calendari_privat}">Calendari Privat</span>
-                    </h2>
-                    <p class="text-muted lead" th:text="#{benvingut} + ', ' + ${tecnic.nom} + '!'">Benvingut/da!</p>
-                </div>
-
-                <!-- Mensajes flash -->
-                <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
-                    <i class="fas fa-check-circle me-2"></i>
-                    <span th:text="${success}">Acció realitzada</span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
-                    <span th:text="${error}">Error</span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-
-                <!-- Calendario -->
-                <div class="card shadow-lg border-0">
-                    <div class="card-body p-4">
-
-                        <!-- RECORRER DÍAS -->
-                        <div th:each="diaGroup : ${frangesHorariesGrouped}">
-                            <div class="dia-header bg-primary text-white rounded-pill py-2 px-4 mb-3 d-inline-block">
-                                <strong th:text="${#temporals.format(diaGroup.key, 'EEEE, d MMMM yyyy', #locale)}">
-                                    Dilluns, 15 de març de 2025
-                                </strong>
-                            </div>
-
-                            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                                <div th:each="event : ${diaGroup.value}" class="col">
-
-                                    <!-- FRANJA LIBRE: Reservar -->
-                                    <div th:if="${event.lliure}" class="franja-lliure p-3 rounded shadow-sm text-center">
-                                        <button type="button" class="franja-btn btn btn-success w-100"
-                                                th:attr="data-agenda=${event.get('agendaCon')},
-                                                         data-start=${event.get('start')},
-                                                         data-end=${event.get('end')}"
-                                                onclick="reservarCita(this)">
-                                            <i class="fas fa-plus-circle me-1"></i>
-                                            <strong th:text="${event.get('title')}">09:00 - 10:00</strong>
-                                        </button>
-                                        <small class="tecnic d-block mt-1" th:text="${event.get('tecnic')}">Tècnic</small>
-                                    </div>
-
-                                    <!-- FRANJA OCUPADA: Gestionar -->
-                                    <div th:if="${!event.lliure}" class="franja-ocupada p-3 rounded shadow-sm text-center">
-                                        <button type="button" class="franja-btn btn btn-danger w-100"
-                                                th:attr="data-cita=${event.get('citaCon')}"
-                                                onclick="gestionarCita(this)">
-                                            <i class="fas fa-user-clock me-1"></i>
-                                            <strong th:text="${event.get('title')}">10:00 - 11:00</strong>
-                                        </button>
-                                        <small class="tecnic d-block mt-1" th:text="${event.get('tecnic')}">Tècnic</small>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- SIN FRANJAS -->
-                        <div th:if="${#maps.isEmpty(frangesHorariesGrouped)}" class="text-center py-5">
-                            <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
-                            <p class="text-muted" th:text="#{no_franges_disponibles}">No hi ha franges</p>
-                        </div>
-
+    <div class="container-fluid py-4">
+        <div class="row">
+            <!-- Sidebar (leyenda) -->
+            <div class="col-lg-2 d-none d-lg-block">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h6 class="mb-0" th:text="#{filtres}"></h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-success"><i class="fas fa-square me-2"></i><span th:text="#{franja_lliure}"></span></p>
+                        <p class="text-danger"><i class="fas fa-square me-2"></i><span th:text="#{franja_ocupada}"></span></p>
                     </div>
                 </div>
-
-                <!-- Salir -->
-                <div class="text-center mt-4">
-                    <a th:href="@{/private/logout}" class="btn btn-outline-danger btn-lg px-5">
-                        <i class="fas fa-sign-out-alt me-2"></i>
-                        <span th:text="#{sortir}">Sortir</span>
-                    </a>
-                </div>
-
             </div>
-        </div>
-    </div>
 
-    <!-- MODAL: RESERVAR CITA -->
-    <div class="modal fade" id="reservaModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <form id="reservaForm" class="modal-content">
-                <div class="modal-header bg-success text-white">
-                    <h5 class=" *modal-title">
-                        <i class="fas fa-plus-circle me-2"></i>
-                        <span th:text="#{reservar_cita}">Reservar Cita</span>
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" name="agendaCon" id="reservaAgendaCon">
-                    <input type="hidden" name="dataHoraInici" id="reservaDataHoraInici">
-                    <input type="hidden" name="dataHoraFin" id="reservaDataHoraFin">
-
-                    <div class="alert alert-info mb-3">
-                        <strong th:text="#{hora_seleccionada} + ':'"></strong>
-                        <span id="reservaHoraVisual"></span>
+            <!-- Calendario -->
+            <div class="col-lg-10">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0" th:text="#{calendari_privat}"></h5>
+                        <div>
+                            <span class="badge bg-light text-dark me-2" th:text="${tecnic.nom}"></span>
+                            <a th:href="@{'/public/' + ${subaplCoa}}" class="btn btn-sm btn-outline-light">
+                                <i class="fas fa-home me-1"></i> <span th:text="#{tornar_index}"></span>
+                            </a>
+                        </div>
                     </div>
-
-                    <div class="mb-3">
-                        <label class="form-label" th:text="#{nom}">Nom</label>
-                        <input type="text" name="nom" class="form-control" required>
+                    <div class="card-body p-3">
+                        <div id="calendar"></div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label" th:text="#{email}">Email</label>
-                        <input type="email" name="ema" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label" th:text="#{telefon}">Telèfon</label>
-                        <input type="tel" name="tel" class="form-control">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{cancelar}">Cancel·lar</button>
-                    <button type="button" class="btn btn-success" onclick="confirmarReserva()" th:text="#{reservar}">Reservar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL: GESTIÓN DE CITA -->
-    <div class="modal fade" id="gestionarCitaModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-info text-white">
-                    <h5 class="modal-title">
-                        <i class="fas fa-calendar-check me-2"></i>
-                        <span th:text="#{opciones_cita}">Opcions de la Cita</span>
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="alert alert-info">
-                        <p><strong th:text="#{hora}">Hora:</strong> <span id="gestionHora"></span></p>
-                        <p><strong th:text="#{nom}">Nom:</strong> <span id="gestionNom"></span></p>
-                        <p><strong th:text="#{email}">Email:</strong> <span id="gestionEma"></span></p>
-                        <p><strong th:text="#{telefon}">Telèfon:</strong> <span id="gestionTel"></span></p>
-                    </div>
-
-                    <div class="d-grid gap-2">
-                        <button type="button" class="btn btn-primary" onclick="actualitzarCita()">
-                            <i class="fas fa-edit me-2"></i> <span th:text="#{actualitzar}">Actualitzar</span>
-                        </button>
-                        <button type="button" class="btn btn-danger" onclick="cancelarCita()">
-                            <i class="fas fa-trash-alt me-2"></i> <span th:text="#{cancelar_cita}">Cancel·lar</span>
-                        </button>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{tancar}">Tancar</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: CONFIRMACIÓN -->
-    <div class="modal fade" id="confirmacioModal" tabindex="-1">
-        <div class="modal-dialog">
-            <form th:action="@{/private/confirmarAccio}" method="post" class="modal-content">
-                <input type="hidden" name="accio" id="confirmacioAccio">
-                <input type="hidden" name="citaCon" id="confirmacioCitaCon">
-                <input type="hidden" name="agendaCon" id="confirmacioAgendaCon">
-                <input type="hidden" name="dataHoraInici" id="confirmacioDataHoraInici">
-                <input type="hidden" name="dataHoraFin" id="confirmacioDataHoraFin">
-
-                <div class="modal-header bg-warning text-dark">
-                    <h5 class="modal-title">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        <span th:text="#{confirmar_accio}">Confirmar acció</span>
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p id="confirmacioMissatge" class="lead"></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{no}">No</button>
-                    <button type="submit" class="btn btn-danger" th:text="#{si_confirmar}">Sí, confirmar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Footer -->
     <th:block th:replace="~{common/footer :: footer}"></th:block>
 
-    <!-- JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
     <script th:inline="javascript">
-        /*<![CDATA[*/
-        // Mensajes desde Thymeleaf
-        const msgAlta = /*[[#{confirmar_alta_cita}]]*/ '';
-        const msgActualitzar = /*[[#{confirmar_actualitzar_cita}]]*/ '';
-        const msgCancelar = /*[[#{confirmar_cancelar_cita}]]*/ '';
+        document.addEventListener('DOMContentLoaded', function() {
+            const calendarEl = document.getElementById('calendar');
+            const events = /*[[${frangesHorariesGrouped}]]*/ [];
 
-        const reservaModal = new bootstrap.Modal(document.getElementById('reservaModal'));
-        const gestionarModal = new bootstrap.Modal(document.getElementById('gestionarCitaModal'));
-        const confirmacioModal = new bootstrap.Modal(document.getElementById('confirmacioModal'));
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek',
+                locale: /*[[${#locale.language}]]*/ 'ca',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                slotMinTime: '08:00:00',
+                slotMaxTime: '20:00:00',
+                slotDuration: '00:30:00',
+                slotLabelInterval: '00:30',
+                allDaySlot: false,
+                nowIndicator: true,
+                height: 'auto',
 
-        let currentCitaCon = null;
-        let currentAgendaCon = null;
-        let currentStart = null;
-        let currentEnd = null;
+                // === GENERAR EVENTOS ===
+                events: Object.keys(events).flatMap(date => {
+                    return events[date].map(event => {
+                        const isLliure = event.lliure === true;
+                        const nom = (event.nom || '').trim();
+                        const llis = (event.llis || '').trim();
+                        const nomComplet = (nom && llis) ? `${nom} ${llis}` : (nom || llis || 'Ocupada');
 
-        function reservarCita(btn) {
-            const agendaCon = btn.getAttribute('data-agenda');
-            const start = btn.getAttribute('data-start');
-            const end = btn.getAttribute('data-end');
-            const hora = btn.querySelector('strong').textContent.trim();
+                        return {
+                            start: event.start,
+                            classNames: isLliure ? 'hora-lliure' : 'hora-ocupada',
+                            extendedProps: {
+                                lliure: isLliure,
+                                agendaCon: event.agendaCon,
+                                tipcitCon: event.tipcitCon,
+                                citaCon: event.citaCon || null,
+                                nom: nom,
+                                llis: llis,
+                                numdoc: event.numdoc || '',
+                                nomcar: event.nomcar || '',
+                                tel: event.tel || '',
+                                ema: event.ema || '',
+                                obs: event.obs || '',
+                                lit1: event.lit1 || '',
+                                lit2: event.lit2 || '',
+                                lit3: event.lit3 || '',
+                                lit4: event.lit4 || '',
+                                lit5: event.lit5 || '',
+                                lit6: event.lit6 || '',
+                                lit7: event.lit7 || '',
+                                lit8: event.lit8 || '',
+                                lit9: event.lit9 || '',
+                                lit10: event.lit10 || '',
+                                tecnic: event.tecnic || 'Tècnic'
+                            },
+                            title: isLliure ? event.title : nomComplet
+                        };
+                    });
+                }),
 
-            currentAgendaCon = agendaCon;
-            currentStart = start;
-            currentEnd = end;
+                // === RENDERIZADO PERSONALIZADO ===
+                eventContent: function(info) {
+                    const props = info.event.extendedProps;
+                    if (props.lliure) {
+                        return { 
+                            html: `<div class="event-title">${info.event.title}</div><div class="event-subtitle">${props.tecnic}</div>` 
+                        };
+                    } else {
+                        return { 
+                            html: `<div class="event-title">${info.event.title}</div>` 
+                        };
+                    }
+                },
 
-            document.getElementById('reservaAgendaCon').value = agendaCon;
-            document.getElementById('reservaDataHoraInici').value = start;
-            document.getElementById('reservaDataHoraFin').value = end;
-            document.getElementById('reservaHoraVisual').textContent = hora;
+                // === TOOLTIP ===
+                eventDidMount: function(info) {
+                    const props = info.event.extendedProps;
+                    let tooltip = '';
+                    if (props.lliure) {
+                        tooltip = `<strong>${info.event.title}</strong><br><small>${props.tecnic}</small>`;
+                    } else {
+                        tooltip = `<div class="tooltip-cita">
+                            <strong>${props.nom} ${props.llis}</strong><br>
+                            <small>${props.numdoc} | ${props.nomcar}</small><br>
+                            <small><i class="fas fa-phone"></i> ${props.tel} | <i class="fas fa-envelope"></i> ${props.ema}</small>`;
+                        if (props.obs) tooltip += `<hr><small><em>${props.obs}</em></small>`;
+                        for (let i = 1; i <= 10; i++) {
+                            const lit = props['lit' + i];
+                            if (lit) tooltip += `<br><small><strong>L${i}:</strong> ${lit}</small>`;
+                        }
+                        tooltip += `</div>`;
+                    }
+                    new bootstrap.Tooltip(info.el, { 
+                        title: tooltip, 
+                        html: true, 
+                        placement: 'top', 
+                        trigger: 'hover', 
+                        container: 'body' 
+                    });
+                },
 
-            reservaModal.show();
-        }
+                // === CLIC EN EVENTO ===
+                eventClick: function(info) {
+                    const props = info.event.extendedProps;
+                    if (props.lliure) {
+                        window.location.href = `/private/cita/alta?agendaCon=${props.agendaCon}&start=${encodeURIComponent(info.event.start.toISOString())}`;
+                    } else {
+                        window.location.href = `/private/cita/detalle/${props.citaCon}`;
+                    }
+                },
 
-        function gestionarCita(btn) {
-            const citaCon = btn.getAttribute('data-cita');
-            const hora = btn.querySelector('strong').textContent.trim();
-
-            currentCitaCon = citaCon;
-
-            // Simular datos
-            document.getElementById('gestionHora').textContent = hora;
-            document.getElementById('gestionNom').textContent = 'Joan Pérez';
-            document.getElementById('gestionEma').textContent = 'joan@example.com';
-            document.getElementById('gestionTel').textContent = '600000000';
-
-            gestionarModal.show();
-        }
-
-        function confirmarReserva() {
-            const hora = document.getElementById('reservaHoraVisual').textContent;
-            const missatge = msgAlta.replace('{hora}', hora);
-            obrirConfirmacio('ALTA', missatge, null, currentAgendaCon, currentStart, currentEnd);
-            reservaModal.hide();
-        }
-
-        function actualitzarCita() {
-            gestionarModal.hide();
-            const hora = document.getElementById('gestionHora').textContent;
-            const missatge = msgActualitzar.replace('{hora}', hora);
-            obrirConfirmacio('ACTUALITZAR', missatge, currentCitaCon);
-        }
-
-        function cancelarCita() {
-            gestionarModal.hide();
-            const hora = document.getElementById('gestionHora').textContent;
-            const missatge = msgCancelar.replace('{hora}', hora);
-            obrirConfirmacio('CANCELAR', missatge, currentCitaCon);
-        }
-
-        function obrirConfirmacio(accio, missatge, citaCon = null, agendaCon = null, start = null, end = null) {
-            document.getElementById('confirmacioAccio').value = accio;
-            document.getElementById('confirmacioMissatge').textContent = missatge;
-            document.getElementById('confirmacioCitaCon').value = citaCon || '';
-            document.getElementById('confirmacioAgendaCon').value = agendaCon || '';
-            document.getElementById('confirmacioDataHoraInici').value = start || '';
-            document.getElementById('confirmacioDataHoraFin').value = end || '';
-
-            confirmacioModal.show();
-        }
-        /*]]>*/
+                loading: function(isLoading) {
+                    calendarEl.classList.toggle('opacity-50', isLoading);
+                }
+            });
+            calendar.render();
+        });
+    lint
     </script>
 </body>
 </html>
