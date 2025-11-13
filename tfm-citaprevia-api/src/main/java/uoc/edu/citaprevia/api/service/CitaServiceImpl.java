@@ -62,6 +62,21 @@ public class CitaServiceImpl implements CitaService{
 	}
 	
 	@Override
+	public ErrorDto deleteCita(Long con, Locale locale) {
+		ErrorDto dto= null;
+		Cita dao = citaDao.findCitaByCon(con);
+		
+		if (dao == null) {
+			return new ErrorDto(9999L,bundle.getMessage(Constants.MSG_ERR_DELETE_CIT, null, locale));
+		} else {
+			citaDao.deleteCita(dao);
+		}
+		
+		return dto;
+		
+	}
+	
+	@Override
 	public CitaDto existeixCitaAgenda (Long ageCon, LocalDateTime inici, LocalDateTime fi, Long tipCitCon, Locale locale) {
 		
 		CitaDto cita = new CitaDto();

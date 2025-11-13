@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import ch.qos.logback.classic.pattern.Util;
 import uoc.edu.citaprevia.dto.AgendaDto;
 import uoc.edu.citaprevia.dto.CitaDto;
 import uoc.edu.citaprevia.dto.SetmanaTipusDto;
@@ -183,11 +184,15 @@ public class PrivateController {
 
 	    String subaplCoa = StringUtils.substringAfter(tecnic.getPrf(), "_");
 
-	    CitaDto cita = citaPreviaPublicClient.getCita(con, locale);
-	    if (cita == null || !subaplCoa.equals(cita.getAgenda().getHorari().getSubapl().getCoa())) {
-	        return "redirect:/private/calendari?error";
+	    CitaDto cita = new CitaDto();
+	    if ( !"cancelada".equals(accion)) {
+		    cita = citaPreviaPublicClient.getCita(con, locale);
+		    if (cita == null || Utils.isEmpty(cita.getCon()) || !subaplCoa.equals(cita.getAgenda().getHorari().getSubapl().getCoa())) {
+		        return "redirect:/private/calendari?error";
+		    }
+	    } else {
+	    	cita.setCon(con);
 	    }
-
 	    model.addAttribute("cita", cita);
 	    model.addAttribute("subaplCoa", subaplCoa);
 	    model.addAttribute("accion", accion); // "creada", "actualitzada", "cancelada"
@@ -264,7 +269,7 @@ public class PrivateController {
 	        return "redirect:/private/calendari";
 	    }
 
-	    ErrorDto error = null; //citaPreviaPrivateClient.deleteCita(citaCon, locale); TODO
+	    ErrorDto error = citaPreviaPrivateClient.deleteCita(citaCon, locale);
 	    if (error == null) {
 	        return "redirect:/private/cita/confirmacio?con=" + citaCon + "&accion=cancelada";
 	    } else {

@@ -16,4 +16,6 @@ public interface CitaService {
 
 	ErrorDto deleteCitaPersona(Long con, String numdoc, Locale locale);
 
+	ErrorDto deleteCita(Long con, Locale locale);
+
 }

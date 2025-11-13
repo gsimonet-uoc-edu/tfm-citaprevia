@@ -9,11 +9,14 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import uoc.edu.citaprevia.dto.AgendaDto;
 import uoc.edu.citaprevia.dto.TecnicDto;
+import uoc.edu.citaprevia.dto.generic.ErrorDto;
 import uoc.edu.citaprevia.front.util.RestTemplateResponseErrorHandler;
 
 @Service("citprePrivateService")
@@ -69,6 +72,22 @@ public class CitaPreviaPrivateClientImpl implements CitaPreviaPrivateClient{
 		String url = getBaseApiUrl() + "/tecnics/{tecCoa}/agendes?lang={lang}";	
 		AgendaDto[] list = restTemplate.getForObject(url, AgendaDto[].class, params);
 		return list == null ? new ArrayList<>() : Arrays.asList(list);
+	}
+	
+	@Override
+	public ErrorDto deleteCita(Long citCon, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_CIT_CON, citCon);
+		params.put(PARAM_LOCALE, locale);
+		String url = getBaseApiUrl() + "/cites/{citCon}?lang={lang}";
+	    ResponseEntity<ErrorDto> response = restTemplate.exchange(url, 
+	        HttpMethod.DELETE, 
+	        null,               
+	        ErrorDto.class,     
+	        params             
+	    );
+
+	    return response.getBody();
 	}
 	
 }

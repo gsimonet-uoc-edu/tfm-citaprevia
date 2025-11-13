@@ -53,6 +53,15 @@ public class CitaController {
 		 
 	}
 	
+	@DeleteMapping("/{con}")
+	@Operation(summary="eliminar una cita per codi")
+	public ErrorDto deleteCita(@PathVariable Long con,
+				 			    Locale locale) {
+		
+		return  citaService.deleteCita(con, locale);
+		 
+	}
+	
 	@PostMapping("")
 	@Operation(summary="donar d'alta un cita")
 	public CitaDto saveCita(@Valid @RequestBody CitaDto dto,
