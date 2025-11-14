@@ -9,6 +9,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.validation.Valid;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,23 +31,27 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import uoc.edu.citaprevia.dto.AgendaDto;
 import uoc.edu.citaprevia.dto.CitaDto;
+import uoc.edu.citaprevia.dto.HorariDto;
 import uoc.edu.citaprevia.dto.SetmanaTipusDto;
 import uoc.edu.citaprevia.dto.TecnicDto;
 import uoc.edu.citaprevia.dto.TipusCitaDto;
+import uoc.edu.citaprevia.dto.UbicacioDto;
 import uoc.edu.citaprevia.dto.generic.ErrorDto;
 import uoc.edu.citaprevia.front.dto.CampConfigDto;
 import uoc.edu.citaprevia.front.dto.CitaFormDto;
+import uoc.edu.citaprevia.front.privat.dto.AgendaFormDto;
 import uoc.edu.citaprevia.front.service.CitaPreviaPrivateClient;
 import uoc.edu.citaprevia.front.service.CitaPreviaPublicClient;
 import uoc.edu.citaprevia.front.service.MetacamapService;
 import uoc.edu.citaprevia.model.Perfil;
+import uoc.edu.citaprevia.util.Constants;
 import uoc.edu.citaprevia.util.Utils;
 
 @Controller
 @RequestMapping("/private")
 public class PrivateController {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(PrivateController.class);
+	private static final Logger LOG = LoggerFactory.getLogger(PrivateController.class);
 	
 	@Value("${citaprevia.service.api.host}")
 	private String urlCitapreviaApi;
@@ -86,7 +92,7 @@ public class PrivateController {
         List<AgendaDto> agendes;
         String subaplCoa = StringUtils.substringAfter(tecnic.getPrf(), "_"); // Extreim el codi de la subaplicació a partir sufixe del perfil.
         //String prefixePerfil = StringUtils.substringBefore(tecnic.getPrf(), "_");
-        boolean isAdministrador = this.isAdministrador(authentication, tecnic);
+        boolean isAdministrador = this.isAdministrador(authentication);
         if (isAdministrador) {
             agendes = citaPreviaPrivateClient.getAgendasBySubaplicacio(subaplCoa, locale);
         } else {
@@ -376,7 +382,7 @@ public class PrivateController {
      * Mètode per determinar si l'usuari autenticat té un rol d'administrador.
      * CAL ADAPTAR A LA VOSTRA LÒGICA DE SPRING SECURITY (ROLS/GRUPS).
      */
-    private boolean isAdministrador(Authentication authentication, TecnicDto tecnic) {
+    private boolean isAdministrador(Authentication authentication) {
         if (authentication == null || authentication.getAuthorities() == null) {
             return false;
         }
@@ -392,4 +398,117 @@ public class PrivateController {
         }
         return false;
     }
+    
+    
+ // Mètode de Consulta (GET)
+    @GetMapping("/gestio/agendes")
+    public String gestioAgendes(Model model, Authentication authentication, RedirectAttributes redirect, Locale locale) {
+		long startTime=System.currentTimeMillis();
+		LOG.info("### Inici PrivateController.gestioAgendes startTime={}", startTime);
+    	try {
+	        // 1. Obtenir el tècnic connectat (assumint que el 'name' és el 'coa')
+	        String tecCoa = authentication.getName();
+	        String subaplCoa = null;
+	        // Obtenir subaplicacio del perfil de l'usuari
+	        if (authentication.getAuthorities() != null && !authentication.getAuthorities().isEmpty()) {
+	            for (GrantedAuthority authority : authentication.getAuthorities()) {
+	                subaplCoa = StringUtils.substringAfter(authority.getAuthority(), "_");
+	                break;
+	            }
+	        }
+	        
+	        
+	        // 2. Obtenir llistes de lookups
+	        List<UbicacioDto> ubicacions = citaPreviaPrivateClient.getUbicacions(locale);
+	        List<HorariDto> horaris = citaPreviaPrivateClient.getHorarisBySubaplicacio(subaplCoa, locale);
+	
+	        // 3. Obtenir llistat d'agendes del tècnic connectat
+	        List<AgendaDto> agendes = citaPreviaPrivateClient.getAgendasByTecnic(tecCoa, locale);
+	        
+	        // 4. Afegir a la vista
+	        model.addAttribute("agendes", agendes);
+	        model.addAttribute("ubicacions", ubicacions);
+	        model.addAttribute("horaris", horaris);
+	        model.addAttribute("agendaForm", new AgendaFormDto()); // Formulari buit per a l'alta
+	        // 5. Determinar si l'usuari és administrador (es manté la lògica prèvia)
+	        model.addAttribute("isAdministrador", this.isAdministrador(authentication));
+    	}  catch (Exception e) {
+            LOG.error("### Error gestio agenda {}", e);
+            redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_GESTIO_AGENDES, null, locale));
+            return "redirect:/private/calendari";
+        } finally {
+			long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final PrivateController.gestioAgendes totalTime={}", totalTime);
+		}
+        
+        return "private/gestio-agendes"; 
+    }
+    
+    /*
+    // Mètode de Creació/Actualització (POST)
+    @PostMapping("/gestio/agendes/save")
+    public String saveAgenda(@ModelAttribute("agendaForm") @Valid AgendaFormDto form,
+                             BindingResult result,
+                             RedirectAttributes ra,
+                             Authentication authentication, 
+                             Locale locale) {
+        
+        if (result.hasErrors()) {
+            ra.addFlashAttribute("error", "Error de validació al formulari.");
+            // Seria millor redirigir amb errors de formulari, però simplificarem
+            return "redirect:/private/gestio/agendes"; 
+        }
+
+        try {
+            // 1. Crear el DTO per enviar al backend
+            AgendaDto agendaToSave = new AgendaDto();
+            agendaToSave.setCon(form.getCon());
+            agendaToSave.setDatini(form.getDatini());
+            agendaToSave.setDatfin(form.getDatfin());
+            agendaToSave.setGespri(form.getGespri());
+            
+            // 2. Lookup de DTOs per CON
+            UbicacioDto centre = new UbicacioDto(); centre.setCon(form.getCentreCon());
+            HorariDto horari = new HorariDto(); horari.setCon(form.getHorariCon());
+            
+            // 3. Tècnic connectat
+            TecnicDto tecnic = new TecnicDto(); tecnic.setCoa(authentication.getName());
+            
+            agendaToSave.setCentre(centre);
+            agendaToSave.setHorari(horari);
+            agendaToSave.setTecnic(tecnic); // Sempre el tècnic connectat
+            
+            // 4. Guardar
+            AgendaDto savedAgenda = citaPreviaPrivateClient.saveAgenda(agendaToSave, locale);
+
+            if (savedAgenda.getErrors() != null && !savedAgenda.getErrors().isEmpty()) {
+                // Maneig d'errors del backend
+                ra.addFlashAttribute("error", "Error al guardar l'agenda: " + savedAgenda.getErrors().get(0).getDec());
+            } else {
+                ra.addFlashAttribute("success", form.getCon() == null ? "Agenda creada correctament." : "Agenda actualitzada correctament.");
+            }
+        } catch (Exception e) {
+            LOGGER.error("Error guardant agenda", e);
+            ra.addFlashAttribute("error", "Error intern al guardar l'agenda.");
+        }
+        
+        return "redirect:/private/gestio/agendes";
+    }
+
+    // Mètode d'Eliminació (POST)
+    @PostMapping("/gestio/agendes/delete")
+    public String deleteAgenda(@RequestParam("con") Long con, 
+                               RedirectAttributes ra, 
+                               Locale locale) {
+        try {
+            citaPreviaPrivateClient.deleteAgenda(con, locale);
+            ra.addFlashAttribute("success", "Agenda eliminada correctament.");
+        } catch (Exception e) {
+            LOGGER.error("Error eliminant agenda {}", con, e);
+            ra.addFlashAttribute("error", "Error intern al eliminar l'agenda.");
+        }
+        return "redirect:/private/gestio/agendes";
+    }
+    
+    */
 }

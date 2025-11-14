@@ -10,4 +10,9 @@ public class Constants {
 	public static final String ERROR_FIND_UBICACIONS = "error.find.ubicacions";
 	public static final String ERROR_FIND_HORARIS = "error.find.horaris";
 	
+	
+	
+	//FRONT
+	public static final String ERROR_GESTIO_AGENDES = "error.agendes.gestio";
+		
 }

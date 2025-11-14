@@ -5,6 +5,7 @@ import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,8 +22,8 @@ public class HorariController {
 	
 	@GetMapping(value="/subaplicacions/{subaplCoa}")
 	@Operation(summary="obtenir llistat d'horaris")
-	public List<HorariDto> getHorarisBySubaplicacio(String subaplCoa,
-													  Locale locale) {
+	public List<HorariDto> getHorarisBySubaplicacio(@PathVariable String subaplCoa,
+													Locale locale) {
 		return horariService.getHorarisBySubaplicacio(subaplCoa, locale);
 	}
 

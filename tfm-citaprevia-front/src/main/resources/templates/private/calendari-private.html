@@ -94,11 +94,10 @@
                             <span th:text="#{cita_creada_ok}"></span>
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
-                        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <span th:text="#{error_guardar_cita}"></span>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-
+						<div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+						    <span th:text="${error}"></span> 
+						    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+						</div>
                         <div id="calendar"></div>
                     </div>
                 </div>

@@ -19,6 +19,6 @@ public class AgendaDto extends ErrorsDto{
 	private UbicacioDto centre;
 	private TecnicDto tecnic;
 	private HorariDto horari;
-	private SiNo gespri;
+	private boolean gespri;
 
 }

@@ -44,7 +44,5 @@ public class Agenda {
 	@QueryInit({"subapl.id","tipusCita"})
 	// mirar  http://www.querydsl.com/static/querydsl/4.1.3/reference/html_single/#d0e2260
 	private Horari horari;
-	@Enumerated(EnumType.STRING)
-	private SiNo gespri;
 
 }

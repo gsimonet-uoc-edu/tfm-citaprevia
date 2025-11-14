@@ -5,7 +5,9 @@ import java.util.Locale;
 
 import uoc.edu.citaprevia.dto.AgendaDto;
 import uoc.edu.citaprevia.dto.CitaDto;
+import uoc.edu.citaprevia.dto.HorariDto;
 import uoc.edu.citaprevia.dto.TecnicDto;
+import uoc.edu.citaprevia.dto.UbicacioDto;
 import uoc.edu.citaprevia.dto.generic.ErrorDto;
 
 public interface CitaPreviaPrivateClient {
@@ -19,5 +21,9 @@ public interface CitaPreviaPrivateClient {
 	ErrorDto deleteCita(Long citCon, Locale locale);
 
 	CitaDto updateCita(Long con, CitaDto dto, Locale locale);
+
+	List<UbicacioDto> getUbicacions(Locale locale);
+
+	List<HorariDto> getHorarisBySubaplicacio(String subaplCoa, Locale locale);
 
 }

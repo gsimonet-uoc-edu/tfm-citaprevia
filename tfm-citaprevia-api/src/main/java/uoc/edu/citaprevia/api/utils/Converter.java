@@ -16,6 +16,7 @@ import uoc.edu.citaprevia.dto.SubaplicacioDto;
 import uoc.edu.citaprevia.dto.TecnicDto;
 import uoc.edu.citaprevia.dto.TipusCitaDto;
 import uoc.edu.citaprevia.dto.UbicacioDto;
+import uoc.edu.citaprevia.model.SiNo;
 
 public class Converter {
 	

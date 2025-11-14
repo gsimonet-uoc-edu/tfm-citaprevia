@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{gestio_agendes}">Gestió d'Agendes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <th:block th:replace="~{common/header :: header}"></th:block>
+
+    <div class="container py-4">
+        <h2 th:text="#{gestio_agendes}">Gestió d'Agendes</h2>
+        <p class="text-muted" th:text="#{agendes_tecnic_desc}"></p>
+
+        <hr>
+        
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0" th:text="#{llistat_agendes}"></h5>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#agendaModal" onclick="clearAgendaModal()">
+                    <i class="fas fa-plus me-1"></i> <span th:text="#{nou_agenda}">Nova Agenda</span>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th th:text="#{con}"></th>
+                                <th th:text="#{datini}">Data Inici</th>
+                                <th th:text="#{datfin}">Data Fi</th>
+                                <th th:text="#{centre}">Centre</th>
+                                <th th:text="#{horari}">Horari Associat</th>
+                                <th th:text="#{accions}">Accions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="agenda : ${agendes}">
+                                <td th:text="${agenda.con}">1</td>
+                                <td th:text="${#temporals.format(agenda.datini, 'dd/MM/yyyy')}"></td>
+                                <td th:text="${agenda.datfin} ? ${#temporals.format(agenda.datfin, 'dd/MM/yyyy')} : '-'"></td>
+                                <td th:text="${agenda.centre.nom}">Centre Principal</td>
+                                <td th:text="${agenda.horari.dec}">Horari Estàndard</td>
+                                
+                                <td>
+                                    <button class="btn btn-sm btn-warning me-2" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#agendaModal" 
+                                            th:attr="onclick='editAgenda('+ ${agenda.con} + ',\'' + ${agenda.datini} + '\',\'' + (${agenda.datfin} ?: '') + '\',' + ${agenda.centre.con} + ',' + ${agenda.horari.con} + '\')'">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <form th:action="@{/private/gestio/agendes/delete}" method="post" class="d-inline" onsubmit="return confirm('Està segur que vol eliminar aquesta agenda?');">
+                                        <input type="hidden" name="con" th:value="${agenda.con}">
+                                        <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="agendaModal" tabindex="-1" aria-labelledby="agendaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form th:action="@{/private/gestio/agendes/save}" method="post" id="formAgenda">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="agendaModalLabel" th:text="#{modal_agenda_titol}">Nova Agenda</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="agendaCon" name="con">
+                        
+                        <div class="mb-3">
+                            <label for="datini" class="form-label" th:text="#{datini} + ' *'"></label>
+                            <input type="date" class="form-control" id="datini" name="datini" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="datfin" class="form-label" th:text="#{datfin}"></label>
+                            <input type="date" class="form-control" id="datfin" name="datfin">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="centreCon" class="form-label" th:text="#{centre} + ' *'"></label>
+                            <select class="form-select" id="centreCon" name="centreCon" required>
+                                <option value="" th:text="#{selecciona_centre}">Selecciona un centre</option>
+                                <option th:each="u : ${ubicacions}" th:value="${u.con}" th:text="${u.nom}"></option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="horariCon" class="form-label" th:text="#{horari} + ' *'"></label>
+                            <select class="form-select" id="horariCon" name="horariCon" required>
+                                <option value="" th:text="#{selecciona_horari}">Selecciona un horari</option>
+                                <option th:each="h : ${horaris}" th:value="${h.con}" th:text="${h.dec}"></option>
+                            </select>
+                        </div>
+                        
+                        </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{cancelar}">Cancel·lar</button>
+                        <button type="submit" class="btn btn-success" th:text="#{guardar}">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <th:block th:replace="~{common/footer :: footer}"></th:block>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function clearAgendaModal() {
+            document.getElementById('formAgenda').reset();
+            document.getElementById('agendaCon').value = '';
+            document.getElementById('agendaModalLabel').textContent = /*[[#{nou_agenda}]]*/ 'Nova Agenda';
+            document.getElementById('datfin').value = ''; // Assegura que el camp opcional es buidi
+        }
+
+        function editAgenda(con, datini, datfin, centreCon, horariCon) {
+            document.getElementById('agendaModalLabel').textContent = /*[[#{editar_agenda}]]*/ 'Editar Agenda';
+            document.getElementById('agendaCon').value = con;
+            document.getElementById('datini').value = datini;
+            document.getElementById('datfin').value = datfin || ''; // Pot ser null
+            document.getElementById('centreCon').value = centreCon;
+            document.getElementById('horariCon').value = horariCon;
+        }
+    </script>
+</body>
+</html>
