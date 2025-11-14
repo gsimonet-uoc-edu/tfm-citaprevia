@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import uoc.edu.citaprevia.api.jpa.AgendaRepository;
 import uoc.edu.citaprevia.api.model.Agenda;
+import uoc.edu.citaprevia.api.model.Cita;
 
 @Component
 public class AgendaDao {
@@ -24,7 +25,7 @@ public class AgendaDao {
 		return agendaRepository.findByHorariTipusCitaConAndHorariSubaplCoaAndDatiniLessThanEqualAndDatfinGreaterThanEqual(tipCitCon, subaplCoa, ultimDia, primerDia);
 	}
 	
-	public Agenda findByCon (Long con) {
+	public Agenda findAgendaByCon (Long con) {
 		return agendaRepository.findByCon(con);
 	}
 
@@ -35,6 +36,19 @@ public class AgendaDao {
     public List<Agenda> findAgendesByTecnicCoa(String tecCoa) {
         return agendaRepository.findByTecnicCoa(tecCoa);
     }
+    
+	public Agenda saveAgenda(Agenda entity) {
+		return (entity != null ? agendaRepository.save(entity) : null);
+	}
+	
+	public Agenda updateAgenda(Agenda entity) {	
+		Agenda dao = this.findAgendaByCon(entity.getCon());
+		return (dao != null) ? agendaRepository.save(entity) : null;
+	}
+	
+	public void deleteAgenda (Agenda entity) {
+		agendaRepository.delete(entity);
+	}
 
     
 }

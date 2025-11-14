@@ -26,4 +26,10 @@ public interface CitaPreviaPrivateClient {
 
 	List<HorariDto> getHorarisBySubaplicacio(String subaplCoa, Locale locale);
 
+	AgendaDto updateAgenda(Long ageCon, AgendaDto dto, Locale locale);
+
+	ErrorDto deleteAgenda(Long ageCon, Locale locale);
+
+	AgendaDto saveAgenda(AgendaDto cita, Locale locale);
+
 }

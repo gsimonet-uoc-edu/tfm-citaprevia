@@ -38,11 +38,11 @@ public class HorariServiceImpl implements HorariService{
 				List<Horari> llista = horariDao.findHorarisBySubaplicacio(subaplCoa);
 				llista.forEach(item->resposta.add(Converter.toDto(item)));
 			} else {
-				LOG.error("### Error HorariServiceImpl.getHorarisBySubaplicacio: " , bundle.getMessage(Constants.ERROR_FIND_HORARIS, null, locale));
+				LOG.error("### Error HorariServiceImpl.getHorarisBySubaplicacio: " , bundle.getMessage(Constants.ERROR_API_FIND_HORARIS, null, locale));
 			}
 			
 		} catch (Exception e) {
-			LOG.error("### Error HorariServiceImpl.getHorarisBySubaplicacio: " , bundle.getMessage(Constants.ERROR_FIND_HORARIS, null, locale));
+			LOG.error("### Error HorariServiceImpl.getHorarisBySubaplicacio: " , bundle.getMessage(Constants.ERROR_API_FIND_HORARIS, null, locale));
 			e.printStackTrace();			
 		} finally {
 			long totalTime = (System.currentTimeMillis() - startTime);

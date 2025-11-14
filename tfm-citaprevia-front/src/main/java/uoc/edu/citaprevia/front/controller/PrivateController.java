@@ -434,7 +434,7 @@ public class PrivateController {
 	        model.addAttribute("isAdministrador", this.isAdministrador(authentication));
     	}  catch (Exception e) {
             LOG.error("### Error gestio agenda {}", e);
-            redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_GESTIO_AGENDES, null, locale));
+            redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_AGENDES, null, locale));
             return "redirect:/private/calendari";
         } finally {
 			long totalTime = (System.currentTimeMillis() - startTime);
@@ -444,57 +444,69 @@ public class PrivateController {
         return "private/gestio-agendes"; 
     }
     
-    /*
+    
     // Mètode de Creació/Actualització (POST)
     @PostMapping("/gestio/agendes/save")
     public String saveAgenda(@ModelAttribute("agendaForm") @Valid AgendaFormDto form,
                              BindingResult result,
-                             RedirectAttributes ra,
+                             RedirectAttributes redirect,
                              Authentication authentication, 
                              Locale locale) {
-        
-        if (result.hasErrors()) {
-            ra.addFlashAttribute("error", "Error de validació al formulari.");
-            // Seria millor redirigir amb errors de formulari, però simplificarem
-            return "redirect:/private/gestio/agendes"; 
-        }
-
-        try {
+		long startTime=System.currentTimeMillis();
+		LOG.info("### Inici PrivateController.saveAgenda startTime={}", startTime);
+		try {
+			if (result.hasErrors()) {
+	            redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SAVE_AGENDES, null, locale));
+	            return "redirect:/private/gestio/agendes"; 
+	        }
+     
             // 1. Crear el DTO per enviar al backend
-            AgendaDto agendaToSave = new AgendaDto();
-            agendaToSave.setCon(form.getCon());
-            agendaToSave.setDatini(form.getDatini());
-            agendaToSave.setDatfin(form.getDatfin());
-            agendaToSave.setGespri(form.getGespri());
+            AgendaDto agendaSaved = new AgendaDto();
+            agendaSaved.setCon(form.getCon());
+            agendaSaved.setDatini(form.getDatini());
+            agendaSaved.setDatfin(form.getDatfin());
             
             // 2. Lookup de DTOs per CON
-            UbicacioDto centre = new UbicacioDto(); centre.setCon(form.getCentreCon());
-            HorariDto horari = new HorariDto(); horari.setCon(form.getHorariCon());
+            UbicacioDto centre = new UbicacioDto(); 
+            centre.setCon(form.getCentreCon());
+            HorariDto horari = new HorariDto(); 
+            horari.setCon(form.getHorariCon());
             
             // 3. Tècnic connectat
-            TecnicDto tecnic = new TecnicDto(); tecnic.setCoa(authentication.getName());
+            TecnicDto tecnic = new TecnicDto(); 
+            tecnic.setCoa(authentication.getName());
             
-            agendaToSave.setCentre(centre);
-            agendaToSave.setHorari(horari);
-            agendaToSave.setTecnic(tecnic); // Sempre el tècnic connectat
+            agendaSaved.setCentre(centre);
+            agendaSaved.setHorari(horari);
+            agendaSaved.setTecnic(tecnic);
             
             // 4. Guardar
-            AgendaDto savedAgenda = citaPreviaPrivateClient.saveAgenda(agendaToSave, locale);
-
-            if (savedAgenda.getErrors() != null && !savedAgenda.getErrors().isEmpty()) {
-                // Maneig d'errors del backend
-                ra.addFlashAttribute("error", "Error al guardar l'agenda: " + savedAgenda.getErrors().get(0).getDec());
+            //AgendaDto savedAgenda = citaPreviaPrivateClient.saveAgenda(agendaSaved, locale);
+            AgendaDto savedAgenda = new AgendaDto();
+            if (form.getCon() != null) {
+            	 savedAgenda = citaPreviaPrivateClient.updateAgenda(form.getCon(), agendaSaved, locale);
             } else {
-                ra.addFlashAttribute("success", form.getCon() == null ? "Agenda creada correctament." : "Agenda actualitzada correctament.");
+            	savedAgenda = citaPreviaPrivateClient.saveAgenda(agendaSaved, locale);
             }
-        } catch (Exception e) {
-            LOGGER.error("Error guardant agenda", e);
-            ra.addFlashAttribute("error", "Error intern al guardar l'agenda.");
-        }
+
+            if (savedAgenda.hasErrors()) {
+                // Maneig d'errors del backend
+                redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SAVE_AGENDES, null, locale));
+            } else {
+                redirect.addFlashAttribute("success", form.getCon() == null ? bundle.getMessage(Constants.SUCCESS_FRONT_SAVE_AGENDES, null, locale) : bundle.getMessage(Constants.SUCCESS_FRONT_UPDATE_AGENDES, null, locale));
+            }
+    	}  catch (Exception e) {
+            LOG.error("### Error gestio agenda {}", e);
+            redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_AGENDES, null, locale));
+        } finally {
+			long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final PrivateController.saveAgenda totalTime={}", totalTime);
+		}
+        
         
         return "redirect:/private/gestio/agendes";
     }
-
+    /*
     // Mètode d'Eliminació (POST)
     @PostMapping("/gestio/agendes/delete")
     public String deleteAgenda(@RequestParam("con") Long con, 

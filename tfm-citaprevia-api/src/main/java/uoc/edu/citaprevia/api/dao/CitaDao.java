@@ -1,6 +1,7 @@
 package uoc.edu.citaprevia.api.dao;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,10 @@ public class CitaDao {
 	public Cita updateCita(Cita entity) {	
 		Cita dao = this.findCitaByCon(entity.getCon());
 		return (dao != null) ? citaRepository.save(entity) : null;
+	}
+	
+	public List<Cita> findCitesByAgenda(Long ageCon) {	
+		return citaRepository.findByAgendaCon(ageCon);
 	}
 	
 	public void deleteCita (Cita entity) {

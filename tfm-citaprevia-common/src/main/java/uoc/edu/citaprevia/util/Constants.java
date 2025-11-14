@@ -7,12 +7,17 @@ public class Constants {
 	public static final String MSG_ERR_GET_CALENDARI= "error.get.calendari";
 	public static final String MSG_ERR_DELETE_CIT= "error.delete.cita";
 	public static final String PATTERN_FORMAT_LOCAL_DATE_TIME = "yyyy-MM-dd'T'HH:mm:ss";
-	public static final String ERROR_FIND_UBICACIONS = "error.find.ubicacions";
-	public static final String ERROR_FIND_HORARIS = "error.find.horaris";
+	public static final String ERROR_API_FIND_UBICACIONS = "error.find.ubicacions";
+	public static final String ERROR_API_FIND_HORARIS = "error.find.horaris";
+	public static final String ERROR_API_CRUD_CITA = "error.cites.crud";
+	public static final String ERROR_API_CRUD_AGENDA = "error.agendas.crud";
+	public static final String ERROR_API_DELETE_AGENDA = "error.agendas.delete";
 	
 	
 	
 	//FRONT
-	public static final String ERROR_GESTIO_AGENDES = "error.agendes.gestio";
-		
+	public static final String ERROR_FRONT_GESTIO_AGENDES = "error.agendes.gestio";
+	public static final String ERROR_FRONT_SAVE_AGENDES = "error.agendes.save";
+	public static final String SUCCESS_FRONT_SAVE_AGENDES = "succes.agendes.save";
+	public static final String SUCCESS_FRONT_UPDATE_AGENDES = "succes.agendes.update";
 }

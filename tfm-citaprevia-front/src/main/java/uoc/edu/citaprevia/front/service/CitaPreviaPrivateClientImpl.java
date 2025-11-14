@@ -79,6 +79,48 @@ public class CitaPreviaPrivateClientImpl implements CitaPreviaPrivateClient{
 	}
 	
 	@Override
+	public AgendaDto saveAgenda(AgendaDto agenda, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_LOCALE, locale);
+		String url = getBaseApiUrl() + "/agendes?lang={lang}";
+	    ResponseEntity<AgendaDto> response = restTemplate.postForEntity(url, agenda, AgendaDto.class, params
+	        );
+		return response.getBody() == null ? new AgendaDto() : response.getBody();
+	}
+	
+	@Override
+	public AgendaDto updateAgenda(Long ageCon, AgendaDto dto, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_AGE_CON, ageCon);
+		params.put(PARAM_LOCALE, locale);
+		String url = getBaseApiUrl() + "/agendes/{ageCon}?lang={lang}";	
+	    ResponseEntity<AgendaDto> response = restTemplate.exchange(url, 
+		        HttpMethod.PUT, 
+		        new HttpEntity<>(dto),               
+		        AgendaDto.class,     
+		        params             
+		    );
+		return response.getBody() == null ? new AgendaDto() : response.getBody();
+	}
+	
+	@Override
+	public ErrorDto deleteAgenda(Long ageCon, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_AGE_CON, ageCon);
+		params.put(PARAM_LOCALE, locale);
+		String url = getBaseApiUrl() + "/agendes/{ageCon}?lang={lang}";
+	    ResponseEntity<ErrorDto> response = restTemplate.exchange(url, 
+	        HttpMethod.DELETE, 
+	        null,               
+	        ErrorDto.class,     
+	        params             
+	    );
+
+	    return response.getBody();
+	}
+	
+	
+	@Override
 	public CitaDto updateCita(Long con, CitaDto dto, Locale locale) {
 		Map<String, Object> params = new HashMap<>();
 		params.put(PARAM_CIT_CON, con);

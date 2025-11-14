@@ -91,7 +91,7 @@ public class Converter {
 	
 	public static Subaplicacio toDao(SubaplicacioDto dto) {
 		Subaplicacio dao = new Subaplicacio();
-		if (dao != null) {
+		if (dto != null) {
 			dao.setCoa(dto.getCoa());
 			dao.setDec(dto.getDec());
 			dao.setDem(dto.getDem());

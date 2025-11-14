@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
 import uoc.edu.citaprevia.api.service.CitaService;
+import uoc.edu.citaprevia.api.utils.ApiUtils;
 import uoc.edu.citaprevia.dto.CitaDto;
 import uoc.edu.citaprevia.dto.generic.ErrorDto;
 import uoc.edu.citaprevia.model.TipusError;
@@ -54,14 +55,6 @@ public class CitaController {
 		 
 	}
 	
-	@DeleteMapping("/{con}")
-	@Operation(summary="eliminar una cita per codi")
-	public ErrorDto deleteCita(@PathVariable Long con,
-				 			    Locale locale) {
-		
-		return  citaService.deleteCita(con, locale);
-		 
-	}
 	
 	@PostMapping("")
 	@Operation(summary="donar d'alta un cita")
@@ -69,13 +62,13 @@ public class CitaController {
 								   BindingResult result,
 								   Locale locale) {
 		
-		/*if (result.hasErrors()) {
-			
+		if (result.hasErrors()) {
+			dto.setErrors(ApiUtils.getBindingResultErrors(result, messageSource, locale));
 			return dto;
-		}*/
+		}
 		
 		if (!Utils.isEmpty(dto.getCon())){
-			dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL,TipusError.ERROR.getValor(),messageSource.getMessage("error.alta.cita", null, locale)));
+			dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL,TipusError.ERROR.getValor(),messageSource.getMessage(Constants.ERROR_API_CRUD_CITA, null, locale)));
 			return dto;
 		}
 		
@@ -90,13 +83,13 @@ public class CitaController {
 						    BindingResult result,
 						    Locale locale) {
 		
-		/*if (result.hasErrors()) {
-			
+		if (result.hasErrors()) {
+			dto.setErrors(ApiUtils.getBindingResultErrors(result, messageSource, locale));
 			return dto;
-		}*/
+		}
 		
 		if (Utils.isEmpty(dto.getCon()) || !con.equals(dto.getCon())){
-			dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL,TipusError.ERROR.getValor(),messageSource.getMessage("error.alta.cita", null, locale)));
+			dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL,TipusError.ERROR.getValor(),messageSource.getMessage(Constants.ERROR_API_CRUD_CITA, null, locale)));
 			return dto;
 		}
 		
@@ -104,6 +97,15 @@ public class CitaController {
 		
 	}
 	
+	
+	@DeleteMapping("/{con}")
+	@Operation(summary="eliminar una cita per codi")
+	public ErrorDto deleteCita(@PathVariable Long con,
+				 			    Locale locale) {
+		
+		return  citaService.deleteCita(con, locale);
+		 
+	}
 
 	
 	@GetMapping(value="/exists/agendes/{ageCon}/tipus-cites/{tipCitCon}")

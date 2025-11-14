@@ -1,6 +1,7 @@
 package uoc.edu.citaprevia.api.jpa;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
 
@@ -16,4 +17,6 @@ public interface CitaRepository extends PagingAndSortingRepository<Cita, Long> {
 	
 	boolean existsByAgendaConAndDathoriniLessThanEqualAndDathorfinGreaterThanEqual(
 	        Long agendaCon, LocalDateTime fi, LocalDateTime inici);
+	
+	List<Cita> findByAgendaCon(Long ageCon);
 }

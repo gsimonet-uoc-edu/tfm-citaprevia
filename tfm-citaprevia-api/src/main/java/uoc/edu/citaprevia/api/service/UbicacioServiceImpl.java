@@ -36,7 +36,7 @@ public class UbicacioServiceImpl implements UbicacioService {
 			List<Ubicacio> llista = ubicacioDao.findUbicacions();	
 			llista.forEach(item->resposta.add(Converter.toDto(item)));
 		} catch (Exception e) {
-			LOG.error("### Error UbicacioServiceImpl.getAllUbicacions: " , bundle.getMessage(Constants.ERROR_FIND_UBICACIONS, null, locale));
+			LOG.error("### Error UbicacioServiceImpl.getAllUbicacions: " , bundle.getMessage(Constants.ERROR_API_FIND_UBICACIONS, null, locale));
 			e.printStackTrace();			
 		} finally {
 			long totalTime = (System.currentTimeMillis() - startTime);

@@ -4,13 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import uoc.edu.citaprevia.api.dao.AgendaDao;
+import uoc.edu.citaprevia.api.dao.CitaDao;
 import uoc.edu.citaprevia.api.model.Agenda;
+import uoc.edu.citaprevia.api.model.Cita;
 import uoc.edu.citaprevia.api.utils.Converter;
 import uoc.edu.citaprevia.dto.AgendaDto;
+import uoc.edu.citaprevia.dto.generic.ErrorDto;
+import uoc.edu.citaprevia.util.Constants;
 import uoc.edu.citaprevia.util.Utils;
 
 @Service("agendaService")
@@ -18,6 +25,15 @@ public class AgendaServiceImpl implements AgendaService{
 	
 	@Autowired
 	private AgendaDao agendaDao;
+	
+	@Autowired
+	private CitaDao citaDao;
+	
+	@Autowired
+	private MessageSource bundle;
+	
+	private static final Logger LOG = LoggerFactory.getLogger(UbicacioServiceImpl.class);
+
 	
 	@Override
 	public List<AgendaDto> getAgendesByTipusCitaAndSubaplicacio (Long tipCitCon, String subaplCoa, Locale locale) {
@@ -36,7 +52,7 @@ public class AgendaServiceImpl implements AgendaService{
 	public AgendaDto getAgenda(Long con, Locale locale) {
 		AgendaDto dto = new AgendaDto();
 		if (!Utils.isEmpty(con)) {
-			Agenda dao = agendaDao.findByCon(con);
+			Agenda dao = agendaDao.findAgendaByCon(con);
 			dto = Converter.toDto(dao);
 		}
 		return dto;
@@ -66,6 +82,87 @@ public class AgendaServiceImpl implements AgendaService{
 		}
 		
 		return dtos;
+	}
+	
+	
+	@Override
+	public AgendaDto saveAgenda (AgendaDto agenda, Locale locale) {
+		long startTime=System.currentTimeMillis();
+		LOG.info("### Inici AgendaServiceImpl.saveAgenda startTime={}, agenda={}", startTime, agenda.toString());
+		AgendaDto dto = new AgendaDto();
+		try {
+			if (dto != null && Utils.isEmpty(dto.getCon())) {
+				dto = Converter.toDto(agendaDao.saveAgenda(Converter.toDao(agenda)));
+			} else {
+				dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL, bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale)));
+				LOG.error("### Error AgendaServiceImpl.saveAgenda: " , dto.getErrors().get(0).toString());
+			}
+		} catch (Exception e) {
+			LOG.error("### Error AgendaServiceImpl.saveAgenda:", e);
+			LOG.error("### Error AgendaServiceImpl.saveAgenda: " , bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale));
+						
+		} finally {
+			long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final AgendaServiceImpl.saveAgenda totalTime={}, agenda={}", totalTime, agenda.toString());
+		}
+		return dto;				
+	}
+	
+	@Override
+	public AgendaDto updateAgenda (AgendaDto agenda, Locale locale) {
+		
+		long startTime=System.currentTimeMillis();
+		LOG.info("### Inici AgendaServiceImpl.updateAgenda startTime={}, agenda={}", startTime, agenda.toString());
+		AgendaDto dto = new AgendaDto();
+		try {
+			if (agenda != null && !Utils.isEmpty(agenda.getCon())) {
+				dto = Converter.toDto(agendaDao.updateAgenda(Converter.toDao(agenda)));
+			} else {
+				dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL, bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale)));
+				LOG.error("### Error AgendaServiceImpl.updateAgenda: " , dto.getErrors().get(0).toString());
+			}
+		} catch (Exception e) {
+			LOG.error("### Error AgendaServiceImpl.updateAgenda:" , e);
+			LOG.error("### Error AgendaServiceImpl.updateAgenda: " , bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale));
+						
+		} finally {
+			long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final AgendaServiceImpl.updateAgenda totalTime={}, agenda={}", totalTime, agenda.toString());
+		}
+		return dto;				
+	}
+	
+	@Override
+	public ErrorDto deleteAgenda(Long con, Locale locale) {		
+		long startTime=System.currentTimeMillis();
+		LOG.info("### Inici AgendaServiceImpl.deleteAgenda startTime={}, ageCon={}", startTime, con);
+		ErrorDto dto = null;
+		try {
+			
+			Agenda dao = agendaDao.findAgendaByCon(con);
+			
+			if (dao == null) {
+				return new ErrorDto(9999L,bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale));
+			} else {
+				// Validacions per esborrar cita
+				List<Cita> teCites = citaDao.findCitesByAgenda(con);
+				// Comprovar que l'agenda no te cites
+				if (teCites != null && !teCites.isEmpty() && teCites.size() > 0) {
+					return new ErrorDto(9999L,bundle.getMessage(Constants.ERROR_API_DELETE_AGENDA, null, locale));
+				} else {
+					agendaDao.deleteAgenda(dao);
+				}			
+			}
+		
+		} catch (Exception e) {
+			LOG.error("### Error AgendaServiceImpl.deleteAgenda: ", bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale));
+			e.printStackTrace();			
+		} finally {
+			long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final AgendaServiceImpl.deleteAgenda totalTime={}, ageCon={}", totalTime, con);
+		}
+		return dto;	
+		
 	}
 	
 
