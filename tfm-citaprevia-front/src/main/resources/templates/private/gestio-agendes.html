@@ -67,10 +67,12 @@
                                         <i class="fas fa-edit"></i>
                                     </button>
                                     
-                                    <form th:action="@{/private/gestio/agendes/delete}" method="post" class="d-inline" onsubmit="return confirm('Està segur que vol eliminar aquesta agenda?');">
-                                        <input type="hidden" name="con" th:value="${agenda.con}">
-                                        <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                                    </form>
+                                    <button class="btn btn-sm btn-danger" 
+                                            th:attr="onclick='prepararEsborrarAgenda(' + ${agenda.con} + ')'"
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#modalEsborrarAgenda">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                 </td>
                             </tr>
                         </tbody>
@@ -129,6 +131,30 @@
             </div>
         </div>
     </div>
+    
+    <div class="modal fade" id="modalEsborrarAgenda" tabindex="-1" aria-labelledby="modalEsborrarAgendaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="modalEsborrarAgendaLabel" th:text="#{confirmar_eliminacio}">Confirmar eliminació</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <i class="fas fa-trash-alt fa-3x text-danger mb-3"></i>
+                    <p th:text="#{segur_eliminar_agenda}">Està segur que vol eliminar aquesta agenda?</p>
+                    <small class="text-muted" th:text="#{confirmar_irreversible}">(Aquesta acció és irreversible)</small>
+                    
+                    <form th:action="@{/private/gestio/agendes/delete}" method="post" id="formEsborrarAgenda" class="mt-4">
+                        <input type="hidden" name="con" id="esborrarAgendaCon">
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger" th:text="#{eliminar_confirmar}">Eliminar Agenda</button>
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" th:text="#{cancelar}">Cancel·lar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <th:block th:replace="~{common/footer :: footer}"></th:block>
 
@@ -155,25 +181,30 @@
 
         /**
          * Carrega les dades de l'Agenda seleccionada al modal d'edició.
-         * Els paràmetres 'con', 'centreCon', i 'horariCon' s'han de rebre com a Strings o números,
-         * depenent de com Thymeleaf els hagi renderitzat (la darrera correcció els passa com a String).
          */
         function editAgenda(con, datini, datfin, centreCon, horariCon) {
             document.getElementById('agendaModalLabel').textContent = /*[[#{editar_agenda}]]*/ 'Editar Agenda';
             
             // 1. Carregar valors de l'agenda
-            // Assignem directament el CON rebut (que ara ha de ser String)
             document.getElementById('agendaCon').value = con; 
             document.getElementById('datini').value = datini;
             document.getElementById('datfin').value = datfin || ''; 
             
-            // 2. Carregar valors de Lookups (Assignem el CON rebut. Si Thymeleaf els passa com a String, això és correcte)
+            // 2. Carregar valors de Lookups (Strings)
             document.getElementById('centreCon').value = centreCon;
             document.getElementById('horariCon').value = horariCon;
             
-            // 3. OBRIR EL MODAL (assegura que s'obre després de carregar les dades)
+            // 3. OBRIR EL MODAL
             var myModal = new bootstrap.Modal(document.getElementById('agendaModal'));
             myModal.show();
+        }
+        
+        /**
+         * Funció per carregar el CON de l'agenda al formulari ocult del modal d'eliminació.
+         */
+        function prepararEsborrarAgenda(con) {
+            // CRÍTIC: Carrega el CON al camp ocult del modal d'eliminació
+            document.getElementById('esborrarAgendaCon').value = con;
         }
     </script>
 </body>
