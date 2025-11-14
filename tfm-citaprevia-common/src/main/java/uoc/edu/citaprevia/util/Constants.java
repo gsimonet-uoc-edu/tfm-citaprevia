@@ -20,4 +20,5 @@ public class Constants {
 	public static final String ERROR_FRONT_SAVE_AGENDES = "error.agendes.save";
 	public static final String SUCCESS_FRONT_SAVE_AGENDES = "succes.agendes.save";
 	public static final String SUCCESS_FRONT_UPDATE_AGENDES = "succes.agendes.update";
+	public static final String SUCCESS_FRONT_DELETE_AGENDES = "succes.agendes.delete";
 }

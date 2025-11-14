@@ -447,7 +447,7 @@ public class PrivateController {
     
     // Mètode de Creació/Actualització (POST)
     @PostMapping("/gestio/agendes/save")
-    public String saveAgenda(@ModelAttribute("agendaForm") @Valid AgendaFormDto form,
+    public String saveUpdateAgenda(@ModelAttribute("agendaForm") @Valid AgendaFormDto form,
                              BindingResult result,
                              RedirectAttributes redirect,
                              Authentication authentication, 
@@ -496,7 +496,7 @@ public class PrivateController {
                 redirect.addFlashAttribute("success", form.getCon() == null ? bundle.getMessage(Constants.SUCCESS_FRONT_SAVE_AGENDES, null, locale) : bundle.getMessage(Constants.SUCCESS_FRONT_UPDATE_AGENDES, null, locale));
             }
     	}  catch (Exception e) {
-            LOG.error("### Error gestio agenda {}", e);
+            LOG.error("### Error save/update agenda {}", e);
             redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_AGENDES, null, locale));
         } finally {
 			long totalTime = (System.currentTimeMillis() - startTime);
@@ -506,21 +506,33 @@ public class PrivateController {
         
         return "redirect:/private/gestio/agendes";
     }
-    /*
+    
     // Mètode d'Eliminació (POST)
     @PostMapping("/gestio/agendes/delete")
     public String deleteAgenda(@RequestParam("con") Long con, 
-                               RedirectAttributes ra, 
+                               RedirectAttributes redirect, 
                                Locale locale) {
+    	
+		long startTime=System.currentTimeMillis();
+		LOG.info("### Inici PrivateController.deleteAgenda startTime={}, ageCon={}", startTime, con);
         try {
-            citaPreviaPrivateClient.deleteAgenda(con, locale);
-            ra.addFlashAttribute("success", "Agenda eliminada correctament.");
+            ErrorDto error = citaPreviaPrivateClient.deleteAgenda(con, locale);
+            if (error != null) {
+                // Maneig d'errors del backend
+                redirect.addFlashAttribute("error", error.getDem());
+            } else {
+            	redirect.addFlashAttribute("success", bundle.getMessage(Constants.SUCCESS_FRONT_DELETE_AGENDES, null, locale));
+            }
+            
         } catch (Exception e) {
-            LOGGER.error("Error eliminant agenda {}", con, e);
-            ra.addFlashAttribute("error", "Error intern al eliminar l'agenda.");
-        }
+            LOG.error("### Error delete agenda {}", e);
+            redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_AGENDES, null, locale));
+        } finally {
+			long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final PrivateController.deleteAgenda totalTime={}, ageCon={}", totalTime, con);
+		}
         return "redirect:/private/gestio/agendes";
     }
     
-    */
+
 }
