@@ -9,12 +9,14 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import uoc.edu.citaprevia.dto.AgendaDto;
+import uoc.edu.citaprevia.dto.CitaDto;
 import uoc.edu.citaprevia.dto.TecnicDto;
 import uoc.edu.citaprevia.dto.generic.ErrorDto;
 import uoc.edu.citaprevia.front.util.RestTemplateResponseErrorHandler;
@@ -72,6 +74,21 @@ public class CitaPreviaPrivateClientImpl implements CitaPreviaPrivateClient{
 		String url = getBaseApiUrl() + "/tecnics/{tecCoa}/agendes?lang={lang}";	
 		AgendaDto[] list = restTemplate.getForObject(url, AgendaDto[].class, params);
 		return list == null ? new ArrayList<>() : Arrays.asList(list);
+	}
+	
+	@Override
+	public CitaDto updateCita(Long con, CitaDto dto, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_CIT_CON, con);
+		params.put(PARAM_LOCALE, locale);
+		String url = getBaseApiUrl() + "/cites/{citCon}/?lang={lang}";	
+	    ResponseEntity<CitaDto> response = restTemplate.exchange(url, 
+		        HttpMethod.PUT, 
+		        new HttpEntity<>(dto),               
+		        CitaDto.class,     
+		        params             
+		    );
+		return response.getBody() == null ? new CitaDto() : response.getBody();
 	}
 	
 	@Override

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Locale;
 
 import uoc.edu.citaprevia.dto.AgendaDto;
+import uoc.edu.citaprevia.dto.CitaDto;
 import uoc.edu.citaprevia.dto.TecnicDto;
 import uoc.edu.citaprevia.dto.generic.ErrorDto;
 
@@ -16,5 +17,7 @@ public interface CitaPreviaPrivateClient {
 	List<AgendaDto> getAgendasByTecnic(String tecCoa, Locale locale);
 
 	ErrorDto deleteCita(Long citCon, Locale locale);
+
+	CitaDto updateCita(Long con, CitaDto dto, Locale locale);
 
 }

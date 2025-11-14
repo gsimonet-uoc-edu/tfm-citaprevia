@@ -235,17 +235,22 @@ public class PrivateController {
 	    cita.setTel(Long.valueOf(form.getTel()));
 	    cita.setEma(form.getEma());
 	    cita.setObs(form.getObs());
-	    cita.setLit1(form.getLit1()); cita.setLit2(form.getLit2());
-	    cita.setLit3(form.getLit3()); cita.setLit4(form.getLit4());
-	    cita.setLit5(form.getLit5()); cita.setLit6(form.getLit6());
-	    cita.setLit7(form.getLit7()); cita.setLit8(form.getLit8());
-	    cita.setLit9(form.getLit9()); cita.setLit10(form.getLit10());
+	    cita.setLit1(form.getLit1()); 
+	    cita.setLit2(form.getLit2());
+	    cita.setLit3(form.getLit3()); 
+	    cita.setLit4(form.getLit4());
+	    cita.setLit5(form.getLit5()); 
+	    cita.setLit6(form.getLit6());
+	    cita.setLit7(form.getLit7()); 
+	    cita.setLit8(form.getLit8());
+	    cita.setLit9(form.getLit9()); 
+	    cita.setLit10(form.getLit10());
 
-	    CitaDto updated = null; //citaPreviaPrivateClient.updateCita(cita, locale); TODO
-	    if (updated == null) {
+	    CitaDto updateCita = citaPreviaPrivateClient.updateCita(form.getCitaCon(), cita, locale);
+	    if (updateCita == null || Utils.isEmpty(updateCita.getCon()) || updateCita.hasErrors()) {
 	        redirect.addFlashAttribute("error", "Error al actualitzar");
 	    } else {
-	        return "redirect:/private/cita/confirmacio?con=" + updated.getCon() + "&accion=actualitzada";
+	        return "redirect:/private/cita/confirmacio?con=" + updateCita.getCon() + "&accion=actualitzada";
 	    }
 	    return "redirect:/private/calendari";
 	}
@@ -319,6 +324,32 @@ public class PrivateController {
 	                    event.put("agendaCon", agenda.getCon());
 	                    if (ocupada) {
 	                    	event.put("citaCon", existeixCita.getCon());
+	                    }
+	                    if (ocupada) {
+	                    	event.put("citaCon", existeixCita.getCon());
+	                    	
+	                    	// *** INICI DE LA MODIFICACIÓ: AFEGIR DADES DE LA CITA EXISTENT ***
+	                        event.put("nom", existeixCita.getNom());
+	                        event.put("llis", existeixCita.getLlis());
+	                        event.put("numdoc", existeixCita.getNumdoc());
+	                        event.put("nomcar", existeixCita.getNomcar());
+	                        // Assegura't que `tel` és un String per al frontend
+	                        event.put("tel", existeixCita.getTel() != null ? String.valueOf(existeixCita.getTel()) : ""); 
+	                        event.put("ema", existeixCita.getEma());
+	                        event.put("obs", existeixCita.getObs());
+	                        
+	                        // Camps dinàmics (lit1 a lit10)
+	                        event.put("lit1", existeixCita.getLit1());
+	                        event.put("lit2", existeixCita.getLit2());
+	                        event.put("lit3", existeixCita.getLit3());
+	                        event.put("lit4", existeixCita.getLit4());
+	                        event.put("lit5", existeixCita.getLit5());
+	                        event.put("lit6", existeixCita.getLit6());
+	                        event.put("lit7", existeixCita.getLit7());
+	                        event.put("lit8", existeixCita.getLit8());
+	                        event.put("lit9", existeixCita.getLit9());
+	                        event.put("lit10", existeixCita.getLit10());
+	                        // *** FINAL DE LA MODIFICACIÓ ***
 	                    }
 	                    dayEvents.add(event);
 	                }

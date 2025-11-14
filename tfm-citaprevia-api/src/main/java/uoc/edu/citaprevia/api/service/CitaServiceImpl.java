@@ -43,6 +43,11 @@ public class CitaServiceImpl implements CitaService{
 	}
 	
 	@Override
+	public CitaDto updateCita (CitaDto cita, Locale locale) {
+		return Converter.toDto(citaDao.updateCita(Converter.toDao(cita)));				
+	}
+	
+	@Override
 	public ErrorDto deleteCitaPersona(Long con, String numdoc, Locale locale) {
 		ErrorDto dto= null;
 		Cita dao = citaDao.findCitaByCon(con);

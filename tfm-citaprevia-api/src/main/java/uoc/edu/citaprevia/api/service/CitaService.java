@@ -18,4 +18,6 @@ public interface CitaService {
 
 	ErrorDto deleteCita(Long con, Locale locale);
 
+	CitaDto updateCita(CitaDto cita, Locale locale);
+
 }

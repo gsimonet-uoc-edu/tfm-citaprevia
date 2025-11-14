@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -79,6 +80,27 @@ public class CitaController {
 		}
 		
 		return citaService.saveCita(dto, locale);
+		
+	}
+	
+	@PutMapping("/{con}")
+	@Operation(summary="actualitzar les dades d'una cita")
+	public CitaDto updateCita(@PathVariable Long con,
+							@Valid @RequestBody CitaDto dto,
+						    BindingResult result,
+						    Locale locale) {
+		
+		/*if (result.hasErrors()) {
+			
+			return dto;
+		}*/
+		
+		if (Utils.isEmpty(dto.getCon()) || !con.equals(dto.getCon())){
+			dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL,TipusError.ERROR.getValor(),messageSource.getMessage("error.alta.cita", null, locale)));
+			return dto;
+		}
+		
+		return citaService.updateCita(dto, locale);
 		
 	}
 	
