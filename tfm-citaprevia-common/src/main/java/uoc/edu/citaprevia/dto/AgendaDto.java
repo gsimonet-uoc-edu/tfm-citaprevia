@@ -1,7 +1,6 @@
 package uoc.edu.citaprevia.dto;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -21,10 +20,5 @@ public class AgendaDto extends ErrorsDto{
 	private TecnicDto tecnic;
 	private HorariDto horari;
 	private SiNo gespri;
-	private String usucre;
-	private String usumod;
-	private Date datcre;
-	private Date datmod;
-	private Long seqmod;
 
 }

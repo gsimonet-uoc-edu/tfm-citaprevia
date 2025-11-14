@@ -1,7 +1,6 @@
 package uoc.edu.citaprevia.api.model;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -47,10 +46,5 @@ public class Agenda {
 	private Horari horari;
 	@Enumerated(EnumType.STRING)
 	private SiNo gespri;
-	private String usucre;
-	private String usumod;
-	private Date datcre;
-	private Date datmod;
-	private Long seqmod;
 
 }

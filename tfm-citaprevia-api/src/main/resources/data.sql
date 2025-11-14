@@ -27,10 +27,10 @@ INSERT INTO HORARI (con, dec, dem, notval, SUBAPL_COA, TIPCIT_CON) VALUES
 (2, 'Tarda', '13-18h', 'N', 'AP1', 1);
 
 -- AGENDA
-INSERT INTO AGENDA (con, datini, datfin, UBI_CON, TEC_COA, HORCIT_CON, gespri, usucre, usumod, datcre, datmod, seqmod) VALUES 
-(1, '2025-11-01', '2025-11-30', 1, 'T1', 1, 'S', 'admin', 'admin', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1),
-(2, '2025-11-01', '2025-11-07', 2, 'T2', 2, 'N', 'admin', 'admin', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 2),
-(3, '2025-12-01', '2025-12-15', 1, 'T3', 2, 'S', 'admin', 'admin', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1);
+INSERT INTO AGENDA (con, datini, datfin, UBI_CON, TEC_COA, HORCIT_CON, gespri) VALUES 
+(1, '2025-11-01', '2025-11-30', 1, 'T1', 1, 'S'),
+(2, '2025-11-01', '2025-11-07', 2, 'T2', 2, 'N'),
+(3, '2025-12-01', '2025-12-15', 1, 'T3', 2, 'S');
 
 -- SetmanaTipus: Lunes y Miércoles, 9-10 y 10-11
 INSERT INTO SETMANA_TIPUS (HORCIT_CON, DIASET_CON, horini, horfin, TIPCIT_CON) VALUES

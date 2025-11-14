@@ -1,5 +1,13 @@
 package uoc.edu.citaprevia.api.jpa;
 
-public interface HorariRepository {
+import java.util.List;
+
+import org.springframework.data.repository.PagingAndSortingRepository;
+
+import uoc.edu.citaprevia.api.model.Horari;
+
+public interface HorariRepository extends PagingAndSortingRepository<Horari, Long>{
+	
+	List<Horari> findBySubaplCoa(String subapl);
 
 }
