@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import ch.qos.logback.classic.pattern.Util;
 import uoc.edu.citaprevia.dto.AgendaDto;
 import uoc.edu.citaprevia.dto.CitaDto;
 import uoc.edu.citaprevia.dto.SetmanaTipusDto;
@@ -70,6 +70,12 @@ public class PrivateController {
 	
 	@GetMapping("/calendari") 
 	public String calendari(Authentication authentication, Model model, Locale locale) throws Exception {
+		
+        /*TODO if (authentication == null || authentication.getAuthorities() == null) {
+	        redirect.addFlashAttribute("error", "Dades incorrectes");
+	        return "redirect:/private/calendari";
+        }*/
+        
 		String coa = authentication.getName();
 		TecnicDto tecnic = citaPreviaPrivateClient.getTecnic(coa, locale);
 
@@ -79,14 +85,16 @@ public class PrivateController {
 
         List<AgendaDto> agendes;
         String subaplCoa = StringUtils.substringAfter(tecnic.getPrf(), "_"); // Extreim el codi de la subaplicació a partir sufixe del perfil.
-        String prefixePerfil = StringUtils.substringBefore(tecnic.getPrf(), "_");
-        
-        if (Perfil.ADMINISTRADOR.getValor().equals(prefixePerfil)) {
+        //String prefixePerfil = StringUtils.substringBefore(tecnic.getPrf(), "_");
+        boolean isAdministrador = this.isAdministrador(authentication, tecnic);
+        if (isAdministrador) {
             agendes = citaPreviaPrivateClient.getAgendasBySubaplicacio(subaplCoa, locale);
         } else {
             agendes = citaPreviaPrivateClient.getAgendasByTecnic(tecnic.getCoa(), locale);    
         }
+        
 
+        model.addAttribute("isAdministrador", isAdministrador);
 		model.addAttribute("subaplCoa", subaplCoa); 
 		model.addAttribute("tipusCita", new TipusCitaDto()); //TODO: mirar
 		//model.addAttribute("tipusCita", null); // No hay selección de tipo en private
@@ -363,4 +371,25 @@ public class PrivateController {
 
 	    return grouped;
 	}
+	
+	/**
+     * Mètode per determinar si l'usuari autenticat té un rol d'administrador.
+     * CAL ADAPTAR A LA VOSTRA LÒGICA DE SPRING SECURITY (ROLS/GRUPS).
+     */
+    private boolean isAdministrador(Authentication authentication, TecnicDto tecnic) {
+        if (authentication == null || authentication.getAuthorities() == null) {
+            return false;
+        }
+        
+        //String prefixePerfil = StringUtils.substringBefore(tecnic.getPrf(), "_");
+
+        // Comprova si l'usuari té el rol "ADMINISTRADOR" o "TECNIC" (Exemple)
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            String prefixePerfil = StringUtils.substringBefore(authority.getAuthority(), "_");
+            if (prefixePerfil.equals(Perfil.ADMINISTRADOR.getValor())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
