@@ -28,16 +28,11 @@ public class Horari {
 	private Long con;
 	private String dec;
 	private String dem;
-	@Enumerated(EnumType.STRING)
-	private SiNo notval;
 	@ManyToOne(fetch=FetchType.LAZY) 
 	@JoinColumn(name="SUBAPL_COA")
 	private Subaplicacio subapl;
 	@ManyToOne(fetch=FetchType.LAZY) 
 	@JoinColumn(name = "TIPCIT_CON")
 	private TipusCita tipusCita;
-	//@OneToMany(fetch=FetchType.LAZY, mappedBy = "id.horari")
-	//private List<SetmanaTipus> setmanesTipus;
-	
 
 }

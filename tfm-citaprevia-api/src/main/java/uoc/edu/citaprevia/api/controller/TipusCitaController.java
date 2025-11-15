@@ -1,5 +1,6 @@
 package uoc.edu.citaprevia.api.controller;
 
+import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,4 +27,11 @@ public class TipusCitaController {
 		return tipusCitaService.getTipusCitaByCon(con, locale);
 	}
 
+	
+	@GetMapping(value="/subaplicacions/{subaplCoa}")
+	@Operation(summary="obtenir tipus de cites donat una subaplicacio")
+	public List<TipusCitaDto> getTipusCitesBySubaplCoa(@PathVariable String subaplCoa,
+													  Locale locale) {
+		return tipusCitaService.getAllTipusCitaBySubaplCoa(subaplCoa, locale);
+	}
 }

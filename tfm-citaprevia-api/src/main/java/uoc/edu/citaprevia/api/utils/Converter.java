@@ -149,7 +149,6 @@ public class Converter {
 			dto.setCon(dao.getCon());
 			dto.setDec(dao.getDec());
 			dto.setDem(dao.getDem());
-			dto.setNotval(dao.getNotval());
 			dto.setSubapl(toDto(dao.getSubapl()));
 			dto.setTipusCita(toDto(dao.getTipusCita()));
 		}
@@ -162,7 +161,6 @@ public class Converter {
 			dao.setCon(dto.getCon());
 			dao.setDec(dto.getDec());
 			dao.setDem(dto.getDem());
-			dao.setNotval(dto.getNotval());
 			dao.setSubapl(toDao(dto.getSubapl()));
 			dao.setTipusCita(toDao(dto.getTipusCita()));
 		}

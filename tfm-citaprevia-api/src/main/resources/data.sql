@@ -22,9 +22,9 @@ INSERT INTO TIPUS_CITA (con, dec, dem, notval, cap, gespri, tipcitmod, SUBAPL_CO
 
 -- HORARI
 -- Horario: Matí (con = 1)
-INSERT INTO HORARI (con, dec, dem, notval, SUBAPL_COA, TIPCIT_CON) VALUES
-(1, 'Matí', 'Horari de matí', 'S', 'AP1', 1),
-(2, 'Tarda', '13-18h', 'N', 'AP1', 1);
+INSERT INTO HORARI (con, dec, dem, SUBAPL_COA, TIPCIT_CON) VALUES
+(1, 'Matí', 'Horari de matí', 'AP1', 1),
+(2, 'Tarda', '13-18h', 'AP1', 1);
 
 -- AGENDA
 INSERT INTO AGENDA (con, datini, datfin, UBI_CON, TEC_COA, HORCIT_CON) VALUES 

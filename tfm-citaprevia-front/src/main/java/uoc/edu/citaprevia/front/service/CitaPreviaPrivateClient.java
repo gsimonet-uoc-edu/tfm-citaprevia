@@ -7,6 +7,7 @@ import uoc.edu.citaprevia.dto.AgendaDto;
 import uoc.edu.citaprevia.dto.CitaDto;
 import uoc.edu.citaprevia.dto.HorariDto;
 import uoc.edu.citaprevia.dto.TecnicDto;
+import uoc.edu.citaprevia.dto.TipusCitaDto;
 import uoc.edu.citaprevia.dto.UbicacioDto;
 import uoc.edu.citaprevia.dto.generic.ErrorDto;
 
@@ -31,5 +32,7 @@ public interface CitaPreviaPrivateClient {
 	ErrorDto deleteAgenda(Long ageCon, Locale locale);
 
 	AgendaDto saveAgenda(AgendaDto cita, Locale locale);
+
+	List<TipusCitaDto> getTipusCitesBySubaplicacio(String subaplCoa, Locale locale);
 
 }

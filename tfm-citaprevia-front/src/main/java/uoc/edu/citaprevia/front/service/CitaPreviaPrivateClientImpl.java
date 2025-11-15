@@ -19,6 +19,7 @@ import uoc.edu.citaprevia.dto.AgendaDto;
 import uoc.edu.citaprevia.dto.CitaDto;
 import uoc.edu.citaprevia.dto.HorariDto;
 import uoc.edu.citaprevia.dto.TecnicDto;
+import uoc.edu.citaprevia.dto.TipusCitaDto;
 import uoc.edu.citaprevia.dto.UbicacioDto;
 import uoc.edu.citaprevia.dto.generic.ErrorDto;
 import uoc.edu.citaprevia.front.util.RestTemplateResponseErrorHandler;
@@ -167,6 +168,16 @@ public class CitaPreviaPrivateClientImpl implements CitaPreviaPrivateClient{
 		params.put(PARAM_LOCALE, locale);
 		String url = getBaseApiUrl() + "/horaris/subaplicacions/{subaplCoa}?lang={lang}";	
 		HorariDto[] list = restTemplate.getForObject(url, HorariDto[].class, params);
+		return list == null ? new ArrayList<>() : Arrays.asList(list);
+	}
+	
+	@Override
+	public List<TipusCitaDto> getTipusCitesBySubaplicacio(String subaplCoa, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_SUBAPL_COA, subaplCoa);
+		params.put(PARAM_LOCALE, locale);
+		String url = getBaseApiUrl() + "/tipus-cites/subaplicacions/{subaplCoa}?lang={lang}";	
+		TipusCitaDto[] list = restTemplate.getForObject(url, TipusCitaDto[].class, params);
 		return list == null ? new ArrayList<>() : Arrays.asList(list);
 	}
 	

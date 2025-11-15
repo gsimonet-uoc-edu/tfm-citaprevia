@@ -40,6 +40,7 @@ import uoc.edu.citaprevia.dto.generic.ErrorDto;
 import uoc.edu.citaprevia.front.dto.CampConfigDto;
 import uoc.edu.citaprevia.front.dto.CitaFormDto;
 import uoc.edu.citaprevia.front.privat.dto.AgendaFormDto;
+import uoc.edu.citaprevia.front.privat.dto.HorariFormDto;
 import uoc.edu.citaprevia.front.service.CitaPreviaPrivateClient;
 import uoc.edu.citaprevia.front.service.CitaPreviaPublicClient;
 import uoc.edu.citaprevia.front.service.MetacamapService;
@@ -534,5 +535,108 @@ public class PrivateController {
         return "redirect:/private/gestio/agendes";
     }
     
+    @GetMapping("/gestio/horaris")
+    public String gestioHoraris(Model model, Authentication authentication, RedirectAttributes redirect, Locale locale) {
+		long startTime=System.currentTimeMillis();
+		LOG.info("### Inici PrivateController.gestioHoraris startTime={}", startTime);
+	    try {	      
+	    	// 1. Obtenir el tècnic connectat (assumint que el 'name' és el 'coa')
+		    String subaplCoa = null;
+		    // Obtenir subaplicacio del perfil de l'usuari
+		    if (authentication.getAuthorities() != null && !authentication.getAuthorities().isEmpty()) {
+		        for (GrantedAuthority authority : authentication.getAuthorities()) {
+		            subaplCoa = StringUtils.substringAfter(authority.getAuthority(), "_");
+		            break;
+		         }
+		     }
+	        
+	        // 1. Obtener listado de Horarios
+	        List<HorariDto> horaris = citaPreviaPrivateClient.getHorarisBySubaplicacio(subaplCoa, locale);
+	        model.addAttribute("horaris", horaris);
+	        
+	        // 2. Obtener Lookups: Tipos de Cita
+	        // Solo se necesitan los Tipos de Cita asociados a esta subaplicación
+	        List<TipusCitaDto> tipusCites = citaPreviaPrivateClient.getTipusCitesBySubaplicacio(subaplCoa, locale);
+	        model.addAttribute("tipusCites", tipusCites);
+	        
+	        // 3. Inicializar el DTO para el formulario modal
+	        if (!model.containsAttribute("horariForm")) {
+	            HorariFormDto form = new HorariFormDto();
+	            model.addAttribute("horariForm", form);
+	        }
+	    }  catch (Exception e) {
+	        LOG.error("### Error gestio horari {}", e);
+	        redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_AGENDES, null, locale));
+	        return "redirect:/private/calendari";
+	    } finally {
+	    	long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final PrivateController.gestioHoraris totalTime={}", totalTime);
+		}
+        return "private/gestio-horaris";
+    }
+/*
+    @PostMapping("/gestio/horaris/save")
+    public String saveHorari(@ModelAttribute("horariForm") @Valid HorariFormDto horariForm,
+                             BindingResult result,
+                             Authentication authentication,
+                             RedirectAttributes redirectAttributes,
+                             Locale locale) {
+        String subaplCoa = authentication.getName();
+        
+        if (result.hasErrors()) {
+            // En caso de error, volvemos a cargar el modelo y mostramos los errores en el modal
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.horariForm", result);
+            redirectAttributes.addFlashAttribute("horariForm", horariForm);
+            redirectAttributes.addFlashAttribute("error", messageSource.getMessage("error_formulari_horari", null, locale));
+            return "redirect:/private/gestio/horaris";
+        }
+
+        try {
+            // Mapear DTO del formulario a DTO de la API
+            HorariDto horariToSave = new HorariDto();
+            horariToSave.setCon(horariForm.getCon());
+            horariToSave.setDec(horariForm.getDec());
+            horariToSave.setDem(horariForm.getDem());
+            horariToSave.setNotval(SiNo.valueOf(horariForm.getNotval()));
+            
+            // Crear objetos DTO de Lookup
+            TipusCitaDto tipusCita = new TipusCitaDto();
+            tipusCita.setCon(horariForm.getTipusCitaCon());
+            horariToSave.setTipusCita(tipusCita);
+            
+            // Asignar Subaplicació
+            SubaplicacioDto subapl = new SubaplicacioDto();
+            subapl.setCoa(subaplCoa);
+            horariToSave.setSubapl(subapl);
+            
+            // Llamada al servicio para guardar
+            HorariDto savedHorari = citaPreviaPrivateClient.saveHorari(horariToSave, locale);
+            
+            String action = horariForm.getCon() == null ? "creat" : "actualitzat";
+            redirectAttributes.addFlashAttribute("success", messageSource.getMessage("horari_" + action + "_ok", null, locale));
+            
+        } catch (Exception e) {
+            log.error("Error al guardar Horari: ", e);
+            redirectAttributes.addFlashAttribute("error", messageSource.getMessage("error_inesperat", null, locale));
+        }
+        
+        return "redirect:/private/gestio/horaris";
+    }
+
+    @PostMapping("/gestio/horaris/delete")
+    public String deleteHorari(@RequestParam("con") Long horCon,
+                               RedirectAttributes redirectAttributes,
+                               Locale locale) {
+        try {
+            citaPreviaPrivateClient.deleteHorari(horCon, locale);
+            redirectAttributes.addFlashAttribute("success", messageSource.getMessage("horari_eliminat_ok", null, locale));
+        } catch (Exception e) {
+            log.error("Error al eliminar Horari: ", e);
+            redirectAttributes.addFlashAttribute("error", messageSource.getMessage("error_eliminacio_horari", null, locale));
+        }
+        
+        return "redirect:/private/gestio/horaris";
+    }
+    */
 
 }
