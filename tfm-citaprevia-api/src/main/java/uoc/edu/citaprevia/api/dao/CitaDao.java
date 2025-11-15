@@ -32,6 +32,10 @@ public class CitaDao {
 		return citaRepository.findByAgendaCon(ageCon);
 	}
 	
+	public List<Cita> findCitesByHorari(Long horCon) {	
+		return citaRepository.findByAgendaHorariCon(horCon);
+	}
+	
 	public void deleteCita (Cita entity) {
 		citaRepository.delete(entity);
 	}

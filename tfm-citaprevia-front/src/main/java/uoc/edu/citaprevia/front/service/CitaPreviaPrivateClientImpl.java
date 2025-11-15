@@ -171,6 +171,48 @@ public class CitaPreviaPrivateClientImpl implements CitaPreviaPrivateClient{
 		return list == null ? new ArrayList<>() : Arrays.asList(list);
 	}
 	
+	
+	@Override
+	public HorariDto saveHorari(HorariDto horari, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_LOCALE, locale);
+		String url = getBaseApiUrl() + "/horaris?lang={lang}";
+	    ResponseEntity<HorariDto> response = restTemplate.postForEntity(url, horari, HorariDto.class, params
+	        );
+		return response.getBody() == null ? new HorariDto() : response.getBody();
+	}
+	
+	@Override
+	public HorariDto updateHorari(Long horCon, HorariDto dto, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_HOR_CON, horCon);
+		params.put(PARAM_LOCALE, locale);
+		String url = getBaseApiUrl() + "/horaris/{horCon}?lang={lang}";	
+	    ResponseEntity<HorariDto> response = restTemplate.exchange(url, 
+		        HttpMethod.PUT, 
+		        new HttpEntity<>(dto),               
+		        HorariDto.class,     
+		        params             
+		    );
+		return response.getBody() == null ? new HorariDto() : response.getBody();
+	}
+	
+	@Override
+	public ErrorDto deleteHorari(Long horCon, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_HOR_CON, horCon);
+		params.put(PARAM_LOCALE, locale);
+		String url = getBaseApiUrl() + "/horaris/{horCon}?lang={lang}";
+	    ResponseEntity<ErrorDto> response = restTemplate.exchange(url, 
+	        HttpMethod.DELETE, 
+	        null,               
+	        ErrorDto.class,     
+	        params             
+	    );
+
+	    return response.getBody();
+	}
+	
 	@Override
 	public List<TipusCitaDto> getTipusCitesBySubaplicacio(String subaplCoa, Locale locale) {
 		Map<String, Object> params = new HashMap<>();

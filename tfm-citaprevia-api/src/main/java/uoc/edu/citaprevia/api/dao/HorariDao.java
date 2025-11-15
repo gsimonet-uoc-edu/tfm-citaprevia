@@ -18,4 +18,20 @@ public class HorariDao {
 		return horariRepository.findBySubaplCoa(subaplCoa);
 	}
 
+	public Horari findHorariByCon (Long con) {
+		return horariRepository.findByCon(con);
+	}
+	
+	public Horari saveHorari(Horari entity) {
+		return (entity != null ? horariRepository.save(entity) : null);
+	}
+	
+	public Horari updateHorari(Horari entity) {	
+		Horari dao = this.findHorariByCon(entity.getCon());
+		return (dao != null) ? horariRepository.save(entity) : null;
+	}
+	
+	public void deleteHorari(Horari entity) {
+		horariRepository.delete(entity);
+	}
 }

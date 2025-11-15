@@ -35,4 +35,10 @@ public interface CitaPreviaPrivateClient {
 
 	List<TipusCitaDto> getTipusCitesBySubaplicacio(String subaplCoa, Locale locale);
 
+	HorariDto saveHorari(HorariDto horari, Locale locale);
+
+	HorariDto updateHorari(Long horCon, HorariDto dto, Locale locale);
+
+	ErrorDto deleteHorari(Long horCon, Locale locale);
+
 }

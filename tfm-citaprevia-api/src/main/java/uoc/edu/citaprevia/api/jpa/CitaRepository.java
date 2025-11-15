@@ -19,4 +19,5 @@ public interface CitaRepository extends PagingAndSortingRepository<Cita, Long> {
 	        Long agendaCon, LocalDateTime fi, LocalDateTime inici);
 	
 	List<Cita> findByAgendaCon(Long ageCon);
+	List<Cita> findByAgendaHorariCon(Long horCon);
 }

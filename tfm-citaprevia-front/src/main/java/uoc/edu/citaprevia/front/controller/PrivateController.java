@@ -33,6 +33,7 @@ import uoc.edu.citaprevia.dto.AgendaDto;
 import uoc.edu.citaprevia.dto.CitaDto;
 import uoc.edu.citaprevia.dto.HorariDto;
 import uoc.edu.citaprevia.dto.SetmanaTipusDto;
+import uoc.edu.citaprevia.dto.SubaplicacioDto;
 import uoc.edu.citaprevia.dto.TecnicDto;
 import uoc.edu.citaprevia.dto.TipusCitaDto;
 import uoc.edu.citaprevia.dto.UbicacioDto;
@@ -462,10 +463,10 @@ public class PrivateController {
 	        }
      
             // 1. Crear el DTO per enviar al backend
-            AgendaDto agendaSaved = new AgendaDto();
-            agendaSaved.setCon(form.getCon());
-            agendaSaved.setDatini(form.getDatini());
-            agendaSaved.setDatfin(form.getDatfin());
+            AgendaDto agendaToSave = new AgendaDto();
+            agendaToSave.setCon(form.getCon());
+            agendaToSave.setDatini(form.getDatini());
+            agendaToSave.setDatfin(form.getDatfin());
             
             // 2. Lookup de DTOs per CON
             UbicacioDto centre = new UbicacioDto(); 
@@ -477,22 +478,22 @@ public class PrivateController {
             TecnicDto tecnic = new TecnicDto(); 
             tecnic.setCoa(authentication.getName());
             
-            agendaSaved.setCentre(centre);
-            agendaSaved.setHorari(horari);
-            agendaSaved.setTecnic(tecnic);
+            agendaToSave.setCentre(centre);
+            agendaToSave.setHorari(horari);
+            agendaToSave.setTecnic(tecnic);
             
             // 4. Guardar
             //AgendaDto savedAgenda = citaPreviaPrivateClient.saveAgenda(agendaSaved, locale);
             AgendaDto savedAgenda = new AgendaDto();
             if (form.getCon() != null) {
-            	 savedAgenda = citaPreviaPrivateClient.updateAgenda(form.getCon(), agendaSaved, locale);
+            	 savedAgenda = citaPreviaPrivateClient.updateAgenda(form.getCon(), agendaToSave, locale);
             } else {
-            	savedAgenda = citaPreviaPrivateClient.saveAgenda(agendaSaved, locale);
+            	savedAgenda = citaPreviaPrivateClient.saveAgenda(agendaToSave, locale);
             }
 
             if (savedAgenda.hasErrors()) {
                 // Maneig d'errors del backend
-                redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SAVE_AGENDES, null, locale));
+                redirect.addFlashAttribute("error", savedAgenda.getErrors().get(0).getDem());
             } else {
                 redirect.addFlashAttribute("success", form.getCon() == null ? bundle.getMessage(Constants.SUCCESS_FRONT_SAVE_AGENDES, null, locale) : bundle.getMessage(Constants.SUCCESS_FRONT_UPDATE_AGENDES, null, locale));
             }
@@ -574,69 +575,97 @@ public class PrivateController {
 		}
         return "private/gestio-horaris";
     }
-/*
+
     @PostMapping("/gestio/horaris/save")
-    public String saveHorari(@ModelAttribute("horariForm") @Valid HorariFormDto horariForm,
+    public String saveUpdateHorari(@ModelAttribute("horariForm") @Valid HorariFormDto form,
                              BindingResult result,
                              Authentication authentication,
-                             RedirectAttributes redirectAttributes,
+                             RedirectAttributes redirect,
                              Locale locale) {
-        String subaplCoa = authentication.getName();
+		long startTime=System.currentTimeMillis();
+		LOG.info("### Inici PrivateController.saveUpdateHorari startTime={}", startTime);
+    	try {
         
-        if (result.hasErrors()) {
-            // En caso de error, volvemos a cargar el modelo y mostramos los errores en el modal
-            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.horariForm", result);
-            redirectAttributes.addFlashAttribute("horariForm", horariForm);
-            redirectAttributes.addFlashAttribute("error", messageSource.getMessage("error_formulari_horari", null, locale));
-            return "redirect:/private/gestio/horaris";
-        }
+    		if (result.hasErrors()) {
+            redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SAVE_HORARIS, null, locale));
+            return "redirect:/private/gestio/agendes"; 
+    		}
 
-        try {
             // Mapear DTO del formulario a DTO de la API
             HorariDto horariToSave = new HorariDto();
-            horariToSave.setCon(horariForm.getCon());
-            horariToSave.setDec(horariForm.getDec());
-            horariToSave.setDem(horariForm.getDem());
-            horariToSave.setNotval(SiNo.valueOf(horariForm.getNotval()));
+            horariToSave.setCon(form.getCon());
+            horariToSave.setDec(form.getDec());
+            horariToSave.setDem(form.getDem());
             
             // Crear objetos DTO de Lookup
             TipusCitaDto tipusCita = new TipusCitaDto();
-            tipusCita.setCon(horariForm.getTipusCitaCon());
+            tipusCita.setCon(form.getTipusCitaCon());
             horariToSave.setTipusCita(tipusCita);
             
             // Asignar Subaplicació
+		    String subaplCoa = null;
+		    // Obtenir subaplicacio del perfil de l'usuari
+		    if (authentication.getAuthorities() != null && !authentication.getAuthorities().isEmpty()) {
+		        for (GrantedAuthority authority : authentication.getAuthorities()) {
+		            subaplCoa = StringUtils.substringAfter(authority.getAuthority(), "_");
+		            break;
+		         }
+		     }
             SubaplicacioDto subapl = new SubaplicacioDto();
             subapl.setCoa(subaplCoa);
             horariToSave.setSubapl(subapl);
             
-            // Llamada al servicio para guardar
-            HorariDto savedHorari = citaPreviaPrivateClient.saveHorari(horariToSave, locale);
+            // 4. Guardar
+            HorariDto savedAgenda = new HorariDto();
+            if (form.getCon() != null) {
+            	 savedAgenda = citaPreviaPrivateClient.updateHorari(form.getCon(), horariToSave, locale);
+            } else {
+            	savedAgenda = citaPreviaPrivateClient.saveHorari(horariToSave, locale);
+            }
+
+            if (savedAgenda.hasErrors()) {
+                // Maneig d'errors del backend
+                redirect.addFlashAttribute("error", savedAgenda.getErrors().get(0).getDem());
+            } else {
+                redirect.addFlashAttribute("success", form.getCon() == null ? bundle.getMessage(Constants.SUCCESS_FRONT_SAVE_HORARIS, null, locale) : bundle.getMessage(Constants.SUCCESS_FRONT_UPDATE_HORARIS, null, locale));
+            }
             
-            String action = horariForm.getCon() == null ? "creat" : "actualitzat";
-            redirectAttributes.addFlashAttribute("success", messageSource.getMessage("horari_" + action + "_ok", null, locale));
-            
-        } catch (Exception e) {
-            log.error("Error al guardar Horari: ", e);
-            redirectAttributes.addFlashAttribute("error", messageSource.getMessage("error_inesperat", null, locale));
-        }
+    	}  catch (Exception e) {
+            LOG.error("### Error save/update horari {}", e);
+            redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_HORARIS, null, locale));
+        } finally {
+			long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final PrivateController.saveUpdateHorari totalTime={}", totalTime);
+		}
+        
         
         return "redirect:/private/gestio/horaris";
     }
 
     @PostMapping("/gestio/horaris/delete")
     public String deleteHorari(@RequestParam("con") Long horCon,
-                               RedirectAttributes redirectAttributes,
+                               RedirectAttributes redirect,
                                Locale locale) {
+		long startTime=System.currentTimeMillis();
+		LOG.info("### Inici PrivateController.deleteHorari startTime={}, horCon={}", startTime, horCon);
         try {
-            citaPreviaPrivateClient.deleteHorari(horCon, locale);
-            redirectAttributes.addFlashAttribute("success", messageSource.getMessage("horari_eliminat_ok", null, locale));
+            ErrorDto error = citaPreviaPrivateClient.deleteHorari(horCon, locale);
+            if (error != null) {
+                // Maneig d'errors del backend
+                redirect.addFlashAttribute("error", error.getDem());
+            } else {
+            	redirect.addFlashAttribute("success", bundle.getMessage(Constants.SUCCESS_FRONT_DELETE_HORARIS, null, locale));
+            }
+            
         } catch (Exception e) {
-            log.error("Error al eliminar Horari: ", e);
-            redirectAttributes.addFlashAttribute("error", messageSource.getMessage("error_eliminacio_horari", null, locale));
-        }
+            LOG.error("### Error delete horari {}", e);
+            redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_HORARIS, null, locale));
+        } finally {
+			long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final PrivateController.deleteHorari totalTime={}, ageCon={}", totalTime, horCon);
+		}
         
         return "redirect:/private/gestio/horaris";
     }
-    */
-
+    
 }

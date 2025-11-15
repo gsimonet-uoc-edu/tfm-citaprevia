@@ -9,5 +9,5 @@ import uoc.edu.citaprevia.api.model.Horari;
 public interface HorariRepository extends PagingAndSortingRepository<Horari, Long>{
 	
 	List<Horari> findBySubaplCoa(String subapl);
-
+	Horari findByCon(Long con);
 }
