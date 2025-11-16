@@ -41,4 +41,6 @@ public interface CitaPreviaPrivateClient {
 
 	ErrorDto deleteHorari(Long horCon, Locale locale);
 
+	HorariDto getHorari(Long horCon, Locale locale);
+
 }

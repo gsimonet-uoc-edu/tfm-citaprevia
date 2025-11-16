@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{gestio_horaris}">Gestió d'Horaris</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <th:block th:replace="~{common/header :: header}"></th:block>
+
+    <div class="container py-4">
+        
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="mb-0" th:text="#{gestio_horaris}">Gestió d'Horaris</h2>
+            
+            <a th:href="@{/private/calendari}" class="btn btn-secondary">
+                <i class="fas fa-calendar-alt me-2"></i> <span th:text="#{tornar_calendari_privat}">Tornar al Calendari Privat</span>
+            </a>
+        </div>
+        <p class="text-muted" th:text="#{descripcio_gestio_horaris}">Gestió dels horaris disponibles per a la cita prèvia.</p>
+
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        
+        <div class="card shadow-sm mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span th:text="#{llistat_horaris}">Llistat d'Horaris</span>
+                
+                <button type="button" class="btn btn-primary btn-sm" 
+                        data-bs-toggle="modal" data-bs-target="#horariModal"
+                        onclick="clearHorariModal()">
+                    <i class="fas fa-plus me-1"></i> <span th:text="#{nou_horari}">Nou Horari</span>
+                </button>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th th:text="#{con}">ID</th>
+                                <th th:text="#{descripcio}">Descripció</th>
+                                <th th:text="#{descripcio_extensa}">Detall</th>
+                                <th th:text="#{tipus_cita}">Tipus Cita</th>
+                                <th class="text-end" th:text="#{accions}">Accions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="horari : ${horaris}">
+                                <td th:text="${horari.con}">1</td>
+                                <td th:text="${horari.dec}">Horari Estàndard</td>
+                                <td th:text="${horari.dem}">Horari de dilluns a divendres</td>
+                                <td th:text="${horari.tipusCita.dec}">Cita Prèvia General</td>
+                                <td class="text-end">
+                                    
+                                    <a th:href="@{/private/gestio/horaris/{con}/setmanes-tipus(con=${horari.con})}" 
+                                       class="btn btn-sm btn-outline-warning me-2"
+                                       th:title="#{gestio_franges_horaries}">
+                                        <i class="fas fa-clock"></i>
+                                    </a>
+                                    
+                                    <button type="button" class="btn btn-sm btn-outline-info me-2" 
+                                            data-bs-toggle="modal" data-bs-target="#horariModal"
+                                            th:onclick="editHorari(
+                                                [[${horari.con}]],
+                                                '[[${horari.dec}]]',
+                                                '[[${horari.dem}]]',
+                                                [[${horari.tipusCita.con}]]
+                                            )" 
+                                            th:title="#{editar}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    
+                                    <button type="button" class="btn btn-sm btn-outline-danger" 
+                                            data-bs-toggle="modal" data-bs-target="#esborrarHorariModal" 
+                                            th:onclick="prepararEsborrarHorari([[${horari.con}]])"
+                                            th:title="#{esborrar}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <div class="modal fade" id="horariModal" tabindex="-1" aria-labelledby="horariModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form th:action="@{/private/gestio/horaris/save}" method="post" th:object="${horariForm}" id="formHorari">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="horariModalLabel" th:text="#{nou_horari}">Nou Horari</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" th:field="*{con}" id="horariCon" value=""/>
+                        
+                        <div class="mb-3">
+                            <label for="dec" class="form-label" th:text="#{descripcio_curta}">Descripció Curta</label>
+                            <input type="text" class="form-control" th:field="*{dec}" id="dec" required th:errorclass="is-invalid"/>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('dec')}" th:errors="*{dec}">Error dec</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="dem" class="form-label" th:text="#{descripcio_extensa}">Descripció Extensa</label>
+                            <textarea class="form-control" th:field="*{dem}" id="dem" rows="3" th:errorclass="is-invalid"></textarea>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('dem')}" th:errors="*{dem}">Error dem</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="tipusCitaCon" class="form-label" th:text="#{tipus_cita}">Tipus Cita</label>
+                            <select class="form-select" th:field="*{tipusCitaCon}" id="tipusCitaCon" required th:errorclass="is-invalid">
+                                <option value="">[[#{selecciona}]]</option>
+                                <option th:each="tipus : ${tipusCites}" 
+                                        th:value="${tipus.con}" 
+                                        th:text="${tipus.dec}"
+                                        th:selected="${horariForm != null and horariForm.tipusCitaCon == tipus.con}">Tipus Cita</option>
+                            </select>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('tipusCitaCon')}" th:errors="*{tipusCitaCon}">Error Tipus Cita</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{tancar}">Tancar</button>
+                        <button type="submit" class="btn btn-primary" th:text="#{guardar}">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="esborrarHorariModal" tabindex="-1" aria-labelledby="esborrarHorariModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form th:action="@{/private/gestio/horaris/delete}" method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="esborrarHorariModalLabel" th:text="#{confirmar_esborrat}">Confirmar Esborrat</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="con" id="esborrarHorariCon" value=""/>
+                        <p th:text="#{confirmacio_esborrat_horari}">Està segur que vol esborrar aquest horari?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{cancelar}">Cancel·lar</button>
+                        <button type="submit" class="btn btn-danger" th:text="#{esborrar}">Esborrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <th:block th:replace="~{common/footer :: footer}"></th:block>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        // CRÍTIC: Aquesta variable detecta si el controlador ha injectat el horariForm via FlashAttribute
+        var isFormPresent = /*[[${horariForm != null}]]*/ false; 
+
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // Si el formulari és present al Model (només hauria de ser per errors de validació), obrim el modal
+            if (isFormPresent) {
+                var myModal = new bootstrap.Modal(document.getElementById('horariModal'));
+                myModal.show();
+                 // Si hi ha errors, el títol ha de reflectir Edició o Nou
+                if (document.getElementById('horariCon').value !== '') {
+                    document.getElementById('horariModalLabel').textContent = /*[[#{editar_horari}]]*/ 'Editar Horari';
+                }
+            }
+        });
+
+        /**
+         * Funció per netejar el formulari abans d'una nova alta (clic al botó Nou).
+         */
+        function clearHorariModal() {
+            document.getElementById('formHorari').reset();
+            document.getElementById('horariCon').value = '';
+            document.getElementById('horariModalLabel').textContent = /*[[#{nou_horari}]]*/ 'Nou Horari';
+            // Netejar classes d'errors (per si venim d'un error de validació anterior)
+            document.getElementById('dec').classList.remove('is-invalid');
+            document.getElementById('dem').classList.remove('is-invalid');
+            document.getElementById('tipusCitaCon').classList.remove('is-invalid');
+        }
+
+        /**
+         * Carrega les dades de l'Horari seleccionat al modal d'edició (lògica antiga).
+         */
+        function editHorari(con, dec, dem, tipusCitaCon) {
+            document.getElementById('horariModalLabel').textContent = /*[[#{editar_horari}]]*/ 'Editar Horari';
+            
+            // 1. Carregar valors principals
+            document.getElementById('horariCon').value = con; 
+            document.getElementById('dec').value = dec;
+            document.getElementById('dem').value = dem || ''; 
+            
+            // 2. Carregar valors de Lookups
+            document.getElementById('tipusCitaCon').value = tipusCitaCon;
+            
+            // 3. Netejar classes d'errors (per si venim d'un error de validació anterior)
+            document.getElementById('dec').classList.remove('is-invalid');
+            document.getElementById('dem').classList.remove('is-invalid');
+            document.getElementById('tipusCitaCon').classList.remove('is-invalid');
+            
+            // El modal ja s'obrirà automàticament gràcies als data-bs-toggle/target del botó
+        }
+        
+        /**
+         * Funció per carregar el CON de l'horari al formulari ocult del modal d'eliminació.
+         */
+        function prepararEsborrarHorari(con) {
+            document.getElementById('esborrarHorariCon').value = con;
+        }
+
+        /*]]>*/
+    </script>
+</body>
+</html>

@@ -171,6 +171,15 @@ public class CitaPreviaPrivateClientImpl implements CitaPreviaPrivateClient{
 		return list == null ? new ArrayList<>() : Arrays.asList(list);
 	}
 	
+	@Override
+	public HorariDto getHorari (Long horCon, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_HOR_CON, horCon);
+		params.put(PARAM_LOCALE, locale);
+		String url = getBaseApiUrl() + "/horaris/{horCon}?lang={lang}";
+		return restTemplate.getForObject(url, HorariDto.class, params);
+	}
+	
 	
 	@Override
 	public HorariDto saveHorari(HorariDto horari, Locale locale) {

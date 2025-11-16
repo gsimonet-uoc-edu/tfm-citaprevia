@@ -16,4 +16,6 @@ public interface HorariService {
 
 	ErrorDto deleteHorari(Long con, Locale locale);
 
+	HorariDto getHorari(Long con, Locale locale);
+
 }

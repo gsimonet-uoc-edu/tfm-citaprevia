@@ -12,9 +12,11 @@ import org.springframework.stereotype.Service;
 
 import uoc.edu.citaprevia.api.dao.CitaDao;
 import uoc.edu.citaprevia.api.dao.HorariDao;
+import uoc.edu.citaprevia.api.model.Agenda;
 import uoc.edu.citaprevia.api.model.Cita;
 import uoc.edu.citaprevia.api.model.Horari;
 import uoc.edu.citaprevia.api.utils.Converter;
+import uoc.edu.citaprevia.dto.AgendaDto;
 import uoc.edu.citaprevia.dto.HorariDto;
 import uoc.edu.citaprevia.dto.generic.ErrorDto;
 import uoc.edu.citaprevia.util.Constants;
@@ -33,6 +35,28 @@ public class HorariServiceImpl implements HorariService{
 	
 	@Autowired
 	protected MessageSource bundle;
+	
+	
+	@Override
+	public HorariDto getHorari (Long con, Locale locale) {
+		HorariDto dto = new HorariDto();
+		long startTime=System.currentTimeMillis();
+		LOG.info("### Inici HorariServiceImpl.getHorari startTime={}, horCon={}", startTime, con);
+		try {
+			if (!Utils.isEmpty(con)) {
+				Horari dao = horariDao.findHorariByCon(con);
+				dto = Converter.toDto(dao);
+			}
+		} catch (Exception e) {
+			LOG.error("### Error HorariServiceImpl.getHorari: " , bundle.getMessage(Constants.ERROR_API_FIND_HORARIS, null, locale));
+			e.printStackTrace();			
+		} finally {
+			long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final HorariServiceImpl.getHorari totalTime={}, horari={}", totalTime, dto.toString());
+		}
+		return dto;
+	}
+	
 	
 	@Override
 	public List<HorariDto> getHorarisBySubaplicacio(String subaplCoa, Locale locale) {

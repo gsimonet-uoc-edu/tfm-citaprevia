@@ -24,6 +24,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -666,6 +667,57 @@ public class PrivateController {
 		}
         
         return "redirect:/private/gestio/horaris";
+    }
+    
+    
+    public Map<Long, String> getDiesSetmana() {
+        // Utilitzem TreeMap per mantenir l'ordre per clau (1, 2, 3...)
+        Map<Long, String> diesSetmana = new TreeMap<>();
+        
+        // Els IDs (1 a 7) han de coincidir amb l'estructura de la teva base de dades/DTO
+        diesSetmana.put(1L, "Dilluns");
+        diesSetmana.put(2L, "Dimarts");
+        diesSetmana.put(3L, "Dimecres");
+        diesSetmana.put(4L, "Dijous");
+        diesSetmana.put(5L, "Divendres");
+        diesSetmana.put(6L, "Dissabte");
+        diesSetmana.put(7L, "Diumenge");
+        
+        return diesSetmana;
+    }
+    
+    @GetMapping("/gestio/horaris/{horCon}/setmanes-tipus")
+    public String gestioSetmanesTipus(@PathVariable("horCon") Long horCon,
+                                      Model model,
+                                      Locale locale,
+                                      RedirectAttributes redirect) {
+        long startTime = System.currentTimeMillis();
+        LOG.info("### Inici PrivateController.gestioSetmanesTipus startTime={}, horCon={}", startTime, horCon);
+
+        try {
+            // 1. Carregar dades de l'Horari (necessari per a la capçalera)
+            HorariDto horariDto = citaPreviaPrivateClient.getHorari(horCon, locale);
+            if (horariDto == null || horariDto.getCon() == null) {
+                redirect.addFlashAttribute("error", bundle.getMessage("error.horari.no.trobat", null, locale));
+                return "redirect:/private/gestio/horaris";
+            }
+            
+            // 2. Afegir dades al model
+            model.addAttribute("horariDto", horariDto);
+            model.addAttribute("horariCon", horCon); // Per simplicitat al JS i form
+            model.addAttribute("diesSetmana", getDiesSetmana());
+            // L'ompliment de la llista (SetmanaTipus) es farà per AJAX al Javascript de la vista.
+            
+        } catch (Exception e) {
+            LOG.error("### Error gestioSetmanesTipus horCon={}", horCon, e);
+            redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_HORARIS, null, locale));
+            return "redirect:/private/gestio/horaris";
+        } finally {
+            long totalTime = (System.currentTimeMillis() - startTime);
+            LOG.info("### Final PrivateController.gestioSetmanesTipus totalTime={}", totalTime);
+        }
+        
+        return "private/gestio-setmanes-tipus"; // El nom de la nova vista HTML
     }
     
 }

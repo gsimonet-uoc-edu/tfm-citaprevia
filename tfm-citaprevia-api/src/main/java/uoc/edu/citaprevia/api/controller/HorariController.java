@@ -43,6 +43,13 @@ public class HorariController {
 		return horariService.getHorarisBySubaplicacio(subaplCoa, locale);
 	}
 	
+	@GetMapping(value="/{con}")
+	@Operation(summary="obtenir un horari")
+	public HorariDto getHorari(@PathVariable Long con,
+							Locale locale) {
+		return horariService.getHorari(con, locale);
+	}
+	
 	@PostMapping("")
 	@Operation(summary="donar d'alta un horari")
 	public HorariDto saveHorari(@Valid @RequestBody HorariDto dto,
