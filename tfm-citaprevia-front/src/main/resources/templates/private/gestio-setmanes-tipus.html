@@ -72,6 +72,9 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
+                        
+                        <div id="modalAlertContainer"></div>
+                        
                         <input type="hidden" name="horariCon" th:value="${horariCon}" id="formHorariCon"/>
                         
                         <input type="hidden" name="isEdit" id="isEdit" value="false"/> 
@@ -93,13 +96,13 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="horini" class="form-label" th:text="#{hora_inici}">Hora Inici</label>
-                                <input type="time" class="form-control" name="horini" id="horini" required step="600"/> </div>
+                                <input type="time" class="form-control" name="horini" id="horini" required step="60"/> </div>
                             <div class="col-md-6 mb-3">
                                 <label for="horfin" class="form-label" th:text="#{hora_fi}">Hora Fi</label>
-                                <input type="time" class="form-control" name="horfin" id="horfin" required step="600"/>
+                                <input type="time" class="form-control" name="horfin" id="horfin" required step="60"/>
                             </div>
                         </div>
-                        </div>
+                    </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{tancar}">Tancar</button>
                         <button type="submit" class="btn btn-primary" th:text="#{guardar}">Guardar</button>
@@ -117,7 +120,6 @@
         /*<![CDATA[*/
 
         const HORARI_CON = /*[[${horariCon}]]*/ 0;
-        // La URL de l'API s'ajusta al teu patró: /private/horaris/{horCon}/setmanes-tipus
         const API_URL = /*[[@{/private/horaris}]]*/ '/private/horaris';
         const DIES_SETMANA = /*[[${diesSetmana}]]*/ {}; // Map<Integer, String>
 
@@ -128,23 +130,37 @@
             
             // Gestió de l'enviament del formulari via AJAX
             document.getElementById('formFranja').addEventListener('submit', handleFormSubmit);
+            
+            // Netejar els errors del modal quan es tanca
+            const franjaModalEl = document.getElementById('franjaModal');
+            franjaModalEl.addEventListener('hidden.bs.modal', clearModalError);
         });
 
         // ===================================
         // GESTIÓ DE MISSATGES D'ALERTA
         // ===================================
 
-        function showAlert(message, type = 'success') {
-            const container = document.getElementById('alertContainer');
+        function showAlert(message, type = 'success', targetId = 'alertContainer') {
+            const container = document.getElementById(targetId);
+            // Netejar alertes prèvies en el mateix contenidor
+            container.innerHTML = ''; 
             const alertHtml = `
                 <div class="alert alert-${type} alert-dismissible fade show" role="alert">
                     ${message}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             `;
-            container.innerHTML = alertHtml;
+            container.insertAdjacentHTML('beforeend', alertHtml);
         }
 
+        // Funció auxiliar per netejar els errors del modal
+        function clearModalError() {
+            const errorContainer = document.getElementById('modalAlertContainer');
+            if (errorContainer) {
+                errorContainer.innerHTML = '';
+            }
+        }
+        
         // ===================================
         // GESTIÓ DE LA LLISTA (AJAX)
         // ===================================
@@ -154,14 +170,11 @@
          */
         function loadSetmanaTipusList(horariCon) {
             const tbody = document.getElementById('setmanaTipusList');
-            // Colspan ajustat a 4
             tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">[[#{carregant_franges}]]</td></tr>`; 
 
-            // URL de GET: /private/horaris/{horCon}/setmanes-tipus
             fetch(`${API_URL}/${horariCon}/setmanes-tipus`)
                 .then(response => {
                     if (!response.ok) {
-                        // Intentem parsejar l'error del JSON
                         return response.json().then(err => { throw new Error(err.dem || '[[#{error_carregar_franges}]]'); });
                     }
                     return response.json();
@@ -169,7 +182,6 @@
                 .then(data => {
                     tbody.innerHTML = ''; // Netejar
                     if (data.length === 0) {
-                        // Colspan ajustat a 4
                         tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">[[#{no_hi_ha_franges}]]</td></tr>`; 
                         return;
                     }
@@ -200,7 +212,6 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    // Colspan ajustat a 4
                     tbody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">${error.message}</td></tr>`; 
                     showAlert(error.message, 'danger');
                 });
@@ -217,11 +228,9 @@
             document.getElementById('oldDiasetCon').value = '';
             document.getElementById('oldHorini').value = '';
             document.getElementById('oldHorfin').value = '';
+            clearModalError(); 
         }
 
-        /**
-         * Carrega les dades al modal per a l'edició (sense durmin).
-         */
         function editFranja(diasetCon, horini, horfin) {
             document.getElementById('franjaModalLabel').textContent = /*[[#{actualitzar_franja}]]*/ 'Actualitzar Franja';
             
@@ -238,6 +247,8 @@
             document.getElementById('horini').value = horini;
             document.getElementById('horfin').value = horfin;
             
+            clearModalError(); 
+
             // OBRIR EL MODAL
             var myModal = new bootstrap.Modal(document.getElementById('franjaModal'));
             myModal.show();
@@ -252,17 +263,17 @@
             const form = event.target;
             const isEdit = document.getElementById('isEdit').value === 'true';
             
-            // URL de POST: /private/horaris/{horCon}/setmanes-tipus/add o update
+            clearModalError(); // Netejar errors anteriors abans de l'enviament
+
             const url = isEdit 
                 ? `${API_URL}/${HORARI_CON}/setmanes-tipus/update` 
                 : `${API_URL}/${HORARI_CON}/setmanes-tipus/add`;
 
-            // Recollir dades del formulari (sense durmin)
+            // Recollir dades del formulari
             const payload = {
                 diasetCon: form.diasetCon.value,
                 horini: form.horini.value,
                 horfin: form.horfin.value,
-                // Si és edició, incloem les claus antigues
                 ...(isEdit && {
                     oldDiasetCon: form.oldDiasetCon.value,
                     oldHorini: form.oldHorini.value,
@@ -277,13 +288,12 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    // Si el backend retorna errors de validació o lògica
+                    // Si el backend retorna errors de validació o lògica (4xx o 5xx)
                     return response.json().then(err => { 
                         // Suposant que 'err' conté el camp 'dem' amb el missatge d'error
                         throw new Error(err.dem || '[[#{error_guardar_franja}]]'); 
                     });
                 }
-                // Si és exitós, podem rebre el DTO retornat o simplement text/resposta d'èxit
                 return response.text(); 
             })
             .then(() => {
@@ -295,7 +305,8 @@
             })
             .catch(error => {
                 console.error('Error:', error);
-                showAlert(error.message, 'danger');
+                // MOSTRAR ERROR DINS DEL MODAL 
+                showAlert(error.message, 'danger', 'modalAlertContainer'); 
             });
         }
         
@@ -307,13 +318,14 @@
                 return;
             }
 
+            showAlert('', 'info', 'alertContainer'); // Netejar missatges previs
+
             const payload = {
                 diasetCon: diasetCon,
                 horini: horini,
                 horfin: horfin
             };
 
-            // URL de DELETE: /private/horaris/{horCon}/setmanes-tipus/delete
             fetch(`${API_URL}/${HORARI_CON}/setmanes-tipus/delete`, { 
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' },
@@ -331,7 +343,8 @@
             })
             .catch(error => {
                 console.error('Error:', error);
-                showAlert(error.message, 'danger');
+                // Mostrar l'error a la pantalla principal (fora del modal)
+                showAlert(error.message, 'danger'); 
             });
         }
 
