@@ -3,6 +3,7 @@ package uoc.edu.citaprevia.front.controller;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import uoc.edu.citaprevia.dto.AgendaDto;
@@ -724,4 +726,59 @@ public class PrivateController {
         }
     }
     
+ // 1. Endpoint per OBTENIR TOTA LA LLISTA (GET)
+    @GetMapping("/horaris/{horCon}/setmanes-tipus") // <--- Patró de URL COMPLET
+    @ResponseBody
+    public List<SetmanaTipusDto> getSetmanesTipus(@PathVariable("horCon") Long horCon, Locale locale) {
+        long startTime = System.currentTimeMillis();
+        LOG.info("### Inici PrivateController.getSetmanesTipus startTime={}, horCon={}", startTime, horCon);
+
+        try {
+            // CRÍTIC: Cridar al client de backend per obtenir la llista
+            List<SetmanaTipusDto> llista = citaPreviaPublicClient.getSetmanesTipusByHorari(horCon, locale);
+            return llista;
+
+        } catch (Exception e) {
+            LOG.error("### Error getSetmanesTipus horCon={}", horCon, e);
+            // Retornar una llista buida o gestionar l'excepció segons la política d'errors de l'API
+            return Collections.emptyList();
+        } finally {
+            long totalTime = (System.currentTimeMillis() - startTime);
+            LOG.info("### Final PrivateController.getSetmanesTipus totalTime={}", totalTime);
+        }
+    }
+/*
+    // 2. Endpoint per AFEGIR (POST)
+    // Assumeix que SetmanaTipusFormDto té els camps (diasetCon, horini, horfin, durmin)
+    @PostMapping("/{horCon}/setmanes-tipus/add")
+    @ResponseBody
+    public SetmanaTipusDto addSetmanaTipus(@PathVariable("horCon") Long horCon,
+                                             @RequestBody SetmanaTipusFormDto formDto,
+                                             Locale locale) {
+        // ... (Implementar crida a citaPreviaPrivateClient.addSetmanaTipus(horCon, formDto, locale))
+        // Retornar el DTO creat o un DTO d'èxit/error.
+        // Lògica similar a la que ja fas a /horaris/save
+    }
+
+    // 3. Endpoint per ACTUALITZAR (POST/PUT)
+    // Utilitza un DTO amb les claus antigues (old...) i les noves
+    @PostMapping("/{horCon}/setmanes-tipus/update") 
+    @ResponseBody
+    public SetmanaTipusDto updateSetmanaTipus(@PathVariable("horCon") Long horCon,
+                                                @RequestBody SetmanaTipusUpdateFormDto formDto,
+                                                Locale locale) {
+        // ... (Implementar crida a citaPreviaPrivateClient.updateSetmanaTipus(horCon, formDto, locale))
+    }
+
+    // 4. Endpoint per ESBORRAR (POST/DELETE)
+    // Utilitza un DTO amb les claus primàries (diasetCon, horini, horfin)
+    @PostMapping("/{horCon}/setmanes-tipus/delete")
+    @ResponseBody
+    public ErrorDto deleteSetmanaTipus(@PathVariable("horCon") Long horCon,
+                                         @RequestBody SetmanaTipusKeyDto keyDto,
+                                         Locale locale) {
+        // ... (Implementar crida a citaPreviaPrivateClient.deleteSetmanaTipus(horCon, keyDto, locale))
+        // Retornar null o un DTO d'error si hi ha problemes.
+    }
+    */
 }
