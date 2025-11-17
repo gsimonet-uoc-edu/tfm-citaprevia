@@ -2,6 +2,8 @@ package uoc.edu.citaprevia.front.privat.dto;
 
 import java.time.LocalTime;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Getter;
@@ -10,14 +12,17 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Getter @Setter @NoArgsConstructor @ToString
-public class SetmanaTipusDeleteDto {
+public class SetmanaTipusDeleteFormDto {
+	
 
     private Long diasetCon;
     
     // Assegura't que el format coincideixi amb el del JS (HH:mm)
-    @JsonFormat(pattern = "HH:mm") 
+    @DateTimeFormat(pattern = "HH:mm")
+    //@JsonFormat(pattern = "HH:mm") 
     private LocalTime horini;
 
-    @JsonFormat(pattern = "HH:mm")
+    @DateTimeFormat(pattern = "HH:mm")
+    //@JsonFormat(pattern = "HH:mm")
     private LocalTime horfin;
 }

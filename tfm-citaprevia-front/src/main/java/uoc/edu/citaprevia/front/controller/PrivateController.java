@@ -48,7 +48,7 @@ import uoc.edu.citaprevia.front.dto.CampConfigDto;
 import uoc.edu.citaprevia.front.dto.CitaFormDto;
 import uoc.edu.citaprevia.front.privat.dto.AgendaFormDto;
 import uoc.edu.citaprevia.front.privat.dto.HorariFormDto;
-import uoc.edu.citaprevia.front.privat.dto.SetmanaTipusDeleteDto;
+import uoc.edu.citaprevia.front.privat.dto.SetmanaTipusDeleteFormDto;
 import uoc.edu.citaprevia.front.privat.dto.SetmanaTipusFormDto;
 import uoc.edu.citaprevia.front.service.CitaPreviaPrivateClient;
 import uoc.edu.citaprevia.front.service.CitaPreviaPublicClient;
@@ -793,41 +793,44 @@ public class PrivateController {
 		}
 
     }
-/*
+
  // Mètode Actualitzat
     @PostMapping("/horaris/{horCon}/setmanes-tipus/delete")
     @ResponseBody
-    public void deleteSetmanaTipusOfHorari(@PathVariable("horCon") Long horCon,
-                                             @RequestBody SetmanaTipusDeleteDto deleteDto, 
+    public void deleteSetmanaTipusOfHorari(@PathVariable Long horCon,
+                                             @RequestBody SetmanaTipusDeleteFormDto form, 
                                              Locale locale) {
         long startTime = System.currentTimeMillis();
-        LOG.info("### Inici PrivateController.deleteSetmanaTipusOfHorari startTime={}, horCon={}, deleteDto={}", startTime, horCon, deleteDto.toString());
+        LOG.info("### Inici PrivateController.deleteSetmanaTipusOfHorari startTime={}, horCon={}, form={}", startTime, horCon, form.toString());
 
         try {
             // Implementar la crida amb els 3 camps de la clau.
             // Assumim que citaPreviaPrivateClient.deleteSetmanaTipus existeix i accepta aquests paràmetres.
-            citaPreviaPrivateClient.deleteSetmanaTipus(
-                horCon, 
-                deleteDto.getDiasetCon(), 
-                deleteDto.getHorini(), 
-                deleteDto.getHorfin(), 
-                locale
-            );
+        	SetmanaTipusDto settipDelete = new SetmanaTipusDto();
+        	HorariDto horari = new HorariDto();
+        	horari.setCon(horCon);
+        	settipDelete.setHorari(horari);
+        	settipDelete.setDiasetCon(form.getDiasetCon());
+        	settipDelete.setHorini(form.getHorini());
+        	settipDelete.setHorfin(form.getHorfin());
+            ErrorDto resultatDelete = citaPreviaPrivateClient.deleteSetmanaTipusOfHorari(horCon, settipDelete, locale);
             // Si no hi ha excepció, retorna un 200 OK / 204 No Content (amb 'void')
+            if (resultatDelete != null && !Utils.isEmpty(resultatDelete.getDem())) {
+            	String errorMessage = resultatDelete.getDem(); 
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage);
+            }
         } catch (Exception e) {
-            LOG.error("### Error deleteSetmanaTipusOfHorari horCon={}", horCon, e);
-            
+            LOG.error("### Error deleteSetmanaTipusOfHorari horCon={}", horCon, e);            
             // Llençar una ResponseStatusException amb el missatge d'error per al client.
             // Aquest missatge serà capturat pel JS.
-            String errorMessage = bundle.getMessage("error.eliminar.franja", null, locale);
-            
+            String errorMessage = bundle.getMessage("error.eliminar.franja", null, locale);           
             // Si la teva capa de negoci ja retorna un missatge personalitzat, pots capturar-lo i usar-lo aquí.
             // Per defecte, usem un error genèric si no podem obtenir un missatge específic de la lògica de negoci.
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage);
         } finally {
             long totalTime = (System.currentTimeMillis() - startTime);
-            LOG.info("### Final PrivateController.deleteSetmanaTipusOfHorari totalTime={}", totalTime);
+            LOG.info("### Final PrivateController.deleteSetmanaTipusOfHorari totalTime={}, horCon={}, form={}", totalTime, horCon, form.toString());
         }
     }
- */   
+    
 }

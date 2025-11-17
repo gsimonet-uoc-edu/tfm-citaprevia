@@ -243,5 +243,20 @@ public class CitaPreviaPrivateClientImpl implements CitaPreviaPrivateClient{
 		return response.getBody() == null ? new SetmanaTipusDto() : response.getBody();
 	}
 	
+	@Override
+	public ErrorDto deleteSetmanaTipusOfHorari(Long horCon, SetmanaTipusDto settip, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_HOR_CON, horCon);
+		params.put(PARAM_LOCALE, locale);
+		String url = getBaseApiUrl() + "/setmanes-tipus/horaris/{horCon}?lang={lang}";
+	    ResponseEntity<ErrorDto> response = restTemplate.exchange(url, 
+	        HttpMethod.DELETE, 
+	        new HttpEntity<>(settip),               
+	        ErrorDto.class,     
+	        params             
+	    );
+
+	    return response.getBody();
+	}
 	
 }
