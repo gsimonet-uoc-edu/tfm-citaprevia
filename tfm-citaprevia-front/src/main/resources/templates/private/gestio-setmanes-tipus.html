@@ -31,7 +31,7 @@
         </div>
 
         <div class="d-flex justify-content-end mb-3">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#franjaModal" th:onclick="clearFranjaModal()">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#franjaModal" onclick="clearFranjaModal()">
                 <i class="fas fa-plus me-1"></i> <span th:text="#{afegir_franja}">Afegir Nova Franja</span>
             </button>
         </div>
@@ -105,6 +105,35 @@
             </div>
         </div>
     </div>
+    
+    <div class="modal fade" id="deleteFranjaModal" tabindex="-1" aria-labelledby="deleteFranjaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="formDeleteFranja">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title" id="deleteFranjaModalLabel" th:text="#{confirmar_esborrat}">Confirmar Esborrat</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p th:text="#{missatge_confirmacio_esborrat_franja}">Està segur que vol esborrar aquesta franja horària? Aquesta acció és irreversible.</p>
+                        <p class="text-danger">
+                            <strong th:text="#{franja_a_esborrar}">Franja a Esborrar:</strong> 
+                            <span id="deleteFranjaInfo" class="fw-bold"></span>
+                        </p>
+                        
+                        <input type="hidden" id="delete_diasetCon" name="diasetCon" />
+                        <input type="hidden" id="delete_horini" name="horini" />
+                        <input type="hidden" id="delete_horfin" name="horfin" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{cancelar}">Cancel·lar</button>
+                        <button type="submit" class="btn btn-danger" th:text="#{esborrar}">Esborrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
 
     <th:block th:replace="~{common/footer :: footer}"></th:block>
 
@@ -117,12 +146,26 @@
         const API_URL = /*[[@{/private/horaris}]]*/ '/private/horaris';
         const DIES_SETMANA = /*[[${diesSetmana}]]*/ {}; // Map<Integer, String>
 
+        // ===================================
+        // GESTIÓ INICIAL I LISTENERS
+        // ===================================
         document.addEventListener('DOMContentLoaded', function() {
             if (HORARI_CON > 0) {
                 loadSetmanaTipusList(HORARI_CON);
             }
             
             document.getElementById('formFranja').addEventListener('submit', handleFormSubmit);
+            
+            // Listener per enviar la petició d'eliminació des del modal
+            document.getElementById('formDeleteFranja').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const diasetCon = document.getElementById('delete_diasetCon').value;
+                const horini = document.getElementById('delete_horini').value;
+                const horfin = document.getElementById('delete_horfin').value;
+                
+                // Cridar la funció d'esborrat AJAX
+                deleteFranja(diasetCon, horini, horfin);
+            });
             
             const franjaModalEl = document.getElementById('franjaModal');
             franjaModalEl.addEventListener('hidden.bs.modal', clearModalError);
@@ -182,8 +225,10 @@
                                 <td>${franja.horfin}</td>
                                 <td class="text-end">
                                     <button type="button" class="btn btn-sm btn-outline-danger" 
-                                            onclick="deleteFranja(${franja.diasetCon}, '${franja.horini}', '${franja.horfin}')"
-                                            title="[[#{esborrar}]]">
+                                            onclick="prepararEsborrarFranja(${franja.diasetCon}, '${franja.horini}', '${franja.horfin}', '${diaNom}')"
+                                            title="[[#{esborrar}]]" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#deleteFranjaModal">
                                         <i class="fas fa-trash"></i> [[#{esborrar}]]
                                     </button>
                                 </td>
@@ -200,13 +245,12 @@
         }
         
         // ===================================
-        // GESTIÓ DEL MODAL I FORMULARI
+        // GESTIÓ DEL MODAL D'AFEGIR/EDITAR
         // ===================================
 
         function clearFranjaModal() {
             document.getElementById('formFranja').reset();
             document.getElementById('franjaModalLabel').textContent = /*[[#{afegir_franja}]]*/ 'Afegir Franja';
-            // Simplificat per només mode ADD
             clearModalError(); 
         }
 
@@ -219,7 +263,6 @@
             
             clearModalError(); 
 
-            // URL fixada a l'operació d'ADD
             const url = `${API_URL}/${HORARI_CON}/setmanes-tipus/add`;
 
             const payload = {
@@ -235,17 +278,27 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    // Si el backend retorna errors (4xx o 5xx)
-                    return response.json().then(err => { 
-                        // CERCA L'ERROR DETALLAT: Primer 'message' (Spring Exception), després 'dem' (DTO)
-                        const errorMessage = err.message || err.dem || '[[#{error_guardar_franja}]]';
-                        throw new Error(errorMessage); 
-                    });
+                    // *** GESTIÓ D'ERROR ROBUSTA (amb clonació) ***
+                    const clonedResponse = response.clone();
+                    
+                    return response.json()
+                        .then(err => {
+                            const errorMessage = err.message || err.dem || '[[#{error_guardar_franja}]]';
+                            throw new Error(errorMessage);
+                        })
+                        .catch(jsonError => {
+                            return clonedResponse.text().then(text => {
+                                if (text && text.trim().length > 0) {
+                                    const shortText = text.length > 300 ? text.substring(0, 300) + '...' : text;
+                                    throw new Error(shortText);
+                                }
+                                throw new Error('[[#{error_guardar_franja}]]');
+                            });
+                        });
                 }
                 return response.text(); 
             })
             .then(() => {
-                // Tancar modal i actualitzar llista
                 const modal = bootstrap.Modal.getInstance(document.getElementById('franjaModal'));
                 if (modal) modal.hide();
                 showAlert('[[#{franja_afegida_ok}]]', 'success');
@@ -253,21 +306,36 @@
             })
             .catch(error => {
                 console.error('Error:', error);
-                // MOSTRAR ERROR NOMÉS DINS DEL MODAL
                 showAlert(error.message, 'danger', 'modalAlertContainer'); 
             });
         }
         
+        // ===================================
+        // GESTIÓ DEL MODAL D'ELIMINACIÓ
+        // ===================================
+
         /**
-         * Elimina una franja horària mitjançant AJAX.
+         * Funció per carregar la clau de la franja al formulari ocult del modal d'eliminació.
+         */
+        function prepararEsborrarFranja(diasetCon, horini, horfin, diaNom) {
+            document.getElementById('delete_diasetCon').value = diasetCon;
+            document.getElementById('delete_horini').value = horini;
+            document.getElementById('delete_horfin').value = horfin;
+            document.getElementById('deleteFranjaInfo').textContent = `${diaNom}: de ${horini} a ${horfin}`;
+            showAlert('', 'info', 'alertContainer'); // Neteja l'alerta principal
+        }
+
+        /**
+         * Elimina una franja horària mitjançant AJAX (Cridada des del modal).
          */
         function deleteFranja(diasetCon, horini, horfin) {
-            if (!confirm(/*[[#{confirmar_esborrat_franja}]]*/ "Està segur que vol esborrar aquesta franja?")) {
-                return;
-            }
+            // Tancar el modal de confirmació
+            const modalEl = document.getElementById('deleteFranjaModal');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            if (modal) modal.hide();
 
-            showAlert('', 'info', 'alertContainer'); // Per netejar missatges anteriors
-
+            showAlert(/*[[#{esborrant_franja}]]*/ 'Esborrant franja...', 'info', 'alertContainer'); 
+            
             const payload = {
                 diasetCon: diasetCon,
                 horini: horini,
@@ -279,12 +347,25 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             })
+            // *** GESTIÓ D'ERROR ROBUSTA (amb clonació) ***
             .then(response => {
                 if (!response.ok) {
-                    return response.json().then(err => { 
-                        const errorMessage = err.dem || '[[#{error_eliminar_franja}]]';
-                        throw new Error(errorMessage); 
-                    });
+                    const clonedResponse = response.clone();
+                    
+                    return response.json()
+                        .then(err => {
+                            const errorMessage = err.message || err.dem || '[[#{error_eliminar_franja}]]';
+                            throw new Error(errorMessage);
+                        })
+                        .catch(jsonError => {
+                            return clonedResponse.text().then(text => {
+                                if (text && text.trim().length > 0) {
+                                    const shortText = text.length > 300 ? text.substring(0, 300) + '...' : text;
+                                    throw new Error(shortText);
+                                }
+                                throw new Error('[[#{error_eliminar_franja}]]');
+                            });
+                        });
                 }
                 return response.text(); 
             })
