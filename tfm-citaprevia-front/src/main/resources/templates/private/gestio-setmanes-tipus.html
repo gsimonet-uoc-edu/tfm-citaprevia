@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
 <head>
     <meta charset="UTF-8">
-    <title th:text="#{gestio_horaris}">Gestió d'Horaris</title>
+    <title th:text="#{gestio_franges_horaries}">Gestió de Franges Horàries</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
@@ -14,78 +14,47 @@
     <div class="container py-4">
         
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2 class="mb-0" th:text="#{gestio_horaris}">Gestió d'Horaris</h2>
+            <h2 class="mb-0" th:text="#{gestio_franges_horaries}">Gestió de Franges Horàries</h2>
             
-            <a th:href="@{/private/calendari}" class="btn btn-secondary">
-                <i class="fas fa-calendar-alt me-2"></i> <span th:text="#{tornar_calendari_privat}">Tornar al Calendari Privat</span>
+            <a th:href="@{/private/gestio/horaris}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i> <span th:text="#{tornar_gestio_horaris}">Tornar a Horaris</span>
             </a>
         </div>
-        <p class="text-muted" th:text="#{descripcio_gestio_horaris}">Gestió dels horaris disponibles per a la cita prèvia.</p>
-
-        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
-            <span th:text="${success}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        
+        <div class="alert alert-info shadow-sm mb-4">
+            <p class="mb-1">
+                <strong th:text="#{horari}">Horari:</strong> 
+                <span th:text="${horariDto.dec}">Horari Estàndard</span> 
+                (<span th:text="${horariDto.con}">1</span>)
+            </p>
+            <p class="mb-0 text-muted" th:text="${horariDto.dem}">Descripció extensa de l'horari.</p>
         </div>
-        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-            <span th:text="${error}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+
+        <div class="d-flex justify-content-end mb-3">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#franjaModal" th:onclick="clearFranjaModal()">
+                <i class="fas fa-plus me-1"></i> <span th:text="#{afegir_franja}">Afegir Nova Franja</span>
+            </button>
         </div>
         
-        <div class="card shadow-sm mb-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <span th:text="#{llistat_horaris}">Llistat d'Horaris</span>
-                
-                <button type="button" class="btn btn-primary btn-sm" 
-                        data-bs-toggle="modal" data-bs-target="#horariModal"
-                        onclick="clearHorariModal()">
-                    <i class="fas fa-plus me-1"></i> <span th:text="#{nou_horari}">Nou Horari</span>
-                </button>
-            </div>
+        <div id="alertContainer" class="mb-3"></div>
+
+        <div class="card shadow-sm">
+            <div class="card-header" th:text="#{franges_setmanals}">Franges Setmanals</div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-striped table-hover mb-0">
                         <thead>
                             <tr>
-                                <th th:text="#{con}">ID</th>
-                                <th th:text="#{descripcio}">Descripció</th>
-                                <th th:text="#{descripcio_extensa}">Detall</th>
-                                <th th:text="#{tipus_cita}">Tipus Cita</th>
+                                <th th:text="#{dia_setmana}">Dia</th>
+                                <th th:text="#{hora_inici}">Hora Inici</th>
+                                <th th:text="#{hora_fi}">Hora Fi</th>
+                                <th th:text="#{durada_min}">Durada (min.)</th>
                                 <th class="text-end" th:text="#{accions}">Accions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr th:each="horari : ${horaris}">
-                                <td th:text="${horari.con}">1</td>
-                                <td th:text="${horari.dec}">Horari Estàndard</td>
-                                <td th:text="${horari.dem}">Horari de dilluns a divendres</td>
-                                <td th:text="${horari.tipusCita.dec}">Cita Prèvia General</td>
-                                <td class="text-end">
-                                    
-                                    <a th:href="@{/private/gestio/horaris/{con}/setmanes-tipus(con=${horari.con})}" 
-                                       class="btn btn-sm btn-outline-warning me-2"
-                                       th:title="#{gestio_franges_horaries}">
-                                        <i class="fas fa-clock"></i>
-                                    </a>
-                                    
-                                    <button type="button" class="btn btn-sm btn-outline-info me-2" 
-                                            data-bs-toggle="modal" data-bs-target="#horariModal"
-                                            th:onclick="editHorari(
-                                                [[${horari.con}]],
-                                                '[[${horari.dec}]]',
-                                                '[[${horari.dem}]]',
-                                                [[${horari.tipusCita.con}]]
-                                            )" 
-                                            th:title="#{editar}">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    
-                                    <button type="button" class="btn btn-sm btn-outline-danger" 
-                                            data-bs-toggle="modal" data-bs-target="#esborrarHorariModal" 
-                                            th:onclick="prepararEsborrarHorari([[${horari.con}]])"
-                                            th:title="#{esborrar}">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </td>
+                        <tbody id="setmanaTipusList">
+                            <tr>
+                                <td colspan="5" class="text-center text-muted" th:text="#{carregant_franges}">Carregant franges...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -95,39 +64,46 @@
         
     </div>
 
-    <div class="modal fade" id="horariModal" tabindex="-1" aria-labelledby="horariModalLabel" aria-hidden="true">
+    <div class="modal fade" id="franjaModal" tabindex="-1" aria-labelledby="franjaModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form th:action="@{/private/gestio/horaris/save}" method="post" th:object="${horariForm}" id="formHorari">
+                <form id="formFranja"> 
                     <div class="modal-header">
-                        <h5 class="modal-title" id="horariModalLabel" th:text="#{nou_horari}">Nou Horari</h5>
+                        <h5 class="modal-title" id="franjaModalLabel" th:text="#{afegir_franja}">Afegir Franja</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <input type="hidden" th:field="*{con}" id="horariCon" value=""/>
+                        <input type="hidden" name="horariCon" th:value="${horariCon}" id="formHorariCon"/>
+                        
+                        <input type="hidden" name="isEdit" id="isEdit" value="false"/> 
+                        
+                        <input type="hidden" name="oldDiasetCon" id="oldDiasetCon"/>
+                        <input type="hidden" name="oldHorini" id="oldHorini"/>
+                        <input type="hidden" name="oldHorfin" id="oldHorfin"/>
                         
                         <div class="mb-3">
-                            <label for="dec" class="form-label" th:text="#{descripcio_curta}">Descripció Curta</label>
-                            <input type="text" class="form-control" th:field="*{dec}" id="dec" required th:errorclass="is-invalid"/>
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('dec')}" th:errors="*{dec}">Error dec</div>
+                            <label for="diasetCon" class="form-label" th:text="#{dia_setmana}">Dia de la Setmana</label>
+                            <select class="form-select" name="diasetCon" id="diasetCon" required>
+                                <option value="">[[#{selecciona}]]</option>
+                                <option th:each="dia : ${diesSetmana}" 
+                                        th:value="${dia.key}" 
+                                        th:text="${dia.value}">Dia</option>
+                            </select>
                         </div>
                         
-                        <div class="mb-3">
-                            <label for="dem" class="form-label" th:text="#{descripcio_extensa}">Descripció Extensa</label>
-                            <textarea class="form-control" th:field="*{dem}" id="dem" rows="3" th:errorclass="is-invalid"></textarea>
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('dem')}" th:errors="*{dem}">Error dem</div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="horini" class="form-label" th:text="#{hora_inici}">Hora Inici</label>
+                                <input type="time" class="form-control" name="horini" id="horini" required step="600"/> </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="horfin" class="form-label" th:text="#{hora_fi}">Hora Fi</label>
+                                <input type="time" class="form-control" name="horfin" id="horfin" required step="600"/>
+                            </div>
                         </div>
 
                         <div class="mb-3">
-                            <label for="tipusCitaCon" class="form-label" th:text="#{tipus_cita}">Tipus Cita</label>
-                            <select class="form-select" th:field="*{tipusCitaCon}" id="tipusCitaCon" required th:errorclass="is-invalid">
-                                <option value="">[[#{selecciona}]]</option>
-                                <option th:each="tipus : ${tipusCites}" 
-                                        th:value="${tipus.con}" 
-                                        th:text="${tipus.dec}"
-                                        th:selected="${horariForm != null and horariForm.tipusCitaCon == tipus.con}">Tipus Cita</option>
-                            </select>
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('tipusCitaCon')}" th:errors="*{tipusCitaCon}">Error Tipus Cita</div>
+                            <label for="durmin" class="form-label" th:text="#{durada_min}">Durada (min.)</label>
+                            <input type="number" class="form-control" name="durmin" id="durmin" required min="10" step="10"/>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -139,28 +115,6 @@
         </div>
     </div>
 
-    <div class="modal fade" id="esborrarHorariModal" tabindex="-1" aria-labelledby="esborrarHorariModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form th:action="@{/private/gestio/horaris/delete}" method="post">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="esborrarHorariModalLabel" th:text="#{confirmar_esborrat}">Confirmar Esborrat</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <input type="hidden" name="con" id="esborrarHorariCon" value=""/>
-                        <p th:text="#{confirmacio_esborrat_horari}">Està segur que vol esborrar aquest horari?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{cancelar}">Cancel·lar</button>
-                        <button type="submit" class="btn btn-danger" th:text="#{esborrar}">Esborrar</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-
     <th:block th:replace="~{common/footer :: footer}"></th:block>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -168,63 +122,216 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
 
-        // CRÍTIC: Aquesta variable detecta si el controlador ha injectat el horariForm via FlashAttribute
-        var isFormPresent = /*[[${horariForm != null}]]*/ false; 
+        const HORARI_CON = /*[[${horariCon}]]*/ 0;
+        const API_URL = /*[[@{/private/api/horaris}]]*/ '/private/api/horaris';
+        const DIES_SETMANA = /*[[${diesSetmana}]]*/ {}; // Map<Integer, String>
 
         document.addEventListener('DOMContentLoaded', function() {
-            
-            // Si el formulari és present al Model (només hauria de ser per errors de validació), obrim el modal
-            if (isFormPresent) {
-                var myModal = new bootstrap.Modal(document.getElementById('horariModal'));
-                myModal.show();
-                 // Si hi ha errors, el títol ha de reflectir Edició o Nou
-                if (document.getElementById('horariCon').value !== '') {
-                    document.getElementById('horariModalLabel').textContent = /*[[#{editar_horari}]]*/ 'Editar Horari';
-                }
+            if (HORARI_CON > 0) {
+                loadSetmanaTipusList(HORARI_CON);
             }
+            
+            // Gestió de l'enviament del formulari via AJAX
+            document.getElementById('formFranja').addEventListener('submit', handleFormSubmit);
         });
 
-        /**
-         * Funció per netejar el formulari abans d'una nova alta (clic al botó Nou).
-         */
-        function clearHorariModal() {
-            document.getElementById('formHorari').reset();
-            document.getElementById('horariCon').value = '';
-            document.getElementById('horariModalLabel').textContent = /*[[#{nou_horari}]]*/ 'Nou Horari';
-            // Netejar classes d'errors (per si venim d'un error de validació anterior)
-            document.getElementById('dec').classList.remove('is-invalid');
-            document.getElementById('dem').classList.remove('is-invalid');
-            document.getElementById('tipusCitaCon').classList.remove('is-invalid');
+        // ===================================
+        // GESTIÓ DE MISSATGES D'ALERTA
+        // ===================================
+
+        function showAlert(message, type = 'success') {
+            const container = document.getElementById('alertContainer');
+            const alertHtml = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+            container.innerHTML = alertHtml;
         }
 
+        // ===================================
+        // GESTIÓ DE LA LLISTA (AJAX)
+        // ===================================
+
         /**
-         * Carrega les dades de l'Horari seleccionat al modal d'edició (lògica antiga).
+         * Carrega la llista de setmanes tipus des del backend i actualitza la taula.
          */
-        function editHorari(con, dec, dem, tipusCitaCon) {
-            document.getElementById('horariModalLabel').textContent = /*[[#{editar_horari}]]*/ 'Editar Horari';
+        function loadSetmanaTipusList(horariCon) {
+            const tbody = document.getElementById('setmanaTipusList');
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">[[#{carregant_franges}]]</td></tr>`;
+
+            fetch(`${API_URL}/${horariCon}/setmanes-tipus`)
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => { throw new Error(err.dem || '[[#{error_carregar_franges}]]'); });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    tbody.innerHTML = ''; // Netejar
+                    if (data.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">[[#{no_hi_ha_franges}]]</td></tr>`;
+                        return;
+                    }
+
+                    data.forEach(franja => {
+                        const diaNom = DIES_SETMANA[franja.diasetCon] || 'Dia Desconegut';
+                        const row = `
+                            <tr>
+                                <td>${diaNom}</td>
+                                <td>${franja.horini}</td>
+                                <td>${franja.horfin}</td>
+                                <td>${franja.durmin}</td>
+                                <td class="text-end">
+                                    <button type="button" class="btn btn-sm btn-outline-info me-2" 
+                                            onclick="editFranja(${franja.diasetCon}, '${franja.horini}', '${franja.horfin}', ${franja.durmin})" 
+                                            title="[[#{editar}]]">
+                                        <i class="fas fa-edit"></i> [[#{actualitzar}]]
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" 
+                                            onclick="deleteFranja(${franja.diasetCon}, '${franja.horini}', '${franja.horfin}')"
+                                            title="[[#{esborrar}]]">
+                                        <i class="fas fa-trash"></i> [[#{esborrar}]]
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                        tbody.insertAdjacentHTML('beforeend', row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    tbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger">${error.message}</td></tr>`;
+                    showAlert(error.message, 'danger');
+                });
+        }
+        
+        // ===================================
+        // GESTIÓ DEL MODAL I FORMULARI
+        // ===================================
+
+        function clearFranjaModal() {
+            document.getElementById('formFranja').reset();
+            document.getElementById('franjaModalLabel').textContent = /*[[#{afegir_franja}]]*/ 'Afegir Franja';
+            document.getElementById('isEdit').value = 'false';
+            document.getElementById('oldDiasetCon').value = '';
+            document.getElementById('oldHorini').value = '';
+            document.getElementById('oldHorfin').value = '';
+        }
+
+        function editFranja(diasetCon, horini, horfin, durmin) {
+            document.getElementById('franjaModalLabel').textContent = /*[[#{actualitzar_franja}]]*/ 'Actualitzar Franja';
             
-            // 1. Carregar valors principals
-            document.getElementById('horariCon').value = con; 
-            document.getElementById('dec').value = dec;
-            document.getElementById('dem').value = dem || ''; 
+            // Mode Edició
+            document.getElementById('isEdit').value = 'true'; 
+
+            // Valors actuals (keys per a l'update)
+            document.getElementById('oldDiasetCon').value = diasetCon;
+            document.getElementById('oldHorini').value = horini;
+            document.getElementById('oldHorfin').value = horfin;
+
+            // Valors del formulari
+            document.getElementById('diasetCon').value = diasetCon; 
+            document.getElementById('horini').value = horini;
+            document.getElementById('horfin').value = horfin;
+            document.getElementById('durmin').value = durmin;
             
-            // 2. Carregar valors de Lookups
-            document.getElementById('tipusCitaCon').value = tipusCitaCon;
+            // OBRIR EL MODAL
+            var myModal = new bootstrap.Modal(document.getElementById('franjaModal'));
+            myModal.show();
+        }
+
+
+        /**
+         * Envia el formulari d'afegir/actualitzar franja via AJAX.
+         */
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const isEdit = document.getElementById('isEdit').value === 'true';
             
-            // 3. Netejar classes d'errors (per si venim d'un error de validació anterior)
-            document.getElementById('dec').classList.remove('is-invalid');
-            document.getElementById('dem').classList.remove('is-invalid');
-            document.getElementById('tipusCitaCon').classList.remove('is-invalid');
-            
-            // El modal ja s'obrirà automàticament gràcies als data-bs-toggle/target del botó
+            const url = isEdit 
+                ? `${API_URL}/${HORARI_CON}/setmanes-tipus/update` 
+                : `${API_URL}/${HORARI_CON}/setmanes-tipus/add`;
+
+            // Recollir dades del formulari
+            const payload = {
+                diasetCon: form.diasetCon.value,
+                horini: form.horini.value,
+                horfin: form.horfin.value,
+                durmin: form.durmin.value,
+                // Si és edició, incloem les claus antigues
+                ...(isEdit && {
+                    oldDiasetCon: form.oldDiasetCon.value,
+                    oldHorini: form.oldHorini.value,
+                    oldHorfin: form.oldHorfin.value
+                })
+            };
+
+            fetch(url, { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    // Si el backend retorna errors de validació o lògica
+                    return response.json().then(err => { 
+                        // Suposant que 'err' conté el camp 'dem' amb el missatge d'error
+                        throw new Error(err.dem || '[[#{error_guardar_franja}]]'); 
+                    });
+                }
+                return response.text(); 
+            })
+            .then(() => {
+                // Tancar modal i actualitzar llista
+                const modal = bootstrap.Modal.getInstance(document.getElementById('franjaModal'));
+                if (modal) modal.hide();
+                showAlert(isEdit ? '[[#{franja_actualitzada_ok}]]' : '[[#{franja_afegida_ok}]]', 'success');
+                loadSetmanaTipusList(HORARI_CON); 
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert(error.message, 'danger');
+            });
         }
         
         /**
-         * Funció per carregar el CON de l'horari al formulari ocult del modal d'eliminació.
+         * Elimina una franja horària mitjançant AJAX.
          */
-        function prepararEsborrarHorari(con) {
-            document.getElementById('esborrarHorariCon').value = con;
+        function deleteFranja(diasetCon, horini, horfin) {
+            if (!confirm(/*[[#{confirmar_esborrat_franja}]]*/ "Està segur que vol esborrar aquesta franja?")) {
+                return;
+            }
+
+            const payload = {
+                diasetCon: diasetCon,
+                horini: horini,
+                horfin: horfin
+            };
+
+            fetch(`${API_URL}/${HORARI_CON}/setmanes-tipus/delete`, { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.dem || '[[#{error_eliminar_franja}]]'); });
+                }
+                return response.text(); 
+            })
+            .then(() => {
+                showAlert(/*[[#{franja_esborrada_ok}]]*/ 'Franja horària esborrada correctament.', 'success');
+                loadSetmanaTipusList(HORARI_CON); 
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert(error.message, 'danger');
+            });
         }
+
 
         /*]]>*/
     </script>

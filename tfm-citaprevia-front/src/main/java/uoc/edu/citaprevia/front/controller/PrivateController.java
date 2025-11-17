@@ -43,6 +43,7 @@ import uoc.edu.citaprevia.front.dto.CampConfigDto;
 import uoc.edu.citaprevia.front.dto.CitaFormDto;
 import uoc.edu.citaprevia.front.privat.dto.AgendaFormDto;
 import uoc.edu.citaprevia.front.privat.dto.HorariFormDto;
+import uoc.edu.citaprevia.front.privat.dto.SetmanaTipusFormDto;
 import uoc.edu.citaprevia.front.service.CitaPreviaPrivateClient;
 import uoc.edu.citaprevia.front.service.CitaPreviaPublicClient;
 import uoc.edu.citaprevia.front.service.MetacamapService;
@@ -687,11 +688,11 @@ public class PrivateController {
     }
     
     @GetMapping("/gestio/horaris/{horCon}/setmanes-tipus")
-    public String gestioSetmanesTipus(@PathVariable("horCon") Long horCon,
-                                      Model model,
-                                      Locale locale,
-                                      RedirectAttributes redirect) {
-        long startTime = System.currentTimeMillis();
+    public String gestioSetmanesTipus(@PathVariable("horCon") Long horCon, 
+                                        Model model, 
+                                        RedirectAttributes redirect, 
+                                        Locale locale) {
+        long startTime=System.currentTimeMillis();
         LOG.info("### Inici PrivateController.gestioSetmanesTipus startTime={}, horCon={}", startTime, horCon);
 
         try {
@@ -705,8 +706,13 @@ public class PrivateController {
             // 2. Afegir dades al model
             model.addAttribute("horariDto", horariDto);
             model.addAttribute("horariCon", horCon); // Per simplicitat al JS i form
-            model.addAttribute("diesSetmana", getDiesSetmana());
-            // L'ompliment de la llista (SetmanaTipus) es farà per AJAX al Javascript de la vista.
+            model.addAttribute("diesSetmana", getDiesSetmana()); // Mètode que retorna Map<Integer, String> dels dies
+            
+            // 3. Afegir HorariFormDto per al modal d'afegir franja (important per a la validació)
+            model.addAttribute("setmanaTipusForm", new SetmanaTipusFormDto()); // <-- Haureu de crear aquest DTO
+            
+            // Retorna el nom de la nova plantilla
+            return "private/gestio-setmanes-tipus";
             
         } catch (Exception e) {
             LOG.error("### Error gestioSetmanesTipus horCon={}", horCon, e);
@@ -716,8 +722,6 @@ public class PrivateController {
             long totalTime = (System.currentTimeMillis() - startTime);
             LOG.info("### Final PrivateController.gestioSetmanesTipus totalTime={}", totalTime);
         }
-        
-        return "private/gestio-setmanes-tipus"; // El nom de la nova vista HTML
     }
     
 }

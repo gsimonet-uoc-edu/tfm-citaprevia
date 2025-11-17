@@ -60,6 +60,10 @@
                                 <td th:text="${horari.tipusCita.dec}">Cites Generals</td>
                                 
                                 <td>
+                                <a th:href="@{/private/gestio/horaris/{con}/setmanes-tipus(con=${horari.con})}" 
+           class="btn btn-sm btn-outline-warning me-2"
+           th:title="#{gestio_setmanes_tipus}">
+            <i class="fas fa-clock"></i> </a>
                                     <button class="btn btn-sm btn-warning me-2" 
                                             th:attr="onclick='editHorari(\'' + ${horari.con} + '\',\'' + ${horari.dec} + '\',\'' + (${horari.dem} ?: '') + '\',\'' + ${horari.tipusCita.con} + '\')'">
                                         <i class="fas fa-edit"></i>
