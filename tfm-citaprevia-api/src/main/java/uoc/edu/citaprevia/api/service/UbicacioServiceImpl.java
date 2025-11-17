@@ -45,7 +45,4 @@ public class UbicacioServiceImpl implements UbicacioService {
 		return resposta;
 	}
 
-	
-	// 			return new ImiErrorDto(9999L,bundle.getMessage(MercatsConstants.DELETE_COOPERATIVA_EXPEDIENT_EXISTENT, null, locale));
-
 }

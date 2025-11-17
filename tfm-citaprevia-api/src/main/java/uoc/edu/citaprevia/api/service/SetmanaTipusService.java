@@ -9,4 +9,6 @@ public interface SetmanaTipusService {
 
 	List<SetmanaTipusDto> getSetmanaTipusByHorari(Long horCon, Locale locale);
 
+	SetmanaTipusDto saveSetmanaTipus(SetmanaTipusDto settip, Locale locale);
+
 }

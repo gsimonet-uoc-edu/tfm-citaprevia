@@ -4,13 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import uoc.edu.citaprevia.api.dao.SetmanaTipusDao;
 import uoc.edu.citaprevia.api.model.SetmanaTipus;
 import uoc.edu.citaprevia.api.utils.Converter;
+import uoc.edu.citaprevia.dto.HorariDto;
 import uoc.edu.citaprevia.dto.SetmanaTipusDto;
+import uoc.edu.citaprevia.dto.generic.ErrorDto;
+import uoc.edu.citaprevia.util.Constants;
 import uoc.edu.citaprevia.util.Utils;
 
 @Service("setmanaTipusService")
@@ -18,6 +24,12 @@ public class SetmanaTipusServiceImpl implements SetmanaTipusService{
 	
 	@Autowired
 	private SetmanaTipusDao setmanaTipusDao;
+	
+	private static final Logger LOG = LoggerFactory.getLogger(SetmanaTipusServiceImpl.class);
+
+	
+	@Autowired
+	protected MessageSource bundle;
 	
 	@Override
 	public List<SetmanaTipusDto> getSetmanaTipusByHorari(Long horCon, Locale locale) {
@@ -28,6 +40,30 @@ public class SetmanaTipusServiceImpl implements SetmanaTipusService{
 			llista.forEach(item->dtos.add(Converter.toDto(item)));
 		}	
 		return dtos;
+	}
+	
+	@Override
+	public SetmanaTipusDto saveSetmanaTipus (SetmanaTipusDto settip, Locale locale) {
+		long startTime=System.currentTimeMillis();
+		LOG.info("### Inici SetmanaTipusServiceImpl.saveSetmanaTipus startTime={}, settip={}", startTime, settip.toString());
+		SetmanaTipusDto dto = new SetmanaTipusDto();
+		try {
+			if (settip != null && settip.getHorari() != null && !Utils.isEmpty(settip.getHorari().getCon()) && !Utils.isEmpty(settip.getDiasetCon()) && settip.getHorini() != null && settip.getHorfin() != null) {
+				dto = Converter.toDto(setmanaTipusDao.saveSetmanaTipus(Converter.toDao(settip)));
+			} else {
+				dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL, bundle.getMessage(Constants.ERROR_API_CRUD_SETMANES_TIPUS, null, locale)));
+				LOG.error("### Error SetmanaTipusServiceImpl.saveSetmanaTipus: " , dto.getErrors().get(0).toString());
+			}
+		} catch (Exception e) {
+			dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL, bundle.getMessage(Constants.ERROR_API_CRUD_SETMANES_TIPUS, null, locale)));
+			LOG.error("### Error SetmanaTipusServiceImpl.saveSetmanaTipus:", e);
+			LOG.error("### Error SetmanaTipusServiceImpl.saveSetmanaTipus: " , bundle.getMessage(Constants.ERROR_API_CRUD_SETMANES_TIPUS, null, locale));
+						
+		} finally {
+			long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final SetmanaTipusServiceImpl.saveSetmanaTipus totalTime={}, horari={}", totalTime, dto.toString());
+		}
+		return dto;				
 	}
 
 }

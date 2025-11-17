@@ -8,6 +8,8 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,9 +27,11 @@ public class SetmanaTipusId implements java.io.Serializable {
 	private Long diasetCon;
 	
 	@Column(name = "horini", columnDefinition = "TIME", nullable = false)
+	@JsonFormat(pattern = "HH:mm")
     private LocalTime horini;
 
     @Column(name = "horfin", columnDefinition = "TIME", nullable = false)
+    @JsonFormat(pattern = "HH:mm")
     private LocalTime horfin;
 
 }

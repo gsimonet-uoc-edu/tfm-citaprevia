@@ -48,8 +48,10 @@ public class HorariServiceImpl implements HorariService{
 				dto = Converter.toDto(dao);
 			}
 		} catch (Exception e) {
-			LOG.error("### Error HorariServiceImpl.getHorari: " , bundle.getMessage(Constants.ERROR_API_FIND_HORARIS, null, locale));
-			e.printStackTrace();			
+			dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL, bundle.getMessage(Constants.ERROR_API_CRUD_HORARI, null, locale)));
+			LOG.error("### Error HorariServiceImpl.getHorari:", e);
+			LOG.error("### Error HorariServiceImpl.getHorari: " , bundle.getMessage(Constants.ERROR_API_CRUD_HORARI, null, locale));
+					
 		} finally {
 			long totalTime = (System.currentTimeMillis() - startTime);
 			LOG.info("### Final HorariServiceImpl.getHorari totalTime={}, horari={}", totalTime, dto.toString());
