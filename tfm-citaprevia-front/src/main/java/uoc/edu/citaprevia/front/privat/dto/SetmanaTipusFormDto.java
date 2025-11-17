@@ -31,8 +31,4 @@ public class SetmanaTipusFormDto {
     @DateTimeFormat(pattern = "HH:mm")
     private LocalTime horfin;
     
-    /**
-     * Camp utilitzat a la vista per marcar si aquesta franja de dia ha de ser eliminada/buidada.
-     */
-    private Boolean delete;
 }

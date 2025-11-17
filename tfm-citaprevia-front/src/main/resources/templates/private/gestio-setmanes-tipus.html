@@ -48,7 +48,6 @@
                                 <th th:text="#{dia_setmana}">Dia</th>
                                 <th th:text="#{hora_inici}">Hora Inici</th>
                                 <th th:text="#{hora_fi}">Hora Fi</th>
-                                <th th:text="#{durada_min}">Durada (min.)</th>
                                 <th class="text-end" th:text="#{accions}">Accions</th>
                             </tr>
                         </thead>
@@ -99,11 +98,6 @@
                                 <label for="horfin" class="form-label" th:text="#{hora_fi}">Hora Fi</label>
                                 <input type="time" class="form-control" name="horfin" id="horfin" required step="600"/>
                             </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="durmin" class="form-label" th:text="#{durada_min}">Durada (min.)</label>
-                            <input type="number" class="form-control" name="durmin" id="durmin" required min="10" step="10"/>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -182,7 +176,6 @@
                                 <td>${diaNom}</td>
                                 <td>${franja.horini}</td>
                                 <td>${franja.horfin}</td>
-                                <td>${franja.durmin}</td>
                                 <td class="text-end">
                                     <button type="button" class="btn btn-sm btn-outline-info me-2" 
                                             onclick="editFranja(${franja.diasetCon}, '${franja.horini}', '${franja.horfin}', ${franja.durmin})" 
