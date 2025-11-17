@@ -35,9 +35,9 @@ public class SetmanaTipusDao {
 		return dao;
 	}
 	
-	public SetmanaTipus updateHorari(SetmanaTipus entity) {	
+	public SetmanaTipus updateSetmanaTipus(SetmanaTipus entity) {	
 		SetmanaTipus dao = this.findSetmanaTipusById(entity.getId());
-		return (dao != null) ? setmanaTipusRepository.save(entity) : null;
+		return (dao == null) ? setmanaTipusRepository.save(entity) : null;
 	}
 	
 	public void deleteSetmanaTipus(SetmanaTipus entity) {

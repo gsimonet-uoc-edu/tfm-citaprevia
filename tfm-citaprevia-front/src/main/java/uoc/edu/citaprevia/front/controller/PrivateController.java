@@ -784,7 +784,7 @@ public class PrivateController {
             throw e; 
         }  catch (Exception e) {
             LOG.error("### Error save setmana tipus {}", e);
-            String errorMessage = bundle.getMessage(Constants.ERROR_FRONT_GESTIO_HORARIS, null, locale);
+            String errorMessage = bundle.getMessage(Constants.ERROR_FRONT_GESTIO_SETMANES_TIPUS, null, locale);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage);
         } finally {
 			long totalTime = (System.currentTimeMillis() - startTime);
@@ -792,17 +792,50 @@ public class PrivateController {
 		}
 
     }
-/*
+
     // 3. Endpoint per ACTUALITZAR (POST/PUT)
     // Utilitza un DTO amb les claus antigues (old...) i les noves
-    @PostMapping("/{horCon}/setmanes-tipus/update") 
+    @PostMapping("/horaris/{horCon}/setmanes-tipus/update") 
     @ResponseBody
-    public SetmanaTipusDto updateSetmanaTipus(@PathVariable("horCon") Long horCon,
-                                                @RequestBody SetmanaTipusUpdateFormDto formDto,
-                                                Locale locale) {
-        // ... (Implementar crida a citaPreviaPrivateClient.updateSetmanaTipus(horCon, formDto, locale))
-    }
+    public SetmanaTipusDto updateSetmanaTipusToHorari(@PathVariable Long horCon,
+                                                	  @RequestBody SetmanaTipusFormDto form,
+                                                      Locale locale) {
+        long startTime = System.currentTimeMillis();
+        LOG.info("### Inici PrivateController.addSetmanaTipus startTime={}, horCon={}, form={}", startTime, horCon, form.toString());
 
+        SetmanaTipusDto settipUpdate = new SetmanaTipusDto();
+        
+        try {
+            // 1. Assignar l'Horari CON al DTO del formulari (obligatori per a la crida al backend)
+        	HorariDto horari = new HorariDto();
+        	horari.setCon(horCon);
+        	settipUpdate.setHorari(horari);
+        	settipUpdate.setDiasetCon(form.getDiasetCon());
+        	settipUpdate.setHorini(form.getHorini());
+        	settipUpdate.setHorfin(form.getHorfin());
+        	
+            // 2. Cridar al client de backend per afegir la nova SetmanaTipus
+            // El client s'encarregarà de la validació (hores, superposicions, etc.)
+            settipUpdate = citaPreviaPrivateClient.updateSetmanaTipusToHorari(horCon, settipUpdate, locale);
+
+            if (settipUpdate.hasErrors()) {
+                // Maneig d'errors del backend
+            	throw new ResponseStatusException(HttpStatus.BAD_REQUEST, settipUpdate.getErrors().get(0).getDem());
+            } else {
+            	return settipUpdate;            
+            }
+        } catch (ResponseStatusException e) {
+            throw e; 
+        }  catch (Exception e) {
+            LOG.error("### Error update setmana tipus {}", e);
+            String errorMessage = bundle.getMessage(Constants.ERROR_FRONT_GESTIO_SETMANES_TIPUS, null, locale);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage);
+        } finally {
+			long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final PrivateController.saveUpdateHorari totalTime={}, horCon={}, settipUpdate={}", totalTime, horCon, settipUpdate.toString());
+		}
+    }
+    /*
     // 4. Endpoint per ESBORRAR (POST/DELETE)
     // Utilitza un DTO amb les claus primàries (diasetCon, horini, horfin)
     @PostMapping("/{horCon}/setmanes-tipus/delete")

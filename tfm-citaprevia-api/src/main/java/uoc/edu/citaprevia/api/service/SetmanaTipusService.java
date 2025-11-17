@@ -11,4 +11,6 @@ public interface SetmanaTipusService {
 
 	SetmanaTipusDto saveSetmanaTipus(SetmanaTipusDto settip, Locale locale);
 
+	SetmanaTipusDto updateSetmanaTipus(SetmanaTipusDto settip, Locale locale);
+
 }

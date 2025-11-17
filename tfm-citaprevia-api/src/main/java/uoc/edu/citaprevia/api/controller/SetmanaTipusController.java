@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -59,6 +60,28 @@ public class SetmanaTipusController {
 		}
 		
 		return setmanaTipusService.saveSetmanaTipus(dto, locale);
+		
+	}
+	
+	@PutMapping("/horaris/{horCon}")
+	@Operation(summary="actualitzar les dades d'una setmana tipus (franja) a un horari")
+	public SetmanaTipusDto updateSetmanaTipusToHorari(@PathVariable Long horCon,
+								      				  @Valid @RequestBody SetmanaTipusDto dto,
+								      				  BindingResult result,
+								      				  Locale locale) {
+		
+		
+		if (result.hasErrors()) {
+			dto.setErrors(ApiUtils.getBindingResultErrors(result, messageSource, locale));
+			return dto;
+		}
+		
+		if (dto.getHorari() == null || Utils.isEmpty(dto.getHorari().getCon()) || !horCon.equals(dto.getHorari().getCon())){
+			dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL,TipusError.ERROR.getValor(),messageSource.getMessage(Constants.ERROR_API_CRUD_SETMANES_TIPUS, null, locale)));
+			return dto;
+		}
+		
+		return setmanaTipusService.updateSetmanaTipus(dto, locale);
 		
 	}
 	
