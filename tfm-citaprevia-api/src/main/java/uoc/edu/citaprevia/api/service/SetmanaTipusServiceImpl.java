@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import uoc.edu.citaprevia.api.dao.CitaDao;
 import uoc.edu.citaprevia.api.dao.SetmanaTipusDao;
+import uoc.edu.citaprevia.api.model.Agenda;
 import uoc.edu.citaprevia.api.model.Cita;
 import uoc.edu.citaprevia.api.model.SetmanaTipus;
 import uoc.edu.citaprevia.api.model.SetmanaTipusId;
@@ -114,6 +115,43 @@ public class SetmanaTipusServiceImpl implements SetmanaTipusService{
 			LOG.info("### Final SetmanaTipusServiceImpl.updateSetmanaTipus totalTime={}, settip={}", totalTime, settip.toString());
 		}
 		return dto;				
+	}
+	
+	@Override
+	public ErrorDto deleteSetmanaTipus(SetmanaTipusDto settip, Locale locale) {		
+		long startTime=System.currentTimeMillis();
+		LOG.info("### Inici SetmanaTipusServiceImpl.deleteSetmanaTipus startTime={}, settip={}", startTime, settip.toString());
+		ErrorDto dto = null;
+		try {
+			SetmanaTipusId id = new SetmanaTipusId();
+			id.setHorari(Converter.toDao(settip.getHorari()));
+			id.setDiasetCon(settip.getDiasetCon());
+			id.setHorini(settip.getHorini());
+			id.setHorfin(settip.getHorfin());
+			SetmanaTipus dao = setmanaTipusDao.findSetmanaTipusById(id);
+						
+			if (dao == null) {
+				return new ErrorDto(9999L,bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale));
+			} else {
+				// Validacions per esborrar setmana cita
+				List<Cita> teCites = citaDao.findCitesByHorari(settip.getHorari().getCon());
+				// Comprovar que l'horari no te cites
+				if (teCites != null && !teCites.isEmpty() && teCites.size() > 0) {
+					return new ErrorDto(9999L,bundle.getMessage(Constants.ERROR_API_DELETE_SETMANES_TIPUS, null, locale));
+				} else {
+					setmanaTipusDao.deleteSetmanaTipus(dao);
+				}			
+			}
+		
+		} catch (Exception e) {
+			LOG.error("### ErrorSetmanaTipusServiceImpl.deleteSetmanaTipus={} ", bundle.getMessage(Constants.ERROR_API_CRUD_SETMANES_TIPUS, null, locale));
+			e.printStackTrace();			
+		} finally {
+			long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final AgendaServiceImpl.deleteAgenda totalTime={}, settip={}", totalTime, settip.toString());
+		}
+		return dto;	
+		
 	}
 
 }

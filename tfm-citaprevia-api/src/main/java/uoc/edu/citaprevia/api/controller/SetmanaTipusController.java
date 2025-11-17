@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import uoc.edu.citaprevia.api.service.SetmanaTipusService;
 import uoc.edu.citaprevia.api.utils.ApiUtils;
-import uoc.edu.citaprevia.dto.HorariDto;
 import uoc.edu.citaprevia.dto.SetmanaTipusDto;
 import uoc.edu.citaprevia.dto.generic.ErrorDto;
 import uoc.edu.citaprevia.model.TipusError;
@@ -83,6 +83,28 @@ public class SetmanaTipusController {
 		
 		return setmanaTipusService.updateSetmanaTipus(dto, locale);
 		
+	}
+	
+	@DeleteMapping("/horaris/{horCon}")
+	@Operation(summary="eliminar una franja horaria assignada a un horari")
+	public ErrorDto deleteSetmanaTipusToHorari(@PathVariable Long horCon,
+											   @Valid @RequestBody SetmanaTipusDto dto,
+											   BindingResult result,
+											   Locale locale) {
+		ErrorDto error = new ErrorDto();
+		
+		if (result.hasErrors()) {
+			 new ErrorDto(Constants.CODI_ERROR_FATAL,TipusError.ERROR.getValor(),messageSource.getMessage(Constants.ERROR_API_CRUD_SETMANES_TIPUS, null, locale));
+			return error;
+		}
+		
+		if (dto.getHorari() == null || Utils.isEmpty(dto.getHorari().getCon()) || !horCon.equals(dto.getHorari().getCon())){
+			error =new ErrorDto(Constants.CODI_ERROR_FATAL,TipusError.ERROR.getValor(),messageSource.getMessage(Constants.ERROR_API_CRUD_SETMANES_TIPUS, null, locale));
+			return error;
+		}
+		
+		return  setmanaTipusService.deleteSetmanaTipus(dto, locale);
+		 
 	}
 	
 }

@@ -46,6 +46,5 @@ public interface CitaPreviaPrivateClient {
 
 	SetmanaTipusDto addSetmanaTipusToHorari(SetmanaTipusDto setmanaTipus, Locale locale);
 
-	SetmanaTipusDto updateSetmanaTipusToHorari(Long horCon, SetmanaTipusDto dto, Locale locale);
 
 }

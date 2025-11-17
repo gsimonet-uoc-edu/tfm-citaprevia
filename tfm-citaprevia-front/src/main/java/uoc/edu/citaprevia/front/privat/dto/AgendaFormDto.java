@@ -8,9 +8,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.Getter;
 import lombok.Setter;
-import uoc.edu.citaprevia.model.SiNo;
+import lombok.ToString;
 
-@Getter @Setter
+@Getter @Setter @ToString
 public class AgendaFormDto {
 	
 private Long con; // Per edició

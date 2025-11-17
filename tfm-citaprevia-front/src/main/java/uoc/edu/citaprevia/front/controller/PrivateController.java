@@ -48,6 +48,7 @@ import uoc.edu.citaprevia.front.dto.CampConfigDto;
 import uoc.edu.citaprevia.front.dto.CitaFormDto;
 import uoc.edu.citaprevia.front.privat.dto.AgendaFormDto;
 import uoc.edu.citaprevia.front.privat.dto.HorariFormDto;
+import uoc.edu.citaprevia.front.privat.dto.SetmanaTipusDeleteDto;
 import uoc.edu.citaprevia.front.privat.dto.SetmanaTipusFormDto;
 import uoc.edu.citaprevia.front.service.CitaPreviaPrivateClient;
 import uoc.edu.citaprevia.front.service.CitaPreviaPublicClient;
@@ -792,61 +793,41 @@ public class PrivateController {
 		}
 
     }
-
-    /*
-    // 3. Endpoint per ACTUALITZAR (POST/PUT)
-    // Utilitza un DTO amb les claus antigues (old...) i les noves
-    @PostMapping("/horaris/{horCon}/setmanes-tipus/update") 
+/*
+ // Mètode Actualitzat
+    @PostMapping("/horaris/{horCon}/setmanes-tipus/delete")
     @ResponseBody
-    public SetmanaTipusDto updateSetmanaTipusToHorari(@PathVariable Long horCon,
-                                                	  @RequestBody SetmanaTipusFormDto form,
-                                                      Locale locale) {
+    public void deleteSetmanaTipusOfHorari(@PathVariable("horCon") Long horCon,
+                                             @RequestBody SetmanaTipusDeleteDto deleteDto, 
+                                             Locale locale) {
         long startTime = System.currentTimeMillis();
-        LOG.info("### Inici PrivateController.addSetmanaTipus startTime={}, horCon={}, form={}", startTime, horCon, form.toString());
+        LOG.info("### Inici PrivateController.deleteSetmanaTipusOfHorari startTime={}, horCon={}, deleteDto={}", startTime, horCon, deleteDto.toString());
 
-        SetmanaTipusDto settipUpdate = new SetmanaTipusDto();
-        
         try {
-            // 1. Assignar l'Horari CON al DTO del formulari (obligatori per a la crida al backend)
-        	HorariDto horari = new HorariDto();
-        	horari.setCon(horCon);
-        	settipUpdate.setHorari(horari);
-        	settipUpdate.setDiasetCon(form.getDiasetCon());
-        	settipUpdate.setHorini(form.getHorini());
-        	settipUpdate.setHorfin(form.getHorfin());
-        	
-            // 2. Cridar al client de backend per afegir la nova SetmanaTipus
-            // El client s'encarregarà de la validació (hores, superposicions, etc.)
-            settipUpdate = citaPreviaPrivateClient.updateSetmanaTipusToHorari(horCon, settipUpdate, locale);
-
-            if (settipUpdate.hasErrors()) {
-                // Maneig d'errors del backend
-            	throw new ResponseStatusException(HttpStatus.BAD_REQUEST, settipUpdate.getErrors().get(0).getDem());
-            } else {
-            	return settipUpdate;            
-            }
-        } catch (ResponseStatusException e) {
-            throw e; 
-        }  catch (Exception e) {
-            LOG.error("### Error update setmana tipus {}", e);
-            String errorMessage = bundle.getMessage(Constants.ERROR_FRONT_GESTIO_SETMANES_TIPUS, null, locale);
+            // Implementar la crida amb els 3 camps de la clau.
+            // Assumim que citaPreviaPrivateClient.deleteSetmanaTipus existeix i accepta aquests paràmetres.
+            citaPreviaPrivateClient.deleteSetmanaTipus(
+                horCon, 
+                deleteDto.getDiasetCon(), 
+                deleteDto.getHorini(), 
+                deleteDto.getHorfin(), 
+                locale
+            );
+            // Si no hi ha excepció, retorna un 200 OK / 204 No Content (amb 'void')
+        } catch (Exception e) {
+            LOG.error("### Error deleteSetmanaTipusOfHorari horCon={}", horCon, e);
+            
+            // Llençar una ResponseStatusException amb el missatge d'error per al client.
+            // Aquest missatge serà capturat pel JS.
+            String errorMessage = bundle.getMessage("error.eliminar.franja", null, locale);
+            
+            // Si la teva capa de negoci ja retorna un missatge personalitzat, pots capturar-lo i usar-lo aquí.
+            // Per defecte, usem un error genèric si no podem obtenir un missatge específic de la lògica de negoci.
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage);
         } finally {
-			long totalTime = (System.currentTimeMillis() - startTime);
-			LOG.info("### Final PrivateController.saveUpdateHorari totalTime={}, horCon={}, settipUpdate={}", totalTime, horCon, settipUpdate.toString());
-		}
+            long totalTime = (System.currentTimeMillis() - startTime);
+            LOG.info("### Final PrivateController.deleteSetmanaTipusOfHorari totalTime={}", totalTime);
+        }
     }
-    */
-    /*
-    // 4. Endpoint per ESBORRAR (POST/DELETE)
-    // Utilitza un DTO amb les claus primàries (diasetCon, horini, horfin)
-    @PostMapping("/{horCon}/setmanes-tipus/delete")
-    @ResponseBody
-    public ErrorDto deleteSetmanaTipus(@PathVariable("horCon") Long horCon,
-                                         @RequestBody SetmanaTipusKeyDto keyDto,
-                                         Locale locale) {
-        // ... (Implementar crida a citaPreviaPrivateClient.deleteSetmanaTipus(horCon, keyDto, locale))
-        // Retornar null o un DTO d'error si hi ha problemes.
-    }
-    */
+ */   
 }
