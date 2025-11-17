@@ -23,9 +23,13 @@ public class Constants {
 	public static final String ERROR_FRONT_GESTIO_HORARIS = "error.horaris.gestio";
 	public static final String ERROR_FRONT_SAVE_AGENDES = "error.agendes.save";
 	public static final String ERROR_FRONT_SAVE_HORARIS = "error.horaris.save";
+	public static final String ERROR_FRONT_GESTIO_SETMANES_TIPUS = "error.setmanestipus.gestio";
+	
 	public static final String SUCCESS_FRONT_SAVE_HORARIS = "succes.horaris.save";
 	public static final String SUCCESS_FRONT_UPDATE_HORARIS = "succes.horaris.update";
 	public static final String SUCCESS_FRONT_DELETE_HORARIS = "succes.horaris.delete";
+	
+	public static final String SUCCESS_FRONT_SAVE_SETMANES_TIPUS = "succes.setmanestipus.save";
 	
 	public static final String SUCCESS_FRONT_SAVE_AGENDES = "succes.agendes.save";
 	public static final String SUCCESS_FRONT_UPDATE_AGENDES = "succes.agendes.update";

@@ -6,6 +6,7 @@ import java.util.Locale;
 import uoc.edu.citaprevia.dto.AgendaDto;
 import uoc.edu.citaprevia.dto.CitaDto;
 import uoc.edu.citaprevia.dto.HorariDto;
+import uoc.edu.citaprevia.dto.SetmanaTipusDto;
 import uoc.edu.citaprevia.dto.TecnicDto;
 import uoc.edu.citaprevia.dto.TipusCitaDto;
 import uoc.edu.citaprevia.dto.UbicacioDto;
@@ -42,5 +43,7 @@ public interface CitaPreviaPrivateClient {
 	ErrorDto deleteHorari(Long horCon, Locale locale);
 
 	HorariDto getHorari(Long horCon, Locale locale);
+
+	SetmanaTipusDto addSetmanaTipusToHorari(SetmanaTipusDto setmanaTipus, Locale locale);
 
 }

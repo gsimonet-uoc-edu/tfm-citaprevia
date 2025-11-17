@@ -53,7 +53,7 @@
                         </thead>
                         <tbody id="setmanaTipusList">
                             <tr>
-                                <td colspan="5" class="text-center text-muted" th:text="#{carregant_franges}">Carregant franges...</td>
+                                <td colspan="4" class="text-center text-muted" th:text="#{carregant_franges}">Carregant franges...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -99,7 +99,7 @@
                                 <input type="time" class="form-control" name="horfin" id="horfin" required step="600"/>
                             </div>
                         </div>
-                    </div>
+                        </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{tancar}">Tancar</button>
                         <button type="submit" class="btn btn-primary" th:text="#{guardar}">Guardar</button>
@@ -117,6 +117,7 @@
         /*<![CDATA[*/
 
         const HORARI_CON = /*[[${horariCon}]]*/ 0;
+        // La URL de l'API s'ajusta al teu patró: /private/horaris/{horCon}/setmanes-tipus
         const API_URL = /*[[@{/private/horaris}]]*/ '/private/horaris';
         const DIES_SETMANA = /*[[${diesSetmana}]]*/ {}; // Map<Integer, String>
 
@@ -153,11 +154,14 @@
          */
         function loadSetmanaTipusList(horariCon) {
             const tbody = document.getElementById('setmanaTipusList');
-            tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">[[#{carregant_franges}]]</td></tr>`;
+            // Colspan ajustat a 4
+            tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">[[#{carregant_franges}]]</td></tr>`; 
 
+            // URL de GET: /private/horaris/{horCon}/setmanes-tipus
             fetch(`${API_URL}/${horariCon}/setmanes-tipus`)
                 .then(response => {
                     if (!response.ok) {
+                        // Intentem parsejar l'error del JSON
                         return response.json().then(err => { throw new Error(err.dem || '[[#{error_carregar_franges}]]'); });
                     }
                     return response.json();
@@ -165,7 +169,8 @@
                 .then(data => {
                     tbody.innerHTML = ''; // Netejar
                     if (data.length === 0) {
-                        tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">[[#{no_hi_ha_franges}]]</td></tr>`;
+                        // Colspan ajustat a 4
+                        tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">[[#{no_hi_ha_franges}]]</td></tr>`; 
                         return;
                     }
 
@@ -178,7 +183,7 @@
                                 <td>${franja.horfin}</td>
                                 <td class="text-end">
                                     <button type="button" class="btn btn-sm btn-outline-info me-2" 
-                                            onclick="editFranja(${franja.diasetCon}, '${franja.horini}', '${franja.horfin}', ${franja.durmin})" 
+                                            onclick="editFranja(${franja.diasetCon}, '${franja.horini}', '${franja.horfin}')" 
                                             title="[[#{editar}]]">
                                         <i class="fas fa-edit"></i> [[#{actualitzar}]]
                                     </button>
@@ -195,7 +200,8 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    tbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger">${error.message}</td></tr>`;
+                    // Colspan ajustat a 4
+                    tbody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">${error.message}</td></tr>`; 
                     showAlert(error.message, 'danger');
                 });
         }
@@ -213,7 +219,10 @@
             document.getElementById('oldHorfin').value = '';
         }
 
-        function editFranja(diasetCon, horini, horfin, durmin) {
+        /**
+         * Carrega les dades al modal per a l'edició (sense durmin).
+         */
+        function editFranja(diasetCon, horini, horfin) {
             document.getElementById('franjaModalLabel').textContent = /*[[#{actualitzar_franja}]]*/ 'Actualitzar Franja';
             
             // Mode Edició
@@ -228,7 +237,6 @@
             document.getElementById('diasetCon').value = diasetCon; 
             document.getElementById('horini').value = horini;
             document.getElementById('horfin').value = horfin;
-            document.getElementById('durmin').value = durmin;
             
             // OBRIR EL MODAL
             var myModal = new bootstrap.Modal(document.getElementById('franjaModal'));
@@ -244,16 +252,16 @@
             const form = event.target;
             const isEdit = document.getElementById('isEdit').value === 'true';
             
+            // URL de POST: /private/horaris/{horCon}/setmanes-tipus/add o update
             const url = isEdit 
                 ? `${API_URL}/${HORARI_CON}/setmanes-tipus/update` 
                 : `${API_URL}/${HORARI_CON}/setmanes-tipus/add`;
 
-            // Recollir dades del formulari
+            // Recollir dades del formulari (sense durmin)
             const payload = {
                 diasetCon: form.diasetCon.value,
                 horini: form.horini.value,
                 horfin: form.horfin.value,
-                durmin: form.durmin.value,
                 // Si és edició, incloem les claus antigues
                 ...(isEdit && {
                     oldDiasetCon: form.oldDiasetCon.value,
@@ -275,6 +283,7 @@
                         throw new Error(err.dem || '[[#{error_guardar_franja}]]'); 
                     });
                 }
+                // Si és exitós, podem rebre el DTO retornat o simplement text/resposta d'èxit
                 return response.text(); 
             })
             .then(() => {
@@ -304,6 +313,7 @@
                 horfin: horfin
             };
 
+            // URL de DELETE: /private/horaris/{horCon}/setmanes-tipus/delete
             fetch(`${API_URL}/${HORARI_CON}/setmanes-tipus/delete`, { 
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' },

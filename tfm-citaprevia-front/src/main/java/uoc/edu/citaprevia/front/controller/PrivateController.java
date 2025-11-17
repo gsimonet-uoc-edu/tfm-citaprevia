@@ -750,50 +750,47 @@ public class PrivateController {
             LOG.info("### Final PrivateController.getSetmanesTipus totalTime={}", totalTime);
         }
     }
-/*
-    @PostMapping("/{horCon}/setmanes-tipus/add")
-    @ResponseBody
-    public SetmanaTipusDto addSetmanaTipus(@PathVariable("horCon") Long horCon,
-                                             @RequestBody SetmanaTipusFormDto formDto,
-                                             Locale locale) {
-        long startTime = System.currentTimeMillis();
-        LOG.info("### Inici PrivateController.addSetmanaTipus startTime={}, horCon={}, formDto={}", startTime, horCon, formDto);
 
-        SetmanaTipusDto settipSave = null;
+    @PostMapping("/horaris/{horCon}/setmanes-tipus/add")
+    @ResponseBody
+    public SetmanaTipusDto addSetmanaTipusToHorari(@PathVariable Long horCon,
+    											   @RequestBody SetmanaTipusFormDto form,
+    										        Locale locale) {
+        long startTime = System.currentTimeMillis();
+        LOG.info("### Inici PrivateController.addSetmanaTipus startTime={}, horCon={}, form={}", startTime, horCon, form.toString());
+
+        SetmanaTipusDto settipSave = new SetmanaTipusDto();
         
         try {
             // 1. Assignar l'Horari CON al DTO del formulari (obligatori per a la crida al backend)
         	HorariDto horari = new HorariDto();
         	horari.setCon(horCon);
         	settipSave.setHorari(horari);
-
+        	settipSave.setDiasetCon(form.getDiasetCon());
+        	settipSave.setHorini(form.getHorini());
+        	settipSave.setHorfin(form.getHorfin());
+        	
             // 2. Cridar al client de backend per afegir la nova SetmanaTipus
             // El client s'encarregarà de la validació (hores, superposicions, etc.)
-            settipSave = citaPreviaPrivateClient.addSetmanaTipus(formDto, locale);
+            settipSave = citaPreviaPrivateClient.addSetmanaTipusToHorari(settipSave, locale);
 
-            // 3. Comprovar si el DTO retornat conté errors
-            if (settipSave != null && settipSave.getCon() == null && settipSave.getDem() != null) {
-                // Si el backend retorna un DTO amb missatge d'error (sense CON de registre)
-                LOG.warn("### Error de validació en addSetmanaTipus: {}", settipSave.getDem());
-                // Llençar una excepció HTTP 400 (Bad Request) amb el missatge de l'error
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, settipSave.getDem());
+            if (settipSave.hasErrors()) {
+                // Maneig d'errors del backend
+            	throw new ResponseStatusException(HttpStatus.BAD_REQUEST, settipSave.getErrors().get(0).getDem());
+            } else {
+            	return settipSave;            
             }
-            
-            // 4. Retornar el DTO de la Setmana Tipus creada (inclourà el CON si el backend el genera)
-            return settipSave;
-
         } catch (ResponseStatusException e) {
-            // Propagar l'excepció (Bad Request 400) amb el missatge de validació
             throw e; 
-        } catch (Exception e) {
-            LOG.error("### Error en addSetmanaTipus horCon={}", horCon, e);
-            // Retornar un error genèric del servidor
-            String errorMessage = bundle.getMessage("error.front.guardar.franja", null, locale);
+        }  catch (Exception e) {
+            LOG.error("### Error save setmana tipus {}", e);
+            String errorMessage = bundle.getMessage(Constants.ERROR_FRONT_GESTIO_HORARIS, null, locale);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage);
         } finally {
-            long totalTime = (System.currentTimeMillis() - startTime);
-            LOG.info("### Final PrivateController.addSetmanaTipus totalTime={}", totalTime);
-        }
+			long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final PrivateController.saveUpdateHorari totalTime={}", totalTime);
+		}
+
     }
 /*
     // 3. Endpoint per ACTUALITZAR (POST/PUT)

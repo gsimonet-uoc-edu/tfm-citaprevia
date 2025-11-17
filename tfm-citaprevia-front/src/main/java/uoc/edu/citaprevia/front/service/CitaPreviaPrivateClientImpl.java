@@ -18,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import uoc.edu.citaprevia.dto.AgendaDto;
 import uoc.edu.citaprevia.dto.CitaDto;
 import uoc.edu.citaprevia.dto.HorariDto;
+import uoc.edu.citaprevia.dto.SetmanaTipusDto;
 import uoc.edu.citaprevia.dto.TecnicDto;
 import uoc.edu.citaprevia.dto.TipusCitaDto;
 import uoc.edu.citaprevia.dto.UbicacioDto;
@@ -230,6 +231,16 @@ public class CitaPreviaPrivateClientImpl implements CitaPreviaPrivateClient{
 		String url = getBaseApiUrl() + "/tipus-cites/subaplicacions/{subaplCoa}?lang={lang}";	
 		TipusCitaDto[] list = restTemplate.getForObject(url, TipusCitaDto[].class, params);
 		return list == null ? new ArrayList<>() : Arrays.asList(list);
+	}
+	
+	@Override
+	public SetmanaTipusDto addSetmanaTipusToHorari(SetmanaTipusDto setmanaTipus, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_LOCALE, locale);
+		String url = getBaseApiUrl() + "/setmanes-tipus?lang={lang}";
+	    ResponseEntity<SetmanaTipusDto> response = restTemplate.postForEntity(url, setmanaTipus, SetmanaTipusDto.class, params
+	        );
+		return response.getBody() == null ? new SetmanaTipusDto() : response.getBody();
 	}
 	
 }
