@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
@@ -27,9 +28,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import uoc.edu.citaprevia.dto.AgendaDto;
@@ -748,18 +751,51 @@ public class PrivateController {
         }
     }
 /*
-    // 2. Endpoint per AFEGIR (POST)
-    // Assumeix que SetmanaTipusFormDto té els camps (diasetCon, horini, horfin, durmin)
     @PostMapping("/{horCon}/setmanes-tipus/add")
     @ResponseBody
     public SetmanaTipusDto addSetmanaTipus(@PathVariable("horCon") Long horCon,
                                              @RequestBody SetmanaTipusFormDto formDto,
                                              Locale locale) {
-        // ... (Implementar crida a citaPreviaPrivateClient.addSetmanaTipus(horCon, formDto, locale))
-        // Retornar el DTO creat o un DTO d'èxit/error.
-        // Lògica similar a la que ja fas a /horaris/save
-    }
+        long startTime = System.currentTimeMillis();
+        LOG.info("### Inici PrivateController.addSetmanaTipus startTime={}, horCon={}, formDto={}", startTime, horCon, formDto);
 
+        SetmanaTipusDto settipSave = null;
+        
+        try {
+            // 1. Assignar l'Horari CON al DTO del formulari (obligatori per a la crida al backend)
+        	HorariDto horari = new HorariDto();
+        	horari.setCon(horCon);
+        	settipSave.setHorari(horari);
+
+            // 2. Cridar al client de backend per afegir la nova SetmanaTipus
+            // El client s'encarregarà de la validació (hores, superposicions, etc.)
+            settipSave = citaPreviaPrivateClient.addSetmanaTipus(formDto, locale);
+
+            // 3. Comprovar si el DTO retornat conté errors
+            if (settipSave != null && settipSave.getCon() == null && settipSave.getDem() != null) {
+                // Si el backend retorna un DTO amb missatge d'error (sense CON de registre)
+                LOG.warn("### Error de validació en addSetmanaTipus: {}", settipSave.getDem());
+                // Llençar una excepció HTTP 400 (Bad Request) amb el missatge de l'error
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, settipSave.getDem());
+            }
+            
+            // 4. Retornar el DTO de la Setmana Tipus creada (inclourà el CON si el backend el genera)
+            return settipSave;
+
+        } catch (ResponseStatusException e) {
+            // Propagar l'excepció (Bad Request 400) amb el missatge de validació
+            throw e; 
+        } catch (Exception e) {
+            LOG.error("### Error en addSetmanaTipus horCon={}", horCon, e);
+            // Retornar un error genèric del servidor
+            String errorMessage = bundle.getMessage("error.front.guardar.franja", null, locale);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage);
+        } finally {
+            long totalTime = (System.currentTimeMillis() - startTime);
+            LOG.info("### Final PrivateController.addSetmanaTipus totalTime={}", totalTime);
+        }
+    }
+/*
     // 3. Endpoint per ACTUALITZAR (POST/PUT)
     // Utilitza un DTO amb les claus antigues (old...) i les noves
     @PostMapping("/{horCon}/setmanes-tipus/update") 

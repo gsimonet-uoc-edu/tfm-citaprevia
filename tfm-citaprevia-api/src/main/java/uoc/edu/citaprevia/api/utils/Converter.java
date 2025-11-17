@@ -232,7 +232,6 @@ public class Converter {
 				dto.setHorfin(dao.getId().getHorfin());
 				dto.setDiasetCon(dao.getId().getDiasetCon());
 			}
-			dto.setTipcit(toDto(dao.getTipcit()));
 		}
 		return dto;
 	}

@@ -18,7 +18,4 @@ public class SetmanaTipusDto extends ErrorsDto{
 	private LocalTime horini;
 	
 	private LocalTime horfin;
-	
-	private TipusCitaDto tipcit;
-
 }

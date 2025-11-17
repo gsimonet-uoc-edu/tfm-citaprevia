@@ -33,15 +33,15 @@ INSERT INTO AGENDA (con, datini, datfin, UBI_CON, TEC_COA, HORCIT_CON) VALUES
 (3, '2025-12-01', '2025-12-15', 1, 'T3', 2);
 
 -- SetmanaTipus: Lunes y Miércoles, 9-10 y 10-11
-INSERT INTO SETMANA_TIPUS (HORCIT_CON, DIASET_CON, horini, horfin, TIPCIT_CON) VALUES
-(1, 1, '09:00:00', '10:00:00', 1),  -- horari 1 dilluns 9-10
-(1, 1, '10:00:00', '11:00:00', 1),  -- horari 1 dilluns 10-11
-(1, 3, '09:00:00', '10:00:00', 1),  -- horari 1 dimecres 10-11
-(2, 1, '13:00:00', '14:00:00', 1),  -- horari 2 dilluns 13-14
-(2, 2, '13:00:00', '14:00:00', 1),	-- horari 2 dimarts 13-14
-(2, 3, '13:00:00', '14:00:00', 1),	-- horari 2 dimecres 13-14
-(2, 4, '13:00:00', '14:00:00', 1),	-- horari 2 dijous 13-14
-(2, 5, '13:00:00', '14:00:00', 1);	-- horari 2 divendres 13-14
+INSERT INTO SETMANA_TIPUS (HORCIT_CON, DIASET_CON, horini, horfin) VALUES
+(1, 1, '09:00:00', '10:00:00'),  -- horari 1 dilluns 9-10
+(1, 1, '10:00:00', '11:00:00'),  -- horari 1 dilluns 10-11
+(1, 3, '09:00:00', '10:00:00'),  -- horari 1 dimecres 10-11
+(2, 1, '13:00:00', '14:00:00'),  -- horari 2 dilluns 13-14
+(2, 2, '13:00:00', '14:00:00'),	-- horari 2 dimarts 13-14
+(2, 3, '13:00:00', '14:00:00'),	-- horari 2 dimecres 13-14
+(2, 4, '13:00:00', '14:00:00'),	-- horari 2 dijous 13-14
+(2, 5, '13:00:00', '14:00:00');	-- horari 2 divendres 13-14
 -- src/main/resources/data.sql
 
 -- ===================================================================
