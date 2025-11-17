@@ -793,6 +793,7 @@ public class PrivateController {
 
     }
 
+    /*
     // 3. Endpoint per ACTUALITZAR (POST/PUT)
     // Utilitza un DTO amb les claus antigues (old...) i les noves
     @PostMapping("/horaris/{horCon}/setmanes-tipus/update") 
@@ -835,6 +836,7 @@ public class PrivateController {
 			LOG.info("### Final PrivateController.saveUpdateHorari totalTime={}, horCon={}, settipUpdate={}", totalTime, horCon, settipUpdate.toString());
 		}
     }
+    */
     /*
     // 4. Endpoint per ESBORRAR (POST/DELETE)
     // Utilitza un DTO amb les claus primàries (diasetCon, horini, horfin)

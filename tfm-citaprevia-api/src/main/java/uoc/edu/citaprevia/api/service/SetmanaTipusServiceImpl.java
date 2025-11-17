@@ -14,6 +14,7 @@ import uoc.edu.citaprevia.api.dao.CitaDao;
 import uoc.edu.citaprevia.api.dao.SetmanaTipusDao;
 import uoc.edu.citaprevia.api.model.Cita;
 import uoc.edu.citaprevia.api.model.SetmanaTipus;
+import uoc.edu.citaprevia.api.model.SetmanaTipusId;
 import uoc.edu.citaprevia.api.utils.Converter;
 import uoc.edu.citaprevia.dto.SetmanaTipusDto;
 import uoc.edu.citaprevia.dto.generic.ErrorDto;
@@ -52,15 +53,28 @@ public class SetmanaTipusServiceImpl implements SetmanaTipusService{
 		SetmanaTipusDto dto = new SetmanaTipusDto();
 		try {
 			if (settip != null && settip.getHorari() != null && !Utils.isEmpty(settip.getHorari().getCon()) && !Utils.isEmpty(settip.getDiasetCon()) && settip.getHorini() != null && settip.getHorfin() != null) {
-				dto = Converter.toDto(setmanaTipusDao.saveSetmanaTipus(Converter.toDao(settip)));
+				SetmanaTipusId id = new SetmanaTipusId();
+				id.setHorari(Converter.toDao(settip.getHorari()));
+				id.setDiasetCon(settip.getDiasetCon());
+				id.setHorini(settip.getHorini());
+				id.setHorfin(settip.getHorfin());
+				SetmanaTipus settipExist = setmanaTipusDao.findSetmanaTipusById(id);
+				// Restricció per no duplicar franges
+				if (settipExist != null && settipExist.getId() != null && settipExist.getId().getHorari() != null &&  !Utils.isEmpty(settipExist.getId().getHorari().getCon())) {
+					dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL, bundle.getMessage(Constants.ERROR_API_ADD_CITES_SETMANES_TIPUS, null, locale)));
+					LOG.error("### Error SetmanaTipusServiceImpl.saveSetmanaTipus={} " , dto.getErrors().get(0).toString());
+				} else {
+					dto = Converter.toDto(setmanaTipusDao.saveSetmanaTipus(Converter.toDao(settip)));
+				}
+				
 			} else {
 				dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL, bundle.getMessage(Constants.ERROR_API_CRUD_SETMANES_TIPUS, null, locale)));
-				LOG.error("### Error SetmanaTipusServiceImpl.saveSetmanaTipus: " , dto.getErrors().get(0).toString());
+				LOG.error("### Error SetmanaTipusServiceImpl.saveSetmanaTipus={} " , dto.getErrors().get(0).toString());
 			}
 		} catch (Exception e) {
 			dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL, bundle.getMessage(Constants.ERROR_API_CRUD_SETMANES_TIPUS, null, locale)));
 			LOG.error("### Error SetmanaTipusServiceImpl.saveSetmanaTipus:", e);
-			LOG.error("### Error SetmanaTipusServiceImpl.saveSetmanaTipus: " , bundle.getMessage(Constants.ERROR_API_CRUD_SETMANES_TIPUS, null, locale));
+			LOG.error("### Error SetmanaTipusServiceImpl.saveSetmanaTipus={} " , bundle.getMessage(Constants.ERROR_API_CRUD_SETMANES_TIPUS, null, locale));
 						
 		} finally {
 			long totalTime = (System.currentTimeMillis() - startTime);
@@ -81,7 +95,7 @@ public class SetmanaTipusServiceImpl implements SetmanaTipusService{
 				// Restricció: Comprovar si l'horari té cites ocupades
 				if (cites != null && !cites.isEmpty()) {
 					dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL, bundle.getMessage(Constants.ERROR_API_UPDATE_CITES_SETMANES_TIPUS, null, locale)));
-					LOG.error("### Error SetmanaTipusServiceImpl.updateSetmanaTipus: " , dto.getErrors().get(0).toString());
+					LOG.error("### Error SetmanaTipusServiceImpl.updateSetmanaTipus={} " , dto.getErrors().get(0).toString());
 
 				} else {
 					dto = Converter.toDto(setmanaTipusDao.updateSetmanaTipus(Converter.toDao(settip)));
@@ -93,7 +107,7 @@ public class SetmanaTipusServiceImpl implements SetmanaTipusService{
 			}
 		} catch (Exception e) {
 			LOG.error("### Error SetmanaTipusServiceImpl.updateSetmanaTipus:" , e);
-			LOG.error("### Error SetmanaTipusServiceImpl.updateSetmanaTipus: " , bundle.getMessage(Constants.ERROR_API_CRUD_SETMANES_TIPUS, null, locale));
+			LOG.error("### Error SetmanaTipusServiceImpl.updateSetmanaTipus={} " , bundle.getMessage(Constants.ERROR_API_CRUD_SETMANES_TIPUS, null, locale));
 						
 		} finally {
 			long totalTime = (System.currentTimeMillis() - startTime);
