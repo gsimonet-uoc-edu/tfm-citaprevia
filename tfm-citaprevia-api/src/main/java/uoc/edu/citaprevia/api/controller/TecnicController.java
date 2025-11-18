@@ -39,4 +39,11 @@ public class TecnicController {
 		return agendaService.getAgendesByTecnic(coa, locale);
 	}
 	
+	@GetMapping(value="subaplicacions/{subaplCoa}")
+	@Operation(summary="obtenir els tècnics d'una subaplicació")
+	public List<TecnicDto> getTecnicsSubaplicacio(@PathVariable String subaplCoa,
+											      Locale locale) {
+		return tecnicService.getTecnicsSubaplicacio(subaplCoa, locale);
+	}
+	
 }

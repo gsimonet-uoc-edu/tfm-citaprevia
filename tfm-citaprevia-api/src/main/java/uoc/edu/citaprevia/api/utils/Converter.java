@@ -175,7 +175,6 @@ public class Converter {
 			dto.setLl1(dao.getLl1());
 			dto.setLl2(dao.getLl2());
 			dto.setNom(dao.getNom());
-			dto.setNotval(dao.getNotval());
 			dto.setPrf(dao.getPrf());
 		}
 		return dto;
@@ -189,7 +188,6 @@ public class Converter {
 			dao.setLl1(dto.getLl1());
 			dao.setLl2(dto.getLl2());
 			dao.setNom(dto.getNom());
-			dao.setNotval(dto.getNotval());
 			dao.setPrf(dto.getPrf());
 		}
 		return dao;

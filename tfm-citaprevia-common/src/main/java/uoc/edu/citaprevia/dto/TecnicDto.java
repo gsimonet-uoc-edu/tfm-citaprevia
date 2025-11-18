@@ -15,7 +15,6 @@ public class TecnicDto extends ErrorsDto{
 	private String nom;
 	private String ll1;
 	private String ll2;
-	private SiNo notval;
 	private String prf;
 
 }
