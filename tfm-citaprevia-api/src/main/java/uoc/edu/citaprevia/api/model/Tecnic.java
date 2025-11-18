@@ -16,7 +16,6 @@ import lombok.ToString;
 public class Tecnic {
 	
 	@Id
-	@Size(max=3)
     private String coa;
 	private String pass;
 	private String nom;

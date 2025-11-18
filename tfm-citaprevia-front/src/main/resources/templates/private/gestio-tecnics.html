@@ -156,8 +156,8 @@
                                     th:classappend="${#fields.hasErrors('prf') ? 'is-invalid' : ''}" required="required">
                                 <option value="" th:text="#{selecciona_perfil}">Selecciona un perfil</option>
                                 <!-- Exemples de valors de perfil. S'haurien de carregar dinàmicament en una aplicació real. -->
-                                <option value="ADMIN">ADMIN</option>
-                                <option value="BASIC">BASIC</option>
+                                <option value="ADMINISTRADOR">ADMINISTRADOR</option>
+                                <option value="TECNIC">TECNIC</option>
                             </select>
                             <div class="invalid-feedback" th:if="${#fields.hasErrors('prf')}" th:errors="*{prf}">Error Perfil.</div>
                         </div>

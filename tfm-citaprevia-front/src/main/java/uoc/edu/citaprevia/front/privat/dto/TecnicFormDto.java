@@ -14,6 +14,8 @@ public class TecnicFormDto {
     // Camp clau / Codi de l'Operari
     private String coa; 
     
+    private String originalCoa;
+    
     // Contrasenya
     @NotBlank(message = "{error.tecnic.pass.obligatori}")
     private String pass;

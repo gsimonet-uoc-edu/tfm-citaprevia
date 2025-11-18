@@ -926,17 +926,11 @@ public class PrivateController {
             tecnicToSave.setNom(tecnicForm.getNom());
             tecnicToSave.setLl1(tecnicForm.getLl1());
             tecnicToSave.setLl2(tecnicForm.getLl2());
-            tecnicToSave.setPrf(tecnicForm.getPrf());
+            tecnicToSave.setPrf(tecnicForm.getPrf() + "_" + subaplCoa);
 
-            // Comprovacions perfil
-            if (!subaplCoa.equals(StringUtils.substringAfter(tecnicForm.getPrf(), "_"))) {
-            	String errorPrfCoa= bundle.getMessage(Constants.ERROR_FRONT_PRF_TECNICS, null, locale);
-                redirect.addFlashAttribute("error", errorPrfCoa);
-
-            } else {
 	            // 4. Guardar
 	            TecnicDto savedTecnic = new TecnicDto();
-	            if (tecnicForm.getCoa() != null) {
+	            if (tecnicForm.getOriginalCoa() != null) {
 	            	savedTecnic = citaPreviaPrivateClient.updateTecnic(tecnicForm.getCoa(), tecnicToSave, locale);
 	            } else {
 	            	savedTecnic = citaPreviaPrivateClient.saveTecnic(tecnicToSave, locale);
@@ -950,7 +944,7 @@ public class PrivateController {
 	                redirect.addFlashAttribute("success", tecnicForm.getCoa() == null ? bundle.getMessage(Constants.SUCCESS_FRONT_SAVE_TECNICS, null, locale) : bundle.getMessage(Constants.SUCCESS_FRONT_UPDATE_TECNICS, null, locale));
 	            }
             
-            }
+            
             // 3. Crida al client API
             //ErrorDto resultat = citaPreviaPrivateClient.saveTecnicOfSubapl(subaplCoa, tecnicToSave, locale);
 
