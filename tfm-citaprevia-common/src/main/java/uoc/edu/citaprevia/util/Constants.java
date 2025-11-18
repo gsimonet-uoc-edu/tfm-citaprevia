@@ -11,6 +11,7 @@ public class Constants {
 	public static final String ERROR_API_FIND_HORARIS = "error.find.horaris";
 	public static final String ERROR_API_CRUD_CITA = "error.cites.crud";
 	public static final String ERROR_API_CRUD_AGENDA = "error.agendas.crud";
+	public static final String ERROR_API_CRUD_TECNIC = "error.tecnics.crud";
 	public static final String ERROR_API_CRUD_HORARI = "error.horaris.crud";
 	public static final String ERROR_API_CRUD_SETMANES_TIPUS = "error.setmanestipus.crud";
 	public static final String ERROR_API_DELETE_AGENDA = "error.agendas.delete";

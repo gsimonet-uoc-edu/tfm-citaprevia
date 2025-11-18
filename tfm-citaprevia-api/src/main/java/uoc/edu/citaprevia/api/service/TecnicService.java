@@ -11,4 +11,8 @@ public interface TecnicService {
 
 	List<TecnicDto> getTecnicsSubaplicacio(String subaplCoa, Locale locale);
 
+	TecnicDto saveTecnic(TecnicDto tecnic, Locale locale);
+
+	TecnicDto updateTecnic(TecnicDto tecnic, Locale locale);
+
 }
