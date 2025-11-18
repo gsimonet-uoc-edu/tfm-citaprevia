@@ -878,4 +878,107 @@ public class PrivateController {
         }
         return "private/gestio-tecnics";
     }
+    
+    /**
+     * Endpoint per crear o actualitzar un Tècnic.
+     */
+    @PostMapping("/gestio/tecnics/save")
+    public String saveUpdateTecnic(@Valid @ModelAttribute("tecnicForm") TecnicFormDto tecnicForm,
+    		Authentication authentication,
+            BindingResult result,
+            RedirectAttributes redirect,
+            Locale locale) {
+
+        long startTime = System.currentTimeMillis();
+        LOG.info("### Inici PrivateController.saveTecnic startTime={}, tecnicForm={}", startTime, tecnicForm.toString());
+
+        String subaplCoa = null;
+        // Obtenir subaplicacio del perfil de l'usuari
+        if (authentication.getAuthorities() != null && !authentication.getAuthorities().isEmpty()) {
+            for (GrantedAuthority authority : authentication.getAuthorities()) {
+                subaplCoa = StringUtils.substringAfter(authority.getAuthority(), "_");
+                break;
+            }
+        }
+        
+        try {
+            // 1. Validació del formulari
+            if (result.hasErrors()) {
+                // Afegir BindingResult i DTO amb les dades introduïdes al FlashMap per a la redirecció
+                redirect.addFlashAttribute("org.springframework.validation.BindingResult.tecnicForm", result);
+                redirect.addFlashAttribute("tecnicForm", tecnicForm);
+                // Redirigir al GET de gestio/tecnics per tornar a carregar la vista amb els errors
+                return "redirect:/private/gestio/tecnics";
+            }
+
+            if (Utils.isEmpty(subaplCoa)) {
+                LOG.error("### Error saveTecnic: No s'ha pogut obtenir la subaplicació (subaplCoa) de l'usuari autenticat.");
+                redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TECNICS, null, locale));
+                return "redirect:/private/gestio/tecnics";
+            }
+
+            // 2. Mapeig DTO per a l'API
+            // Només fem servir TecnicDto per enviar dades a l'API.
+            TecnicDto tecnicToSave = new TecnicDto();
+            // Si coa no és null, és una edició, altrament és una creació
+            tecnicToSave.setCoa(tecnicForm.getCoa());
+            tecnicToSave.setPass(tecnicForm.getPass());
+            tecnicToSave.setNom(tecnicForm.getNom());
+            tecnicToSave.setLl1(tecnicForm.getLl1());
+            tecnicToSave.setLl2(tecnicForm.getLl2());
+            tecnicToSave.setPrf(tecnicForm.getPrf());
+
+            // Comprovacions perfil
+            if (!subaplCoa.equals(StringUtils.substringAfter(tecnicForm.getPrf(), "_"))) {
+            	String errorPrfCoa= bundle.getMessage(Constants.ERROR_FRONT_PRF_TECNICS, null, locale);
+                redirect.addFlashAttribute("error", errorPrfCoa);
+
+            } else {
+	            // 4. Guardar
+	            TecnicDto savedTecnic = new TecnicDto();
+	            if (tecnicForm.getCoa() != null) {
+	            	savedTecnic = citaPreviaPrivateClient.updateTecnic(tecnicForm.getCoa(), tecnicToSave, locale);
+	            } else {
+	            	savedTecnic = citaPreviaPrivateClient.saveTecnic(tecnicToSave, locale);
+	            }
+	
+	            if (savedTecnic.hasErrors()) {
+	                // Maneig d'errors del backend
+	                redirect.addFlashAttribute("error", savedTecnic.getErrors().get(0).getDem());
+	                redirect.addFlashAttribute("tecnicForm", tecnicForm);
+	            } else {
+	                redirect.addFlashAttribute("success", tecnicForm.getCoa() == null ? bundle.getMessage(Constants.SUCCESS_FRONT_SAVE_TECNICS, null, locale) : bundle.getMessage(Constants.SUCCESS_FRONT_UPDATE_TECNICS, null, locale));
+	            }
+            
+            }
+            // 3. Crida al client API
+            //ErrorDto resultat = citaPreviaPrivateClient.saveTecnicOfSubapl(subaplCoa, tecnicToSave, locale);
+
+            // 4. Gestió de l'error retornat per l'API (si n'hi ha)
+           /* if (resultat != null && !Utils.isEmpty(resultat.getDem())) {
+                String errorMessage = resultat.getDem();
+                // Afegeix l'error al FlashMap
+                redirect.addFlashAttribute("error", errorMessage);
+                // Torna a afegir el DTO per mantenir les dades al formulari i obrir el modal
+                redirect.addFlashAttribute("tecnicForm", tecnicForm);
+                return "redirect:/private/gestio/tecnics";
+            }
+
+            // 5. Success
+            String successMessageKey = StringUtils.isBlank(tecnicForm.getCoa()) ? "tecnic.creat.ok" : "tecnic.guardat.ok";
+            // El nom a mostrar podria ser el camp 'nom' del formulari
+            redirect.addFlashAttribute("success", bundle.getMessage(successMessageKey, new Object[]{tecnicForm.getNom()}, locale));
+*/
+        } catch (Exception e) {
+            LOG.error("### Error saveTecnic tecnicForm={}", tecnicForm.toString(), e);
+            redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TECNICS, null, locale));
+            // Torna a afegir el DTO per mantenir les dades al formulari en cas d'error inesperat
+            redirect.addFlashAttribute("tecnicForm", tecnicForm);
+        } finally {
+            long totalTime = (System.currentTimeMillis() - startTime);
+            LOG.info("### Final PrivateController.saveTecnic totalTime={}, tecnicForm={}", totalTime, tecnicForm.toString());
+        }
+
+        return "redirect:/private/gestio/tecnics";
+    }
 }

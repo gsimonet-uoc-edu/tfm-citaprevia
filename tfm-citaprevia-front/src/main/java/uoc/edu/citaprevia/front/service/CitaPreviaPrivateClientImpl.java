@@ -61,6 +61,31 @@ public class CitaPreviaPrivateClientImpl implements CitaPreviaPrivateClient{
 	}
 	
 	@Override
+	public TecnicDto saveTecnic(TecnicDto tecnic, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_LOCALE, locale);
+		String url = getBaseApiUrl() + "/tecnics?lang={lang}";
+	    ResponseEntity<TecnicDto> response = restTemplate.postForEntity(url, tecnic, TecnicDto.class, params
+	        );
+		return response.getBody() == null ? new TecnicDto() : response.getBody();
+	}
+	
+	@Override
+	public TecnicDto updateTecnic(String tecCoa, TecnicDto dto, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_TEC_COA, tecCoa);
+		params.put(PARAM_LOCALE, locale);
+		String url = getBaseApiUrl() + "/tecnics/{tecCoa}?lang={lang}";	
+	    ResponseEntity<TecnicDto> response = restTemplate.exchange(url, 
+		        HttpMethod.PUT, 
+		        new HttpEntity<>(dto),               
+		        TecnicDto.class,     
+		        params             
+		    );
+		return response.getBody() == null ? new TecnicDto() : response.getBody();
+	}
+	
+	@Override
 	public List<TecnicDto> getTecnicsBySubaplicacio(String subaplCoa, Locale locale) {
 		Map<String, Object> params = new HashMap<>();
 		params.put(PARAM_SUBAPL_COA, subaplCoa);

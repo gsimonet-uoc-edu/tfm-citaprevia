@@ -50,5 +50,9 @@ public interface CitaPreviaPrivateClient {
 
 	List<TecnicDto> getTecnicsBySubaplicacio(String subaplCoa, Locale locale);
 
+	TecnicDto saveTecnic(TecnicDto tecnic, Locale locale);
+
+	TecnicDto updateTecnic(String tecCoa, TecnicDto dto, Locale locale);
+
 
 }
