@@ -50,6 +50,7 @@ import uoc.edu.citaprevia.front.privat.dto.AgendaFormDto;
 import uoc.edu.citaprevia.front.privat.dto.HorariFormDto;
 import uoc.edu.citaprevia.front.privat.dto.SetmanaTipusDeleteFormDto;
 import uoc.edu.citaprevia.front.privat.dto.SetmanaTipusFormDto;
+import uoc.edu.citaprevia.front.privat.dto.TecnicFormDto;
 import uoc.edu.citaprevia.front.service.CitaPreviaPrivateClient;
 import uoc.edu.citaprevia.front.service.CitaPreviaPublicClient;
 import uoc.edu.citaprevia.front.service.MetacamapService;
@@ -833,4 +834,48 @@ public class PrivateController {
         }
     }
     
+    
+    /**
+     * Pàgina de gestió de tècnics.
+     */
+    @GetMapping("/gestio/tecnics")
+    public String gestioTecnics(Model model, @ModelAttribute("tecnicForm") TecnicFormDto tecnicForm, Authentication authentication, Locale locale) {
+        long startTime = System.currentTimeMillis();
+        LOG.info("### Inici PrivateController.gestioTecnics");
+        String subaplCoa = null;
+        // Obtenir subaplicacio del perfil de l'usuari
+        if (authentication.getAuthorities() != null && !authentication.getAuthorities().isEmpty()) {
+            for (GrantedAuthority authority : authentication.getAuthorities()) {
+                subaplCoa = StringUtils.substringAfter(authority.getAuthority(), "_");
+                break;
+            }
+        }
+
+        try {
+            if (Utils.isEmpty(subaplCoa)) {
+                LOG.error("### Error gestioTecnics: No s'ha pogut obtenir la subaplicació (subaplCoa) de l'usuari autenticat.");
+                model.addAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TECNICS, null, locale));
+                return "private/gestio-tecnics";
+            }
+
+            // 2. Carregar llista de Tècnics
+            List<TecnicDto> tecnicsList = citaPreviaPrivateClient.getTecnicsBySubaplicacio(subaplCoa, locale);
+
+            // CRITICAL FIX: El nom de l'atribut a la vista HTML és 'tecnics'
+            model.addAttribute("tecnics", tecnicsList);
+
+            // 3. Afegir un DTO buit per al formulari modal si no n'hi ha un per errors de validació
+            // Ja que l'hem injectat a la signatura (@ModelAttribute("tecnicForm") TecnicDto tecnicForm),
+            // ja està disponible amb el nom 'tecnicForm', per això eliminem la comprovació.
+            // Si hi ha errors de validació d'una crida POST, Spring l'haurà afegit automàticament.
+
+        } catch (Exception e) {
+            LOG.error("### Error gestioTecnics per a subaplCoa={}", subaplCoa, e);
+            model.addAttribute("tecnicFormError", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TECNICS, null, locale));
+        } finally {
+            long totalTime = (System.currentTimeMillis() - startTime);
+            LOG.info("### Final PrivateController.gestioTecnics totalTime={}", totalTime);
+        }
+        return "private/gestio-tecnics";
+    }
 }

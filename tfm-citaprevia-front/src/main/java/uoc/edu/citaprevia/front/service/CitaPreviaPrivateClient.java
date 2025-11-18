@@ -48,5 +48,7 @@ public interface CitaPreviaPrivateClient {
 
 	ErrorDto deleteSetmanaTipusOfHorari(Long horCon, SetmanaTipusDto settip, Locale locale);
 
+	List<TecnicDto> getTecnicsBySubaplicacio(String subaplCoa, Locale locale);
+
 
 }

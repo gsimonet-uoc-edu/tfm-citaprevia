@@ -21,6 +21,7 @@ public class Constants {
 	
 	
 	//FRONT
+	public static final String ERROR_FRONT_GESTIO_TECNICS = "error.tecnics.gestio";
 	public static final String ERROR_FRONT_GESTIO_AGENDES = "error.agendes.gestio";
 	public static final String ERROR_FRONT_GESTIO_HORARIS = "error.horaris.gestio";
 	public static final String ERROR_FRONT_SAVE_AGENDES = "error.agendes.save";

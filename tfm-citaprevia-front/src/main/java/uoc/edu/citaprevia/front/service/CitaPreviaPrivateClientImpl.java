@@ -61,6 +61,16 @@ public class CitaPreviaPrivateClientImpl implements CitaPreviaPrivateClient{
 	}
 	
 	@Override
+	public List<TecnicDto> getTecnicsBySubaplicacio(String subaplCoa, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_SUBAPL_COA, subaplCoa);
+		params.put(PARAM_LOCALE, locale);
+		String url = getBaseApiUrl() + "/tecnics/subaplicacions/{subaplCoa}?lang={lang}";	
+		TecnicDto[] list = restTemplate.getForObject(url, TecnicDto[].class, params);
+		return list == null ? new ArrayList<>() : Arrays.asList(list);
+	}
+	
+	@Override
 	public List<AgendaDto> getAgendasBySubaplicacio(String subaplCoa, Locale locale) {
 		Map<String, Object> params = new HashMap<>();
 		params.put(PARAM_SUBAPL_COA, subaplCoa);		
