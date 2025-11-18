@@ -21,275 +21,327 @@
             </a>
         </div>
         
-        <!-- Contenidor per a missatges d'alerta (éxit/error) -->
-        <div id="alertContainer">
-            <th:block th:if="${tecnicFormError}">
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <span th:text="${tecnicFormError}">Error de validació o de sistema.</span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            </th:block>
-        </div>
-
-        <div class="card shadow-sm mb-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0" th:text="#{llista_tecnics}">Llista de Tècnics</h5>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tecnicModal" onclick="clearTecnicModal()">
-                    <i class="fas fa-plus me-2"></i> <span th:text="#{nou_tecnic}">Nou Tècnic</span>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <!-- Espai per al missatge d'alerta global -->
+            <div id="alertContainer" class="w-100"></div>
+            
+            <!-- INICI: Form afegit segons la petició de l'usuari -->
+            <form th:action="@{/private/gestio/tecnics/save}" method="post">
+                <button type="button" class="btn btn-primary" onclick="clearTecnicModal()" data-bs-toggle="modal" data-bs-target="#tecnicModal">
+                    <i class="fas fa-plus-circle me-2"></i> <span th:text="#{nou_tecnic}">Nou Tècnic</span>
                 </button>
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th th:text="#{tecnic.coa}">COA</th>
-                                <th th:text="#{tecnic.nom}">Nom</th>
-                                <th th:text="#{tecnic.prf}">Perfil</th>
-                                <th th:text="#{tecnic.ll1}">Lliure 1</th>
-                                <th th:text="#{tecnic.ll2}">Lliure 2</th>
-                                <th th:text="#{accions}">Accions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Llistat de Tècnics -->
-                            <tr th:each="tecnic : ${tecnics}">
-                                <td th:text="${tecnic.coa}"></td>
-                                <td th:text="${tecnic.nom}"></td>
-                                <td th:text="${tecnic.prf}"></td>
-                                <td th:text="${tecnic.ll1}"></td>
-                                <td th:text="${tecnic.ll2}"></td>
-                                <td>
-                                    <!-- Botó d'Edició: Ús segur de data-attributes (FIX PER ERROR DE SEGURETAT) -->
-                                    <button type="button" 
-                                            class="btn btn-sm btn-primary" 
-                                            th:text="#{editar}"
-                                            th:data-coa="${tecnic.coa}"
-                                            th:data-nom="${tecnic.nom}"
-                                            th:data-ll1="${tecnic.ll1}"
-                                            th:data-ll2="${tecnic.ll2}"
-                                            th:data-prf="${tecnic.prf}"
-                                            onclick="editTecnic(this)">
-                                        Editar
-                                    </button>
-                                    
-                                    <!-- Botó d'Eliminació: Ús segur de data-attributes -->
-                                    <button type="button" 
-                                            class="btn btn-sm btn-danger" 
-                                            th:text="#{esborrar}"
-                                            th:data-coa="${tecnic.coa}"
-                                            onclick="prepararEsborrarTecnic(this.dataset.coa)">
-                                        Esborrar
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr th:if="${#lists.isEmpty(tecnics)}">
-                                <td colspan="6" class="text-center" th:text="#{no_hi_ha_tecnics}">No hi ha tècnics registrats.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            </form>
+            <!-- FINAL: Form afegit -->
         </div>
 
-        <!-- Modal d'Edició/Creació de Tècnic -->
-        <div class="modal fade" id="tecnicModal" tabindex="-1" aria-labelledby="tecnicModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <form th:action="@{/private/gestio/tecnics}" method="post" id="formTecnic" th:object="${tecnicForm}">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="tecnicModalLabel" th:text="#{nou_tecnic}">Nou Tècnic</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            
-                            <!-- Camp ocult per al COA original (útil per a l'edició, ja que COA pot ser clau primària) -->
-                            <input type="hidden" id="originalCoa" name="originalCoa" value=""> 
-
-                            <!-- Camp COA -->
-                            <div class="mb-3">
-                                <label for="coa" class="form-label" th:text="#{tecnic.coa}">COA</label>
-                                <input type="text" class="form-control" id="coa" name="coa" th:field="*{coa}" required>
-                                <div class="text-danger" th:if="${#fields.hasErrors('coa')}" th:errors="*{coa}">Error COA</div>
-                            </div>
-                            
-                            <!-- Camp Nom -->
-                            <div class="mb-3">
-                                <label for="nom" class="form-label" th:text="#{tecnic.nom}">Nom</label>
-                                <input type="text" class="form-control" id="nom" name="nom" th:field="*{nom}" required>
-                                <div class="text-danger" th:if="${#fields.hasErrors('nom')}" th:errors="*{nom}">Error Nom</div>
-                            </div>
-
-                            <!-- Camp Contrasenya (només s'omple en creació o si es vol canviar) -->
-                            <div class="mb-3">
-                                <label for="pass" class="form-label" th:text="#{tecnic.pass}">Contrasenya</label>
-                                <input type="password" class="form-control" id="pass" name="pass" th:field="*{pass}" th:required="${tecnicForm.coa == null or tecnicForm.coa.isEmpty()}">
-                                <div class="text-muted small" th:text="#{tecnic.pass.tip}">Deixar buit per no canviar la contrasenya en edició.</div>
-                                <div class="text-danger" th:if="${#fields.hasErrors('pass')}" th:errors="*{pass}">Error Contrasenya</div>
-                            </div>
-                            
-                            <!-- Camp Perfil -->
-                            <div class="mb-3">
-                                <label for="prf" class="form-label" th:text="#{tecnic.prf}">Perfil (Ex: ADMIN, BASIC)</label>
-                                <input type="text" class="form-control" id="prf" name="prf" th:field="*{prf}" required>
-                                <div class="text-danger" th:if="${#fields.hasErrors('prf')}" th:errors="*{prf}">Error Perfil</div>
-                            </div>
-
-                            <!-- Camps Lliure -->
-                            <div class="mb-3">
-                                <label for="ll1" class="form-label" th:text="#{tecnic.ll1}">Lliure 1</label>
-                                <input type="text" class="form-control" id="ll1" name="ll1" th:field="*{ll1}">
-                                <div class="text-danger" th:if="${#fields.hasErrors('ll1')}" th:errors="*{ll1}">Error Lliure 1</div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="ll2" class="form-label" th:text="#{tecnic.ll2}">Lliure 2</label>
-                                <input type="text" class="form-control" id="ll2" name="ll2" th:field="*{ll2}">
-                                <div class="text-danger" th:if="${#fields.hasErrors('ll2')}" th:errors="*{ll2}">Error Lliure 2</div>
-                            </div>
-                            
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{cancelar}">Cancel·lar</button>
-                            <button type="submit" class="btn btn-success" th:text="#{guardar}">Guardar</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Modal d'Eliminació de Tècnic -->
-        <div class="modal fade" id="esborrarTecnicModal" tabindex="-1" aria-labelledby="esborrarTecnicModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-sm">
-                <div class="modal-content">
-                    <div class="modal-header bg-danger text-white">
-                        <h5 class="modal-title" id="esborrarTecnicModalLabel" th:text="#{confirmar_esborrar}">Confirmar Eliminació</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body text-center">
-                        <i class="fas fa-exclamation-triangle fa-3x text-danger mb-3"></i>
-                        <p th:text="#{confirmar_esborrat_tecnic}">Està segur que vol esborrar aquest tècnic?</p>
-                        <!-- Camp ocult per rebre el CON del tècnic a esborrar -->
-                        <input type="hidden" id="esborrarTecnicCon" value="">
-                    </div>
-                    <div class="modal-footer justify-content-center">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{cancelar}">Cancel·lar</button>
-                        <button type="button" class="btn btn-danger" onclick="deleteTecnic()" th:text="#{esborrar}">Esborrar</button>
-                    </div>
-                </div>
-            </div>
+        <!-- Missatge d'error general (si ve de la validació del GET/carrega inicial) -->
+        <!-- S'assumeix que 'tecnicFormError' pot portar missatges d'error de negoci general de la càrrega inicial (GET) -->
+        <div th:if="${tecnicFormError}" class="alert alert-danger" role="alert" th:text="${tecnicFormError}">
+            Error en carregar la gestió de tècnics.
         </div>
 
+        <!-- Llista de Tècnics -->
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th th:text="#{tecnic_coa}">COA</th>
+                        <th th:text="#{tecnic_nom}">Nom</th>
+                        <th th:text="#{tecnic_ll1}">Lliure 1</th>
+                        <th th:text="#{tecnic_ll2}">Lliure 2</th>
+                        <th th:text="#{tecnic_prf}">Perfil</th>
+                        <th th:text="#{accions}">Accions</th>
+                    </tr>
+                </thead>
+                <tbody id="tecnicsTableBody">
+                    <!-- Les dades es carregaran amb Thymeleaf per la càrrega inicial i AJAX/JS -->
+                    <tr th:each="tecnic : ${tecnics}">
+                        <td th:text="${tecnic.coa}">T001</td>
+                        <td th:text="${tecnic.nom}">Joan</td>
+                        <td th:text="${tecnic.ll1}">Lliure A</td>
+                        <td th:text="${tecnic.ll2}">Lliure B</td>
+                        <td th:text="${tecnic.prf}">ADMIN</td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-info me-2" th:title="#{editar_tecnic}"
+                                th:data-coa="${tecnic.coa}"
+                                th:data-nom="${tecnic.nom}"
+                                th:data-ll1="${tecnic.ll1}"
+                                th:data-ll2="${tecnic.ll2}"
+                                th:data-prf="${tecnic.prf}"
+                                onclick="editTecnic(this)">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-danger" th:title="#{esborrar_tecnic}"
+                                th:data-coa="${tecnic.coa}"
+                                onclick="prepararEsborrarTecnic(this.getAttribute('data-coa'))"
+                                data-bs-toggle="modal" data-bs-target="#esborrarTecnicModal">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Si la llista és buida, mostrar un missatge -->
+        <div th:if="${#lists.isEmpty(tecnics)}" class="alert alert-info mt-3" th:text="#{llista_tecnics_buida}">
+            No hi ha tècnics registrats per a aquesta subaplicació.
+        </div>
     </div>
 
-    <th:block th:replace="~{common/footer :: footer}"></th:block>
+    <!-- Modal per a Afegir/Editar Tècnic -->
+    <div class="modal fade" id="tecnicModal" tabindex="-1" aria-labelledby="tecnicModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- IMPORTANT: Aquest és el formulari real d'edició/creació -->
+                <form th:action="@{/private/gestio/tecnics/save}" th:object="${tecnicForm}" method="post" id="formTecnic">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="tecnicModalLabel" th:text="#{nou_tecnic}">Nou Tècnic</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Camp ocult per a l'ID original en cas d'edició (no s'utilitza amb el COA) -->
+                        <input type="hidden" id="originalCoa" th:field="*{coa}" />
+                        
+                        <!-- Camp COA (Codi de l'Operari) -->
+                        <div class="mb-3">
+                            <label for="coa" class="form-label" th:text="#{tecnic_coa}">Codi Operari (COA)</label>
+                            <input type="text" class="form-control" id="coa" name="coa" 
+                                   th:value="*{coa}" maxlength="8" required="required"
+                                   th:classappend="${#fields.hasErrors('coa') ? 'is-invalid' : ''}" 
+                                   oninput="this.value = this.value.toUpperCase()">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('coa')}" th:errors="*{coa}">Error COA.</div>
+                            <!-- S'HA ELIMINAT la referència a tecnicForm.dem -->
+                        </div>
+
+                        <!-- Camp PASS (Contrasenya) -->
+                        <div class="mb-3">
+                            <label for="pass" class="form-label" th:text="#{tecnic_pass}">Contrasenya</label>
+                            <input type="password" class="form-control" id="pass" name="pass"
+                                   th:classappend="${#fields.hasErrors('pass') ? 'is-invalid' : ''}">
+                            <div id="pass-help" class="form-text" th:text="#{tecnic_pass_ajuda}">
+                                Obligatòria per a nou tècnic. Deixar buida per no canviar en edició.
+                            </div>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('pass')}" th:errors="*{pass}">Error Contrasenya.</div>
+                        </div>
+
+                        <!-- Camp NOM -->
+                        <div class="mb-3">
+                            <label for="nom" class="form-label" th:text="#{tecnic_nom}">Nom</label>
+                            <input type="text" class="form-control" id="nom" th:field="*{nom}" 
+                                   th:classappend="${#fields.hasErrors('nom') ? 'is-invalid' : ''}" required="required">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('nom')}" th:errors="*{nom}">Error Nom.</div>
+                        </div>
+
+                        <!-- Camp LLIURE 1 (LL1) -->
+                        <div class="mb-3">
+                            <label for="ll1" class="form-label" th:text="#{tecnic_ll1}">Lliure 1</label>
+                            <input type="text" class="form-control" id="ll1" th:field="*{ll1}" 
+                                   th:classappend="${#fields.hasErrors('ll1') ? 'is-invalid' : ''}">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('ll1')}" th:errors="*{ll1}">Error Lliure 1.</div>
+                        </div>
+
+                        <!-- Camp LLIURE 2 (LL2) -->
+                        <div class="mb-3">
+                            <label for="ll2" class="form-label" th:text="#{tecnic_ll2}">Lliure 2</label>
+                            <input type="text" class="form-control" id="ll2" th:field="*{ll2}" 
+                                   th:classappend="${#fields.hasErrors('ll2') ? 'is-invalid' : ''}">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('ll2')}" th:errors="*{ll2}">Error Lliure 2.</div>
+                        </div>
+
+                        <!-- Camp PERFIL (PRF) -->
+                        <div class="mb-3">
+                            <label for="prf" class="form-label" th:text="#{tecnic_prf}">Perfil</label>
+                            <select class="form-select" id="prf" th:field="*{prf}" 
+                                    th:classappend="${#fields.hasErrors('prf') ? 'is-invalid' : ''}" required="required">
+                                <option value="" th:text="#{selecciona_perfil}">Selecciona un perfil</option>
+                                <!-- Exemples de valors de perfil. S'haurien de carregar dinàmicament en una aplicació real. -->
+                                <option value="ADMIN">ADMIN</option>
+                                <option value="BASIC">BASIC</option>
+                            </select>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('prf')}" th:errors="*{prf}">Error Perfil.</div>
+                        </div>
+                        
+                        <!-- Missatge d'error general (si no es pot assignar a un camp concret) -->
+                        <!-- S'HA ELIMINAT la referència a tecnicForm.dem -->
+                        <!-- Si el teu controlador Spring retorna un missatge d'error de negoci que no és una validació de camp, 
+                             hauràs d'afegir-lo com un atribut al Model (p.ex., 'globalError') i mostrar-lo aquí. -->
+                        <div class="alert alert-danger mt-3" role="alert" th:if="${#fields.hasGlobalErrors()}" th:errors="*{global}">
+                            Error global.
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{cancelar}">Cancel·lar</button>
+                        <button type="submit" class="btn btn-primary" th:text="#{guardar}">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal d'Eliminació -->
+    <div class="modal fade" id="esborrarTecnicModal" tabindex="-1" aria-labelledby="esborrarTecnicModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="esborrarTecnicModalLabel" th:text="#{confirmar_esborrat}">Confirmar Esborrat</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p th:text="#{confirmar_esborrat_tecnic}">Està segur que vol esborrar aquest tècnic?</p>
+                    <input type="hidden" id="esborrarTecnicCon">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{cancelar}">Cancel·lar</button>
+                    <button type="button" class="btn btn-danger" onclick="esborrarTecnic()" th:text="#{esborrar}">Esborrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script th:inline="javascript">
         /*<![CDATA[*/
         const API_URL = /*[[@{/api/private/tecnics}]]*/ '/api/private/tecnics';
-        // Assume HORARI_CON is not strictly needed here, but keeping the context
-        // const HORARI_CON = /*[[${horariCon}]]*/ ''; 
-        
-        // Funció per mostrar alertes
-        function showAlert(message, type = 'success', containerId = 'alertContainer') {
+        // const HORARI_CON = /*[[${horariCon}]]*/ 'default-horari-con'; 
+
+        /**
+         * Funció genèrica per mostrar alertes de Bootstrap.
+         */
+        function showAlert(message, type, containerId = 'alertContainer') {
             const container = document.getElementById(containerId);
             if (!container) return;
-            const alertHtml = `
-                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            `;
-            container.innerHTML = alertHtml;
-        }
+            
+            // Neteja l'alerta actual
+            container.innerHTML = '';
 
+            if (message) {
+                const wrapper = document.createElement('div');
+                wrapper.innerHTML = [
+                    `<div class="alert alert-${type} alert-dismissible fade show w-100" role="alert">`,
+                    `   <div>${message}</div>`,
+                    '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+                    '</div>'
+                ].join('');
+
+                container.append(wrapper);
+                
+                // Si és un èxit, s'amaga al cap d'uns segons
+                if (type === 'success') {
+                    setTimeout(() => {
+                        const alert = wrapper.querySelector('.alert');
+                        if (alert) {
+                            bootstrap.Alert.getInstance(alert)?.close();
+                        }
+                    }, 5000);
+                }
+            }
+        }
+        
         /**
-         * Buidar el modal i preparar-lo per a la creació d'un nou tècnic.
+         * Neteja el modal i el prepara per a l'acció de "Nou Tècnic".
          */
         function clearTecnicModal() {
-            document.getElementById('formTecnic').reset();
+            const form = document.getElementById('formTecnic');
+            
+            // 1. Netejar el formulari
+            form.reset();
+            
+            // 2. Netejar errors de validació anteriors i missatges de negoci (si n'hi ha)
+            form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            // La comprovació de missatges de negoci globals ara es fa amb #fields.hasGlobalErrors() a l'HTML
+            
+            // 3. Configurar com a mode Nou Tècnic
             document.getElementById('tecnicModalLabel').textContent = /*[[#{nou_tecnic}]]*/ 'Nou Tècnic';
-            document.getElementById('originalCoa').value = ''; // Netejar el COA original
-            document.getElementById('coa').readOnly = false; // El COA és editable en nou
-            document.getElementById('pass').required = true; // La contrasenya és obligatòria en nou
-        }
+            document.getElementById('coa').readOnly = false; // El COA és editable per a un nou tècnic
+            document.getElementById('pass').required = true; // La contrasenya és obligatòria per a un nou tècnic
 
+            // 4. Netejar el camp ocult que guardaria el COA original en cas d'edició
+            document.getElementById('originalCoa').value = '';
+            document.getElementById('coa').value = ''; // Netejar el valor del COA si estava ple
+        }
+        
         /**
-         * Carrega les dades del Tècnic seleccionat al modal d'edició llegint de data attributes.
-         * La clau 'coa' es passa amb seguretat mitjançant data-attributes.
-         * @param {HTMLElement} button - El botó d'edició clicat.
+         * Carrega les dades del Tècnic seleccionat al modal d'edició.
          */
         function editTecnic(button) {
             document.getElementById('tecnicModalLabel').textContent = /*[[#{editar_tecnic}]]*/ 'Editar Tècnic';
-
-            // Llegir de data attributes
-            const coa = button.dataset.coa;
-            const nom = button.dataset.nom;
-            const ll1 = button.dataset.ll1;
-            const ll2 = button.dataset.ll2;
-            const prf = button.dataset.prf;
+            
+            // Netejar per si hi havia errors d'un intent de guardat anterior
+            clearTecnicModal();
+            
+            // Carregar valors del data-* atributs del botó
+            const coa = button.getAttribute('data-coa');
+            const nom = button.getAttribute('data-nom');
+            const ll1 = button.getAttribute('data-ll1');
+            const ll2 = button.getAttribute('data-ll2');
+            const prf = button.getAttribute('data-prf');
 
             // 1. Carregar valors principals
-            document.getElementById('coa').value = coa;
+            document.getElementById('coa').value = coa; 
             document.getElementById('nom').value = nom;
-            document.getElementById('ll1').value = ll1 || '';
+            document.getElementById('ll1').value = ll1 || ''; 
             document.getElementById('ll2').value = ll2 || '';
-            document.getElementById('prf').value = prf;
+            document.getElementById('prf').value = prf; 
             
-            // 2. Ajustos per a Edició
-            document.getElementById('originalCoa').value = coa; // Guardar el COA original per a l'acció POST
-            document.getElementById('coa').readOnly = true; // El COA no és editable en edició
-            document.getElementById('pass').required = false; // La contrasenya no és obligatòria en edició
-            document.getElementById('pass').value = ''; // Buidar el camp de contrasenya per defecte
+            // 2. Configurar per a Edició
+            // El camp originalCoa guarda el COA que s'està editant.
+            document.getElementById('originalCoa').value = coa; 
+            
+            // El COA és de només lectura en edició
+            document.getElementById('coa').readOnly = true; 
+            
+            // La contrasenya no és obligatòria en edició (si es deixa buida, no es canvia)
+            document.getElementById('pass').required = false; 
+            document.getElementById('pass').value = ''; // Buidar el camp de contrasenya
 
             // 3. OBRIR EL MODAL
             var myModal = new bootstrap.Modal(document.getElementById('tecnicModal'));
             myModal.show();
         }
-
+        
         /**
          * Funció per carregar el COA del tècnic al formulari ocult del modal d'eliminació.
-         * @param {string} coa - El codi COA del tècnic.
          */
         function prepararEsborrarTecnic(coa) {
-            // Carrega el COA al camp ocult del modal d'eliminació
+            // CRÍTIC: Carrega el COA al camp ocult del modal d'eliminació
             document.getElementById('esborrarTecnicCon').value = coa;
-            var myModal = new bootstrap.Modal(document.getElementById('esborrarTecnicModal'));
-            myModal.show();
         }
 
         /**
-         * Elimina un tècnic mitjançant AJAX.
+         * Funció per esborrar un tècnic mitjançant AJAX.
          */
-        function deleteTecnic() {
-            // Netejar missatges anteriors
-            showAlert('', 'info', 'alertContainer'); 
+        function esborrarTecnic() {
+            const esborrarTecnicModal = document.getElementById('esborrarTecnicModal');
+            if (!esborrarTecnicModal) return;
+
+            showAlert('', 'info', 'alertContainer'); // Per netejar missatges anteriors
             
             const tecnicCon = document.getElementById('esborrarTecnicCon').value;
             
-            if (!tecnicCon) {
-                showAlert(/*[[#{error_general}]]*/ 'Error: No s\'ha pogut obtenir el codi del tècnic.', 'danger');
-                return;
-            }
-
-            // Tancar el modal d'eliminació
-            bootstrap.Modal.getInstance(document.getElementById('esborrarTecnicModal')).hide();
-
+            // Codi real a implementar:
             fetch(`${API_URL}/delete/${tecnicCon}`, { 
-                method: 'POST', // O DELETE, segons el vostre disseny d'API
+                method: 'POST', 
                 headers: { 'Content-Type': 'application/json' }
+                // No cal body per a un DELETE simple basat en path variable
             })
             .then(response => {
                 if (!response.ok) {
+                    // Si el back-end llança un error HTTP, intentem obtenir el cos amb el missatge d'error
                     return response.json().then(err => { 
-                        // Utilitzem 'dem' (demanda/descripció de l'error) si està disponible, o missatge genèric
+                        // Assumim que l'error conté un camp 'dem' o un missatge general
                         const errorMessage = err.dem || /*[[#{error_eliminar_tecnic}]]*/ 'Error en eliminar el tècnic.';
                         throw new Error(errorMessage); 
                     });
                 }
-                return response.text(); 
+                // El back pot retornar 200 OK amb cos buit o un missatge de text
+                return response.text().catch(() => ''); // Capturar error si no hi ha text
             })
             .then(() => {
+                // Tancar el modal
+                bootstrap.Modal.getInstance(esborrarTecnicModal).hide();
+                // Mostrar missatge d'èxit
                 showAlert(/*[[#{tecnic_esborrat_ok}]]*/ 'Tècnic esborrat correctament.', 'success');
                 // Recarregar la pàgina o la llista per reflectir els canvis
                 window.location.reload(); 
@@ -302,7 +354,9 @@
         
         // Si hi ha errors de validació en el model, obrir el modal automàticament
         window.onload = function() {
-            const hasErrors = document.querySelector('.text-danger[th\\:if]');
+            // Comprova si hi ha qualsevol error de validació a nivell de camp o global
+            const hasErrors = document.querySelector('.is-invalid, .alert-danger[th\\\\:if]');
+            // Comprova si l'error ve d'una edició (el camp ocult 'originalCoa' té valor)
             const isEditing = document.getElementById('originalCoa') && document.getElementById('originalCoa').value !== '';
             
             if (hasErrors) {
@@ -316,6 +370,7 @@
                     document.getElementById('coa').readOnly = true;
                     document.getElementById('pass').required = false;
                 } else {
+                    document.getElementById('tecnicModalLabel').textContent = /*[[#{nou_tecnic}]]*/ 'Nou Tècnic';
                     document.getElementById('coa').readOnly = false;
                     document.getElementById('pass').required = true;
                 }
