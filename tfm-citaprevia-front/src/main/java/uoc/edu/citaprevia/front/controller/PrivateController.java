@@ -930,7 +930,7 @@ public class PrivateController {
 
 	            // 4. Guardar
 	            TecnicDto savedTecnic = new TecnicDto();
-	            if (tecnicForm.getOriginalCoa() != null) {
+	            if (!Utils.isEmpty(tecnicForm.getOriginalCoa())) {
 	            	savedTecnic = citaPreviaPrivateClient.updateTecnic(tecnicForm.getCoa(), tecnicToSave, locale);
 	            } else {
 	            	savedTecnic = citaPreviaPrivateClient.saveTecnic(tecnicToSave, locale);

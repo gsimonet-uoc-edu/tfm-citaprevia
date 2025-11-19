@@ -2,6 +2,7 @@ package uoc.edu.citaprevia.front.privat.dto;
 
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,11 +18,11 @@ public class TecnicFormDto {
     private String originalCoa;
     
     // Contrasenya
-    @NotBlank(message = "{error.tecnic.pass.obligatori}")
+    @NotNull (message = "{error.tecnic.pass.obligatori}")
     private String pass;
     
     // Nom
-    @NotBlank(message = "{error.tecnic.nom.obligatori}")
+    @NotNull(message = "{error.tecnic.nom.obligatori}")
 	private String nom;
     
     // Lliure 1
@@ -31,6 +32,6 @@ public class TecnicFormDto {
 	private String ll2;
     
     // Perfil (Ex: 'ADMIN', 'BASIC', etc.)
-    @NotBlank(message = "{error.tecnic.prf.obligatori}")
+	@NotNull(message = "{error.tecnic.prf.obligatori}")
 	private String prf;
 }
