@@ -310,4 +310,44 @@ public class CitaPreviaPrivateClientImpl implements CitaPreviaPrivateClient{
 	    return response.getBody();
 	}
 	
+	@Override
+	public TipusCitaDto saveTipusCita(TipusCitaDto tipusCita, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_LOCALE, locale);
+		String url = getBaseApiUrl() + "/tipus-cites?lang={lang}";
+	    ResponseEntity<TipusCitaDto> response = restTemplate.postForEntity(url, tipusCita, TipusCitaDto.class, params
+	        );
+		return response.getBody() == null ? new TipusCitaDto() : response.getBody();
+	}
+	
+	@Override
+	public TipusCitaDto updateTipusCita(Long tipCitCon, TipusCitaDto dto, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_TIPCIT_CON, tipCitCon);
+		params.put(PARAM_LOCALE, locale);
+		String url = getBaseApiUrl() + "/tipus-cites/{tipCitCon}?lang={lang}";	
+	    ResponseEntity<TipusCitaDto> response = restTemplate.exchange(url, 
+		        HttpMethod.PUT, 
+		        new HttpEntity<>(dto),               
+		        TipusCitaDto.class,     
+		        params             
+		    );
+		return response.getBody() == null ? new TipusCitaDto() : response.getBody();
+	}
+	
+	@Override
+	public ErrorDto deleteTipusCita(Long tipCitCon, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_TIPCIT_CON, tipCitCon);
+		params.put(PARAM_LOCALE, locale);
+		String url = getBaseApiUrl() + "/tipus-cites/{tipCitCon}?lang={lang}";
+	    ResponseEntity<ErrorDto> response = restTemplate.exchange(url, 
+	        HttpMethod.DELETE, 
+	        null,               
+	        ErrorDto.class,     
+	        params             
+	    );
+	    return response.getBody();
+	}
+	
 }

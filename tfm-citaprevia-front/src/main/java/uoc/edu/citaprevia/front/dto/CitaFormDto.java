@@ -1,8 +1,6 @@
 package uoc.edu.citaprevia.front.dto;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;

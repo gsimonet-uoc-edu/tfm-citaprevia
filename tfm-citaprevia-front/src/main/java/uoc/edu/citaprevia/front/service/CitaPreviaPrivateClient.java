@@ -56,5 +56,11 @@ public interface CitaPreviaPrivateClient {
 
 	ErrorDto deleteTecnic(String tecCoa, Locale locale);
 
+	TipusCitaDto saveTipusCita(TipusCitaDto tipusCita, Locale locale);
+
+	TipusCitaDto updateTipusCita(Long tipCitCon, TipusCitaDto dto, Locale locale);
+
+	ErrorDto deleteTipusCita(Long tipCitCon, Locale locale);
+
 
 }
