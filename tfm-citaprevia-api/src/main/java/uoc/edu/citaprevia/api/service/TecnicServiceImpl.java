@@ -10,12 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
+import uoc.edu.citaprevia.api.dao.CitaDao;
 import uoc.edu.citaprevia.api.dao.TecnicDao;
-import uoc.edu.citaprevia.api.model.Agenda;
 import uoc.edu.citaprevia.api.model.Cita;
 import uoc.edu.citaprevia.api.model.Tecnic;
 import uoc.edu.citaprevia.api.utils.Converter;
-import uoc.edu.citaprevia.dto.AgendaDto;
 import uoc.edu.citaprevia.dto.TecnicDto;
 import uoc.edu.citaprevia.dto.generic.ErrorDto;
 import uoc.edu.citaprevia.util.Constants;
@@ -26,6 +25,9 @@ public class TecnicServiceImpl implements TecnicService{
 	
 	@Autowired
 	private TecnicDao tecnicDao;
+	
+	@Autowired
+	private CitaDao citaDao;
 	
 	private static final Logger LOG = LoggerFactory.getLogger(TecnicServiceImpl.class);
 	
@@ -106,38 +108,38 @@ public class TecnicServiceImpl implements TecnicService{
 		}
 		return dto;				
 	}
-	/*
+	
 	@Override
-	public ErrorDto deleteAgenda(Long con, Locale locale) {		
+	public ErrorDto deleteTecnic(String coa, Locale locale) {		
 		long startTime=System.currentTimeMillis();
-		LOG.info("### Inici AgendaServiceImpl.deleteAgenda startTime={}, ageCon={}", startTime, con);
+		LOG.info("### Inici TecnicServiceImpl.deleteTecnic startTime={}, tecCoa={}", startTime, coa);
 		ErrorDto dto = null;
 		try {
 			
-			Agenda dao = agendaDao.findAgendaByCon(con);
+			Tecnic dao = tecnicDao.findTecnicByCoa(coa);
 			
 			if (dao == null) {
-				return new ErrorDto(9999L,bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale));
+				return new ErrorDto(9999L,bundle.getMessage(Constants.ERROR_API_CRUD_TECNIC, null, locale));
 			} else {
-				// Validacions per esborrar cita
-				List<Cita> teCites = citaDao.findCitesByAgenda(con);
-				// Comprovar que l'agenda no te cites
+				// Validacions per esborrar tecnic
+				List<Cita> teCites = citaDao.findCitesByAgendaTecnicCoa(coa);
+				// Comprovar que el tècnic no te cites
 				if (teCites != null && !teCites.isEmpty() && teCites.size() > 0) {
-					return new ErrorDto(9999L,bundle.getMessage(Constants.ERROR_API_DELETE_AGENDA, null, locale));
+					return new ErrorDto(9999L,bundle.getMessage(Constants.ERROR_API_DELETE_TECNIC_CITES, null, locale));
 				} else {
-					agendaDao.deleteAgenda(dao);
+					tecnicDao.deleteTecnic(dao);
 				}			
 			}
 		
 		} catch (Exception e) {
-			LOG.error("### Error AgendaServiceImpl.deleteAgenda:" , e);
-			LOG.error("### Error AgendaServiceImpl.deleteAgenda={} ", bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale));		
+			LOG.error("### Error TecnicServiceImpl.deleteTecnic:" , e);
+			LOG.error("### Error TecnicServiceImpl.deleteTecnic={} ", bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale));		
 		} finally {
 			long totalTime = (System.currentTimeMillis() - startTime);
-			LOG.info("### Final AgendaServiceImpl.deleteAgenda totalTime={}, ageCon={}", totalTime, con);
+			LOG.info("### Final TecnicServiceImpl.deleteTecnic totalTime={}, tecCoa={}", totalTime, coa);
 		}
 		return dto;	
 		
 	}
-*/
+
 }

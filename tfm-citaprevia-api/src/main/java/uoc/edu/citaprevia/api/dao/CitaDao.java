@@ -36,6 +36,10 @@ public class CitaDao {
 		return citaRepository.findByAgendaHorariCon(horCon);
 	}
 	
+	public List<Cita> findCitesByAgendaTecnicCoa(String tecCoa) {	
+		return citaRepository.findByAgendaTecnicCoa(tecCoa);
+	}
+		
 	public void deleteCita (Cita entity) {
 		citaRepository.delete(entity);
 	}

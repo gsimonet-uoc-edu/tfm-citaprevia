@@ -944,25 +944,6 @@ public class PrivateController {
 	                redirect.addFlashAttribute("success", tecnicForm.getCoa() == null ? bundle.getMessage(Constants.SUCCESS_FRONT_SAVE_TECNICS, null, locale) : bundle.getMessage(Constants.SUCCESS_FRONT_UPDATE_TECNICS, null, locale));
 	            }
             
-            
-            // 3. Crida al client API
-            //ErrorDto resultat = citaPreviaPrivateClient.saveTecnicOfSubapl(subaplCoa, tecnicToSave, locale);
-
-            // 4. Gestió de l'error retornat per l'API (si n'hi ha)
-           /* if (resultat != null && !Utils.isEmpty(resultat.getDem())) {
-                String errorMessage = resultat.getDem();
-                // Afegeix l'error al FlashMap
-                redirect.addFlashAttribute("error", errorMessage);
-                // Torna a afegir el DTO per mantenir les dades al formulari i obrir el modal
-                redirect.addFlashAttribute("tecnicForm", tecnicForm);
-                return "redirect:/private/gestio/tecnics";
-            }
-
-            // 5. Success
-            String successMessageKey = StringUtils.isBlank(tecnicForm.getCoa()) ? "tecnic.creat.ok" : "tecnic.guardat.ok";
-            // El nom a mostrar podria ser el camp 'nom' del formulari
-            redirect.addFlashAttribute("success", bundle.getMessage(successMessageKey, new Object[]{tecnicForm.getNom()}, locale));
-*/
         } catch (Exception e) {
             LOG.error("### Error saveTecnic tecnicForm={}", tecnicForm.toString(), e);
             redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TECNICS, null, locale));
@@ -971,6 +952,56 @@ public class PrivateController {
         } finally {
             long totalTime = (System.currentTimeMillis() - startTime);
             LOG.info("### Final PrivateController.saveTecnic totalTime={}, tecnicForm={}", totalTime, tecnicForm.toString());
+        }
+
+        return "redirect:/private/gestio/tecnics";
+    }
+    
+    /**
+     * Elimina un tècnic.
+     */
+    @PostMapping("/gestio/tecnics/delete")
+    public String deleteTecnic(@RequestParam("coa") String coa,
+                               RedirectAttributes redirect,
+                               Authentication authentication,
+                               Locale locale) {
+
+        long startTime = System.currentTimeMillis();
+        LOG.info("### Inici PrivateController.deleteTecnic con={}", coa);
+
+        String subaplCoa = null;
+
+        // Obtenir la subaplicació del perfil de l'usuari (igual que als altres mètodes)
+        if (authentication.getAuthorities() != null && !authentication.getAuthorities().isEmpty()) {
+            for (GrantedAuthority authority : authentication.getAuthorities()) {
+                subaplCoa = StringUtils.substringAfter(authority.getAuthority(), "_");
+                break;
+            }
+        }
+
+        try {
+            if (Utils.isEmpty(subaplCoa)) {
+                LOG.error("### Error deleteTecnic: No s'ha pogut obtenir la subaplicació de l'usuari autenticat.");
+                redirect.addFlashAttribute("tecnicFormError", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TECNICS, null, locale));
+                return "redirect:/private/gestio/tecnics";
+            }
+
+            // Crida al client per esborrar el tècnic
+            // Assumint que tens un mètode deleteTecnic al teu CitaPreviaPrivateClient
+            ErrorDto error = citaPreviaPrivateClient.deleteTecnic(coa, locale);
+
+            if (error != null && !Utils.isEmpty(error.getDem())) {
+                redirect.addFlashAttribute("tecnicFormError", error.getDem());
+            } else {
+                redirect.addFlashAttribute("successMessage", bundle.getMessage("tecnic.esborrat.ok", null, locale));
+            }
+
+        } catch (Exception e) {
+            LOG.error("### Error deleteTecnic con={}", coa, e);
+            redirect.addFlashAttribute("tecnicFormError", bundle.getMessage("error.esborrar.tecnic", null, locale));
+        } finally {
+            long totalTime = (System.currentTimeMillis() - startTime);
+            LOG.info("### Final PrivateController.deleteTecnic totalTime={}", totalTime);
         }
 
         return "redirect:/private/gestio/tecnics";

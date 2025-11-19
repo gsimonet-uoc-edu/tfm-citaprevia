@@ -86,6 +86,22 @@ public class CitaPreviaPrivateClientImpl implements CitaPreviaPrivateClient{
 	}
 	
 	@Override
+	public ErrorDto deleteTecnic(String tecCoa, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_TEC_COA, tecCoa);
+		params.put(PARAM_LOCALE, locale);
+		String url = getBaseApiUrl() + "/tecnics/{tecCoa}?lang={lang}";
+	    ResponseEntity<ErrorDto> response = restTemplate.exchange(url, 
+	        HttpMethod.DELETE, 
+	        null,               
+	        ErrorDto.class,     
+	        params             
+	    );
+
+	    return response.getBody();
+	}
+	
+	@Override
 	public List<TecnicDto> getTecnicsBySubaplicacio(String subaplCoa, Locale locale) {
 		Map<String, Object> params = new HashMap<>();
 		params.put(PARAM_SUBAPL_COA, subaplCoa);

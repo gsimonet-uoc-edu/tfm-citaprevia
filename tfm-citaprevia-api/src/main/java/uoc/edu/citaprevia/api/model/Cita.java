@@ -45,11 +45,7 @@ public class Cita {
 	@ManyToOne
 	@JoinColumn(name = "AGE_CON")
 	@NotNull
-	private Agenda agenda;
-	//@Column(name="WEBUSUMOD_COA")
-	//private String webusumodCoa;
-	//@Column(name="UBIMOD_CON")
-	//private Long ubimodCon;	
+	private Agenda agenda;	
 	@Size(max = 250)
 	private String lit1er;
 	@Size(max = 250)

@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -101,6 +102,15 @@ public class TecnicController {
 		
 		return tecnicService.updateTecnic(dto, locale);
 		
+	}
+	
+	@DeleteMapping("/{coa}")
+	@Operation(summary="eliminar un tècnic")
+	public ErrorDto deleteTecnic(@PathVariable String coa,
+				 			    Locale locale) {
+		
+		return  tecnicService.deleteTecnic(coa, locale);
+		 
 	}
 	
 }

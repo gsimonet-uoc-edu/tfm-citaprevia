@@ -54,5 +54,7 @@ public interface CitaPreviaPrivateClient {
 
 	TecnicDto updateTecnic(String tecCoa, TecnicDto dto, Locale locale);
 
+	ErrorDto deleteTecnic(String tecCoa, Locale locale);
+
 
 }
