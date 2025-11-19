@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
-import uoc.edu.citaprevia.api.dao.CitaDao;
+import uoc.edu.citaprevia.api.dao.AgendaDao;
 import uoc.edu.citaprevia.api.dao.TecnicDao;
-import uoc.edu.citaprevia.api.model.Cita;
+import uoc.edu.citaprevia.api.model.Agenda;
 import uoc.edu.citaprevia.api.model.Tecnic;
 import uoc.edu.citaprevia.api.utils.Converter;
 import uoc.edu.citaprevia.dto.TecnicDto;
@@ -27,7 +27,7 @@ public class TecnicServiceImpl implements TecnicService{
 	private TecnicDao tecnicDao;
 	
 	@Autowired
-	private CitaDao citaDao;
+	private AgendaDao agendaDao;
 	
 	private static final Logger LOG = LoggerFactory.getLogger(TecnicServiceImpl.class);
 	
@@ -122,10 +122,10 @@ public class TecnicServiceImpl implements TecnicService{
 				return new ErrorDto(9999L,bundle.getMessage(Constants.ERROR_API_CRUD_TECNIC, null, locale));
 			} else {
 				// Validacions per esborrar tecnic
-				List<Cita> teCites = citaDao.findCitesByAgendaTecnicCoa(coa);
+				List<Agenda> teAgendes = agendaDao.findAgendesByTecnicCoa(coa);
 				// Comprovar que el tècnic no te cites
-				if (teCites != null && !teCites.isEmpty() && teCites.size() > 0) {
-					return new ErrorDto(9999L,bundle.getMessage(Constants.ERROR_API_DELETE_TECNIC_CITES, null, locale));
+				if (teAgendes != null && !teAgendes.isEmpty() && teAgendes.size() > 0) {
+					return new ErrorDto(9999L,bundle.getMessage(Constants.ERROR_API_DELETE_TECNIC_AGENDES, null, locale));
 				} else {
 					tecnicDao.deleteTecnic(dao);
 				}			
@@ -133,7 +133,8 @@ public class TecnicServiceImpl implements TecnicService{
 		
 		} catch (Exception e) {
 			LOG.error("### Error TecnicServiceImpl.deleteTecnic:" , e);
-			LOG.error("### Error TecnicServiceImpl.deleteTecnic={} ", bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale));		
+			LOG.error("### Error TecnicServiceImpl.deleteTecnic={} ", bundle.getMessage(Constants.ERROR_API_CRUD_TECNIC, null, locale));		
+			return new ErrorDto(9999L,bundle.getMessage(Constants.ERROR_API_CRUD_TECNIC, null, locale));
 		} finally {
 			long totalTime = (System.currentTimeMillis() - startTime);
 			LOG.info("### Final TecnicServiceImpl.deleteTecnic totalTime={}, tecCoa={}", totalTime, coa);

@@ -144,8 +144,9 @@ public class SetmanaTipusServiceImpl implements SetmanaTipusService{
 			}
 		
 		} catch (Exception e) {
-			LOG.error("### ErrorSetmanaTipusServiceImpl.deleteSetmanaTipus={} ", bundle.getMessage(Constants.ERROR_API_CRUD_SETMANES_TIPUS, null, locale));
-			e.printStackTrace();			
+			LOG.error("### SetmanaTipusServiceImpl.deleteSetmanaTipus:" , e);
+			LOG.error("### SetmanaTipusServiceImpl.deleteSetmanaTipus={} ", bundle.getMessage(Constants.ERROR_API_DELETE_SETMANES_TIPUS, null, locale));		
+			return new ErrorDto(9999L,bundle.getMessage(Constants.ERROR_API_DELETE_SETMANES_TIPUS, null, locale));			
 		} finally {
 			long totalTime = (System.currentTimeMillis() - startTime);
 			LOG.info("### Final AgendaServiceImpl.deleteAgenda totalTime={}, settip={}", totalTime, settip.toString());

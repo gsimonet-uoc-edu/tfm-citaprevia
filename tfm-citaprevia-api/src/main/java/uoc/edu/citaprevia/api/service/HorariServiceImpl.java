@@ -153,8 +153,10 @@ public class HorariServiceImpl implements HorariService{
 			}
 		
 		} catch (Exception e) {
-			LOG.error("### Error HorariServiceImpl.deleteHorari: ", bundle.getMessage(Constants.ERROR_API_CRUD_HORARI, null, locale));
-			e.printStackTrace();			
+			LOG.error("### Error HorariServiceImpl.deleteHorari:" , e);
+			LOG.error("### Error HorariServiceImpl.deleteHorari={} ", bundle.getMessage(Constants.ERROR_API_CRUD_HORARI, null, locale));		
+			return new ErrorDto(9999L,bundle.getMessage(Constants.ERROR_API_CRUD_HORARI, null, locale));
+			
 		} finally {
 			long totalTime = (System.currentTimeMillis() - startTime);
 			LOG.info("### Final HorariServiceImpl.deleteHorari totalTime={}, horCon={}", totalTime, con);

@@ -234,8 +234,9 @@
 
         // Obrir modal si hi ha errors de validació
         window.addEventListener('DOMContentLoaded', function () {
-            if (document.querySelector('.is-invalid') || document.querySelector('.alert-danger')) {
-                const modal = new bootstrap.Modal(document.getElementById('tecnicModal'));
+        	if (document.querySelector('#formTecnic .is-invalid') 
+        		    || document.querySelector('#formTecnic .alert-danger')) {
+        		const modal = new bootstrap.Modal(document.getElementById('tecnicModal'));
                 modal.show();
 
                 if (document.getElementById('originalCoa').value) {
