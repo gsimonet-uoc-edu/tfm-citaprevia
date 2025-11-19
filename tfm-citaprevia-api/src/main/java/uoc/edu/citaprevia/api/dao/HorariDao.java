@@ -17,7 +17,11 @@ public class HorariDao {
 	public List<Horari> findHorarisBySubaplicacio (String subaplCoa) {
 		return horariRepository.findBySubaplCoa(subaplCoa);
 	}
-
+	
+	public List<Horari> findHorarisByTipusCita (Long tipcitCon) {
+		return horariRepository.findByTipusCitaCon(tipcitCon);
+	}
+	
 	public Horari findHorariByCon (Long con) {
 		return horariRepository.findByCon(con);
 	}

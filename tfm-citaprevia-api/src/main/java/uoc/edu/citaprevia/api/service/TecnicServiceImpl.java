@@ -80,7 +80,7 @@ public class TecnicServiceImpl implements TecnicService{
 						
 		} finally {
 			long totalTime = (System.currentTimeMillis() - startTime);
-			LOG.info("### Final TecnicServiceImpl.saveTecnic totalTime={}, tecnic={}", totalTime, tecnic.toString());
+			LOG.info("### Final TecnicServiceImpl.saveTecnic totalTime={}, tecnic={}", totalTime, dto.toString());
 		}
 		return dto;				
 	}
@@ -99,6 +99,7 @@ public class TecnicServiceImpl implements TecnicService{
 				LOG.error("### Error TecnicServiceImpl.updateTecnic={} " , dto.getErrors().get(0).toString());
 			}
 		} catch (Exception e) {
+			dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL, bundle.getMessage(Constants.ERROR_API_CRUD_TECNIC, null, locale)));
 			LOG.error("### Error TecnicServiceImpl.updateTecnic:" , e);
 			LOG.error("### Error TecnicServiceImpl.updateTecnic={} " , bundle.getMessage(Constants.ERROR_API_CRUD_TECNIC, null, locale));
 						

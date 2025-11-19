@@ -10,4 +10,5 @@ public interface HorariRepository extends PagingAndSortingRepository<Horari, Lon
 	
 	List<Horari> findBySubaplCoa(String subapl);
 	Horari findByCon(Long con);
+	List<Horari> findByTipusCitaCon (Long tipcitCon);
 }

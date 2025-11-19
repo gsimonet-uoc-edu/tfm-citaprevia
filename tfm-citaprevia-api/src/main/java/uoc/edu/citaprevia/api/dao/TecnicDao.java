@@ -6,9 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import uoc.edu.citaprevia.api.jpa.TecnicRepository;
-import uoc.edu.citaprevia.api.model.Horari;
 import uoc.edu.citaprevia.api.model.Tecnic;
-import uoc.edu.citaprevia.api.model.TipusCita;
 
 @Component
 public class TecnicDao {

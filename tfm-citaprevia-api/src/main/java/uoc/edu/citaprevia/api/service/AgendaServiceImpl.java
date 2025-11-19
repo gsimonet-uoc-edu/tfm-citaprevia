@@ -98,12 +98,13 @@ public class AgendaServiceImpl implements AgendaService{
 				LOG.error("### Error AgendaServiceImpl.saveAgenda={} " , dto.getErrors().get(0).toString());
 			}
 		} catch (Exception e) {
+			dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL, bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale)));
 			LOG.error("### Error AgendaServiceImpl.saveAgenda:", e);
 			LOG.error("### Error AgendaServiceImpl.saveAgenda={} " , bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale));
 						
 		} finally {
 			long totalTime = (System.currentTimeMillis() - startTime);
-			LOG.info("### Final AgendaServiceImpl.saveAgenda totalTime={}, agenda={}", totalTime, agenda.toString());
+			LOG.info("### Final AgendaServiceImpl.saveAgenda totalTime={}, agenda={}", totalTime, dto.toString());
 		}
 		return dto;				
 	}
@@ -122,6 +123,7 @@ public class AgendaServiceImpl implements AgendaService{
 				LOG.error("### Error AgendaServiceImpl.updateAgenda={} " , dto.getErrors().get(0).toString());
 			}
 		} catch (Exception e) {
+			dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL, bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale)));
 			LOG.error("### Error AgendaServiceImpl.updateAgenda:" , e);
 			LOG.error("### Error AgendaServiceImpl.updateAgenda={} " , bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale));
 						
@@ -157,6 +159,8 @@ public class AgendaServiceImpl implements AgendaService{
 		} catch (Exception e) {
 			LOG.error("### Error AgendaServiceImpl.deleteAgenda:" , e);
 			LOG.error("### Error AgendaServiceImpl.deleteAgenda={} ", bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale));		
+			return new ErrorDto(9999L,bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale));
+
 		} finally {
 			long totalTime = (System.currentTimeMillis() - startTime);
 			LOG.info("### Final AgendaServiceImpl.deleteAgenda totalTime={}, ageCon={}", totalTime, con);

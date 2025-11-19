@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import uoc.edu.citaprevia.api.jpa.AgendaRepository;
 import uoc.edu.citaprevia.api.model.Agenda;
-import uoc.edu.citaprevia.api.model.Cita;
 
 @Component
 public class AgendaDao {

@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import uoc.edu.citaprevia.api.dao.CitaDao;
 import uoc.edu.citaprevia.api.dao.SetmanaTipusDao;
-import uoc.edu.citaprevia.api.model.Agenda;
 import uoc.edu.citaprevia.api.model.Cita;
 import uoc.edu.citaprevia.api.model.SetmanaTipus;
 import uoc.edu.citaprevia.api.model.SetmanaTipusId;

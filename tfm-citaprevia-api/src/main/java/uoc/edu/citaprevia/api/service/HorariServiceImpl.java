@@ -12,11 +12,9 @@ import org.springframework.stereotype.Service;
 
 import uoc.edu.citaprevia.api.dao.CitaDao;
 import uoc.edu.citaprevia.api.dao.HorariDao;
-import uoc.edu.citaprevia.api.model.Agenda;
 import uoc.edu.citaprevia.api.model.Cita;
 import uoc.edu.citaprevia.api.model.Horari;
 import uoc.edu.citaprevia.api.utils.Converter;
-import uoc.edu.citaprevia.dto.AgendaDto;
 import uoc.edu.citaprevia.dto.HorariDto;
 import uoc.edu.citaprevia.dto.generic.ErrorDto;
 import uoc.edu.citaprevia.util.Constants;

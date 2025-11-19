@@ -21,5 +21,18 @@ public class TipusCitaDao {
 	public TipusCita findTipusCitaByCon(Long con) {
 		return tipusCitaRepository.findByCon(con);
 	}
+	
+	public TipusCita saveTipusCita(TipusCita entity) {
+		return (entity != null ? tipusCitaRepository.save(entity) : null);
+	}
+	
+	public TipusCita updateTipusCita(TipusCita entity) {	
+		TipusCita dao = this.findTipusCitaByCon(entity.getCon());
+		return (dao != null) ? tipusCitaRepository.save(entity) : null;
+	}
+	
+	public void deleteTipusCita (TipusCita entity) {
+		tipusCitaRepository.delete(entity);
+	}
 
 }
