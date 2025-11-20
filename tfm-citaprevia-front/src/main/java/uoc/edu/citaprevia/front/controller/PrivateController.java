@@ -1101,63 +1101,43 @@ public class PrivateController {
         } else {
             redirect.addFlashAttribute("success", form.getCon() == null ? bundle.getMessage(Constants.SUCCESS_FRONT_SAVE_TIPUS_CITES, null, locale) : bundle.getMessage(Constants.SUCCESS_FRONT_UPDATE_TIPUS_CITES, null, locale));
         }
-       /*
-            ErrorDto error;
-            if (form.getCon() == null) {
-                // ALTA
-                error = citaPreviaPrivateClient.crearTipusCita(form, locale);
-            } else {
-                // ACTUALITZACIÓ
-                error = citaPreviaPrivateClient.actualitzarTipusCita(form, locale);
-            }
-
-            if (error != null && !Utils.isEmpty(error.getDem())) {
-                redirect.addFlashAttribute("error", error.getDem());
-                redirect.addFlashAttribute("tipusCitaForm", form);
-            } else {
-                String missatge = (form.getCon() == null)
-                        ? bundle.getMessage("tipuscita.creat.ok", null, locale)
-                        : bundle.getMessage("tipuscita.actualitzat.ok", null, locale);
-                redirect.addFlashAttribute("success", missatge);
-            }
-*/
+        
         } catch (Exception e) {
             LOG.error("### Error guardant tipus de cita: {}", form, e);
-            redirect.addFlashAttribute("error", bundle.getMessage("error.guardar.tipuscita", null, locale));
+            redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TIPUS_CITES, null, locale));
             redirect.addFlashAttribute("tipusCitaForm", form);
         }
 
         return "redirect:/private/gestio/tipus-cites";
     }
-/*
-    @PostMapping("/gestio/tipuscites/delete")
+
+    @PostMapping("/gestio/tipus-cites/delete")
     public String deleteTipusCita(@RequestParam("con") Long con,
                                   RedirectAttributes redirect,
                                   Authentication authentication,
                                   Locale locale) {
+    	try {
+	        String subaplCoa = getSubaplCoa(authentication);
+	        if (Utils.isEmpty(subaplCoa)) {
+	            redirect.addFlashAttribute("error", bundle.getMessage("error.subapl.no.trobada", null, locale));
+	            return "redirect:/private/gestio/tipus-cites";
+	        }
 
-        String subaplCoa = obtenirSubaplCoa(authentication);
-        if (Utils.isEmpty(subaplCoa)) {
-            redirect.addFlashAttribute("error", bundle.getMessage("error.subapl.no.trobada", null, locale));
-            return "redirect:/private/gestio/tipuscites";
-        }
-
-        try {
-            ErrorDto error = citaPreviaPrivateClient.eliminarTipusCita(con, subaplCoa, locale);
+            ErrorDto error = citaPreviaPrivateClient.deleteTipusCita(con, locale);
 
             if (error != null && !Utils.isEmpty(error.getDem())) {
                 redirect.addFlashAttribute("error", error.getDem());
             } else {
-                redirect.addFlashAttribute("success", bundle.getMessage("tipuscita.esborrat.ok", null, locale));
+                redirect.addFlashAttribute("success", bundle.getMessage(Constants.SUCCESS_FRONT_DELETE_TIPUS_CITES, null, locale));
             }
 
         } catch (Exception e) {
             LOG.error("### Error esborrant tipus de cita con={}", con, e);
-            redirect.addFlashAttribute("error", bundle.getMessage("error.esborrar.tipuscita", null, locale));
+            redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TIPUS_CITES, null, locale));
         }
 
-        return "redirect:/private/gestio/tipuscites";
+        return "redirect:/private/gestio/tipus-cites";
     }
-*/
+
 
 }
