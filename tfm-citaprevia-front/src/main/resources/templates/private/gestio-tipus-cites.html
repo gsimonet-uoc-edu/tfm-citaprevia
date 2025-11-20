@@ -25,6 +25,7 @@
 
         <hr>
 
+        <!-- Missatges flash -->
         <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
             <span th:text="${success}"></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -40,6 +41,8 @@
                 <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#tipusCitaModal" onclick="clearTipusCitaModal()">
                     <i class="fas fa-plus me-1"></i> <span th:text="#{nou_tipus_cita}">Nou Tipus de Cita</span>
                 </button>
+            </div>
+
             </div>
 
             <div class="card-body">
@@ -62,16 +65,17 @@
                             <tr th:each="tipus : ${tipusCites}">
                                 <td th:text="${tipus.con}"></td>
                                 <td th:text="${tipus.dec}"></td>
-                                <td th:text="${tipus.dem}"></td>
+                                <td th:text="${tipus.dem} ?: '-'"></td>
                                 <td>
                                     <span th:switch="${tipus.tipcitmod}">
-                                        <span th:case="'P'">Presencial</span>
-                                        <span th:case="'T'">Telèfon</span>
-                                        <span th:case="'V'">Videoconferència</span>
+                                        <span th:case="P">Presencial</span>
+                                        <span th:case="T">Telèfon</span>
+                                        <span th:case="V">Videoconferència</span>
                                         <span th:case="*">-</span>
                                     </span>
                                 </td>
                                 <td class="text-end">
+                                    <!-- EDITAR -->
                                     <button type="button"
                                             class="btn btn-sm btn-info me-2"
                                             th:title="#{editar}"
@@ -83,12 +87,13 @@
                                         <i class="fas fa-edit"></i>
                                     </button>
 
+                                    <!-- ESBORRAR -->
                                     <button type="button"
                                             class="btn btn-sm btn-danger"
                                             th:title="#{esborrar}"
                                             th:data-con="${tipus.con}"
                                             data-bs-toggle="modal"
-                                            data-bs-target="#esborrarTipusC´itaModal"
+                                            data-bs-target="#esborrarTipusCitaModal"
                                             onclick="prepararEsborrarTipusCita(this)">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
@@ -100,7 +105,7 @@
             </div>
         </div>
 
-        <!-- MODAL CREAR / EDITAR TIPUS DE CITA -->
+        <!-- MODAL CREAR / EDITAR -->
         <div class="modal fade" id="tipusCitaModal" tabindex="-1" aria-labelledby="tipusCitaModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -149,6 +154,7 @@
                     </form>
                 </div>
             </div>
+            </div>
         </div>
 
         <!-- MODAL ESBORRAR -->
@@ -183,6 +189,7 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
 
+        // Reobre el modal només si hi ha errors
         document.addEventListener('DOMContentLoaded', function() {
             if ([/*[[${#fields.hasErrors('tipusCitaForm.*')}]]*/ false]) {
                 const modal = new bootstrap.Modal(document.getElementById('tipusCitaModal'));

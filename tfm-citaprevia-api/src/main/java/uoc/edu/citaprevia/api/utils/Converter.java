@@ -107,6 +107,7 @@ public class Converter {
 			dto.setCon(dao.getCon());
 			dto.setDec(dao.getDec());
 			dto.setDem(dao.getDem());
+			dto.setTipcitmod(dao.getTipcitmod());
 			dto.setSubapl(toDto(dao.getSubaplicacio()));
 		}
 		return dto;
@@ -118,6 +119,7 @@ public class Converter {
 			dao.setCon(dto.getCon());
 			dao.setDec(dto.getDec());
 			dao.setDem(dto.getDem());
+			dao.setTipcitmod(dto.getTipcitmod());
 			dao.setSubaplicacio(toDao(dto.getSubapl()));
 		}
 		return dao;
