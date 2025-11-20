@@ -131,6 +131,7 @@ public class Converter {
 			dto.setCon(dao.getCon());
 			dto.setNom(dao.getNom());
 			dto.setObs(dao.getObs());
+			dto.setNomcar(dao.getNomcar());
 		}
 		return dto;
 	}
@@ -141,6 +142,7 @@ public class Converter {
 			dao.setCon(dto.getCon());
 			dao.setNom(dto.getNom());
 			dao.setObs(dto.getObs());
+			dao.setNomcar(dto.getNom());
 		}
 		return dao;
 	}

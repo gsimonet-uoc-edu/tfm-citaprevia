@@ -22,6 +22,7 @@ public class Ubicacio {
 	@SequenceGenerator(name = "ubicacio_seq", sequenceName = "UBICACIO_SEQ", allocationSize = 1)
 	private Long con;	
 	private String nom;
+	private String nomcar;
 	private String obs;
 
 }

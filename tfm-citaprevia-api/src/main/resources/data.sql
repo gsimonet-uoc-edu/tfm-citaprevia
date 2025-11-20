@@ -10,9 +10,9 @@ INSERT INTO TECNIC (coa, pass, nom, ll1, ll2, prf) VALUES
 ('T3', '1234', 'Guillem', 'Simonet', 'Ramon','TECNIC_AP1');
 
 -- UBICACIO
-INSERT INTO UBICACIO (con, nom, obs) VALUES 
-(1, 'Centre A', 'Principal'),
-(2, 'Centre B', 'Secundari');
+INSERT INTO UBICACIO (con, nom, nomcar, obs) VALUES 
+(1, 'Centre A', 'C/ Avinguda Barcelona 2', 'Observacions A'),
+(2, 'Centre B', 'Plaça Catalunya 32 baixos', 'Observacions B');
 
 -- TIPUS_CITA
 INSERT INTO TIPUS_CITA (con, dec, dem, tipcitmod, SUBAPL_COA) VALUES 

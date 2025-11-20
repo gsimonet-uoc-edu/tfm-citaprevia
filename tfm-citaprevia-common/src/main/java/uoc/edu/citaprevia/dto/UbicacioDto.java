@@ -11,6 +11,7 @@ public class UbicacioDto extends ErrorsDto {
 	
 	private Long con;	
 	private String nom;
+	private String nomcar;
 	private String obs;
 
 
