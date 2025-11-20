@@ -1067,7 +1067,7 @@ public class PrivateController {
         String subaplCoa = getSubaplCoa(authentication);
         if (Utils.isEmpty(subaplCoa)) {
             redirect.addFlashAttribute("error", bundle.getMessage("error.subapl.no.trobada", null, locale));
-            return "redirect:/private/gestio/tipuscites";
+            return "redirect:/private/gestio/tipus-cites";
         }
 
         // Afegim la subaplicació al DTO

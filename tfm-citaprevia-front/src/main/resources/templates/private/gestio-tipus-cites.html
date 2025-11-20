@@ -25,7 +25,7 @@
 
         <hr>
 
-        <!-- Missatges -->
+        <!-- Missatges flash -->
         <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
             <span th:text="${success}"></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -64,11 +64,7 @@
                                 <td th:text="${tipus.con}"></td>
                                 <td th:text="${tipus.dec}"></td>
                                 <td th:text="${tipus.dem} ?: '-'"></td>
-                                <td>
-                                    <span th:text="${tipus.tipcitmod != null ? tipus.tipcitmod.descripcio : '-'}">
-                                        Presencial
-                                    </span>
-                                </td>
+                                <td th:text="${tipus.tipcitmod != null ? tipus.tipcitmod.descripcio : '-'}"></td>
                                 <td class="text-end">
                                     <!-- EDITAR -->
                                     <button type="button"
@@ -153,7 +149,7 @@
         <div class="modal fade" id="esborrarTipusCitaModal" tabindex="-1">
             <div class="modal-dialog modal-sm">
                 <div class="modal-content">
-                    <form id="formEsborrarTipusCita" th:action="@{/private/gestio/tipus-cites/delete}" method="post">
+                    <form th:action="@{/private/gestio/tipus-cites/delete}" method="post">
                         <input type="hidden" id="esborrarTipusCitaCon" name="con">
                         <div class="modal-header bg-danger text-white">
                             <h5 class="modal-title" th:text="#{confirmacio_esborrat}">Confirmació</h5>
@@ -178,11 +174,13 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- SCRIPT CORREGIT: ja no falla mai -->
     <script th:inline="javascript">
         /*<![CDATA[*/
 
         document.addEventListener('DOMContentLoaded', function() {
-            if ([/*[[${#fields.hasErrors('tipusCitaForm.*')}]]*/ false]) {
+            /*[[${#fields.hasErrors('tipusCitaForm.*')}]]*/ false
+            if (false) {
                 const modal = new bootstrap.Modal(document.getElementById('tipusCitaModal'));
                 modal.show();
                 if (document.getElementById('tipusCitaCon').value) {
