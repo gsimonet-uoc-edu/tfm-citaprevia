@@ -25,7 +25,7 @@
 
         <hr>
 
-        <!-- Missatges flash -->
+        <!-- Missatges -->
         <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
             <span th:text="${success}"></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -41,8 +41,6 @@
                 <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#tipusCitaModal" onclick="clearTipusCitaModal()">
                     <i class="fas fa-plus me-1"></i> <span th:text="#{nou_tipus_cita}">Nou Tipus de Cita</span>
                 </button>
-            </div>
-
             </div>
 
             <div class="card-body">
@@ -67,11 +65,8 @@
                                 <td th:text="${tipus.dec}"></td>
                                 <td th:text="${tipus.dem} ?: '-'"></td>
                                 <td>
-                                    <span th:switch="${tipus.tipcitmod}">
-                                        <span th:case="P">Presencial</span>
-                                        <span th:case="T">Telèfon</span>
-                                        <span th:case="V">Videoconferència</span>
-                                        <span th:case="*">-</span>
+                                    <span th:text="${tipus.tipcitmod != null ? tipus.tipcitmod.descripcio : '-'}">
+                                        Presencial
                                     </span>
                                 </td>
                                 <td class="text-end">
@@ -82,7 +77,7 @@
                                             th:data-con="${tipus.con}"
                                             th:data-dec="${tipus.dec}"
                                             th:data-dem="${tipus.dem}"
-                                            th:data-tipcitmod="${tipus.tipcitmod}"
+                                            th:data-tipcitmod="${tipus.tipcitmod != null ? tipus.tipcitmod.valor : ''}"
                                             onclick="editTipusCitaFromButton(this)">
                                         <i class="fas fa-edit"></i>
                                     </button>
@@ -118,7 +113,6 @@
                         </div>
 
                         <div class="modal-body">
-
                             <div class="mb-3">
                                 <label for="dec" class="form-label" th:text="#{dec} + ' *'">Descripció *</label>
                                 <input type="text" class="form-control" id="dec" th:field="*{dec}" required maxlength="100"
@@ -144,7 +138,6 @@
                                 </select>
                                 <div class="invalid-feedback" th:if="${#fields.hasErrors('tipcitmod')}" th:errors="*{tipcitmod}"></div>
                             </div>
-
                         </div>
 
                         <div class="modal-footer">
@@ -153,7 +146,6 @@
                         </div>
                     </form>
                 </div>
-            </div>
             </div>
         </div>
 
@@ -189,7 +181,6 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
 
-        // Reobre el modal només si hi ha errors
         document.addEventListener('DOMContentLoaded', function() {
             if ([/*[[${#fields.hasErrors('tipusCitaForm.*')}]]*/ false]) {
                 const modal = new bootstrap.Modal(document.getElementById('tipusCitaModal'));
