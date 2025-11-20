@@ -16,9 +16,7 @@ public class TipusCitaDto extends ErrorsDto{
 	private Long con;
 	private String dec;
 	private String dem;
-	private SiNo notval;
 	private Long cap;
-	private SiNo gespri;
 	private ModalitatTipusCita tipcitmod;
 	private SubaplicacioDto subapl;
 	

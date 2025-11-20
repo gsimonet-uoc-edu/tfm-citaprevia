@@ -30,11 +30,6 @@ public class TipusCita {
 	private String dec;
 	private String dem;
 	@Enumerated(EnumType.STRING)
-	private SiNo notval;
-	private Long cap;
-	@Enumerated(EnumType.STRING)
-	private SiNo gespri;
-	@Enumerated(EnumType.STRING)
 	private ModalitatTipusCita tipcitmod;
 	@ManyToOne 
 	@JoinColumn(name="SUBAPL_COA")
