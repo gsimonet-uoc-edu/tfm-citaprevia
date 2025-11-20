@@ -55,6 +55,7 @@ import uoc.edu.citaprevia.front.privat.dto.TipusCitaFormDto;
 import uoc.edu.citaprevia.front.service.CitaPreviaPrivateClient;
 import uoc.edu.citaprevia.front.service.CitaPreviaPublicClient;
 import uoc.edu.citaprevia.front.service.MetacamapService;
+import uoc.edu.citaprevia.model.ModalitatTipusCita;
 import uoc.edu.citaprevia.model.Perfil;
 import uoc.edu.citaprevia.util.Constants;
 import uoc.edu.citaprevia.util.Utils;
@@ -1054,58 +1055,81 @@ public class PrivateController {
 
         return "private/gestio-tipus-cites";
     }
-/*
-    @PostMapping("/gestio/tipuscites/save")
-    public String saveTipusCita(@Valid @ModelAttribute("tipusCitaForm") TipusCitaFormDto tipusCitaForm,
+
+    @PostMapping("/gestio/tipus-cites/save")
+    public String saveUpdateTipusCita(@Valid @ModelAttribute("tipusCitaForm") TipusCitaFormDto form,
                                 BindingResult bindingResult,
                                 RedirectAttributes redirect,
                                 Authentication authentication,
                                 Locale locale) {
 
-        String subaplCoa = obtenirSubaplCoa(authentication);
+    try {
+        String subaplCoa = getSubaplCoa(authentication);
         if (Utils.isEmpty(subaplCoa)) {
             redirect.addFlashAttribute("error", bundle.getMessage("error.subapl.no.trobada", null, locale));
             return "redirect:/private/gestio/tipuscites";
         }
 
         // Afegim la subaplicació al DTO
-        tipusCitaForm.setSubaplCoa(subaplCoa);
+        form.setSubaplCoa(subaplCoa);
 
         if (bindingResult.hasErrors()) {
             redirect.addFlashAttribute("org.springframework.validation.BindingResult.tipusCitaForm", bindingResult);
-            redirect.addFlashAttribute("tipusCitaForm", tipusCitaForm);
-            return "redirect:/private/gestio/tipuscites";
+            redirect.addFlashAttribute("tipusCitaForm", form);
+            return "redirect:/private/gestio/tipus-cites";
         }
 
-        try {
+        // 4. Guardar
+        TipusCitaDto savedTipusCita = new TipusCitaDto();
+        TipusCitaDto tipusCitaToSave = new TipusCitaDto();
+        tipusCitaToSave.setCon(form.getCon());
+        tipusCitaToSave.setDec(form.getDec());
+        tipusCitaToSave.setDem(form.getDem());
+        tipusCitaToSave.setTipcitmod(ModalitatTipusCita.valueOf(form.getTipcitmod()));
+        SubaplicacioDto subapl = new SubaplicacioDto();
+        subapl.setCoa(subaplCoa);
+        tipusCitaToSave.setSubapl(subapl);
+        if (!Utils.isEmpty(form.getCon())) {
+        	savedTipusCita = citaPreviaPrivateClient.updateTipusCita(form.getCon(), tipusCitaToSave, locale);
+        } else {
+        	savedTipusCita = citaPreviaPrivateClient.saveTipusCita(tipusCitaToSave, locale);
+        }
+
+        if (tipusCitaToSave.hasErrors()) {
+            // Maneig d'errors del backend
+            redirect.addFlashAttribute("error", tipusCitaToSave.getErrors().get(0).getDem());
+        } else {
+            redirect.addFlashAttribute("success", form.getCon() == null ? bundle.getMessage(Constants.SUCCESS_FRONT_SAVE_TIPUS_CITES, null, locale) : bundle.getMessage(Constants.SUCCESS_FRONT_UPDATE_TIPUS_CITES, null, locale));
+        }
+       /*
             ErrorDto error;
-            if (tipusCitaForm.getCon() == null) {
+            if (form.getCon() == null) {
                 // ALTA
-                error = citaPreviaPrivateClient.crearTipusCita(tipusCitaForm, locale);
+                error = citaPreviaPrivateClient.crearTipusCita(form, locale);
             } else {
                 // ACTUALITZACIÓ
-                error = citaPreviaPrivateClient.actualitzarTipusCita(tipusCitaForm, locale);
+                error = citaPreviaPrivateClient.actualitzarTipusCita(form, locale);
             }
 
             if (error != null && !Utils.isEmpty(error.getDem())) {
                 redirect.addFlashAttribute("error", error.getDem());
-                redirect.addFlashAttribute("tipusCitaForm", tipusCitaForm);
+                redirect.addFlashAttribute("tipusCitaForm", form);
             } else {
-                String missatge = (tipusCitaForm.getCon() == null)
+                String missatge = (form.getCon() == null)
                         ? bundle.getMessage("tipuscita.creat.ok", null, locale)
                         : bundle.getMessage("tipuscita.actualitzat.ok", null, locale);
                 redirect.addFlashAttribute("success", missatge);
             }
-
+*/
         } catch (Exception e) {
-            LOG.error("### Error guardant tipus de cita: {}", tipusCitaForm, e);
+            LOG.error("### Error guardant tipus de cita: {}", form, e);
             redirect.addFlashAttribute("error", bundle.getMessage("error.guardar.tipuscita", null, locale));
-            redirect.addFlashAttribute("tipusCitaForm", tipusCitaForm);
+            redirect.addFlashAttribute("tipusCitaForm", form);
         }
 
-        return "redirect:/private/gestio/tipuscites";
+        return "redirect:/private/gestio/tipus-cites";
     }
-
+/*
     @PostMapping("/gestio/tipuscites/delete")
     public String deleteTipusCita(@RequestParam("con") Long con,
                                   RedirectAttributes redirect,

@@ -40,6 +40,8 @@ public class Constants {
 	public static final String SUCCESS_FRONT_SAVE_SETMANES_TIPUS = "succes.setmanestipus.save";
 	
 	public static final String SUCCESS_FRONT_SAVE_AGENDES = "succes.agendes.save";
+	public static final String SUCCESS_FRONT_SAVE_TIPUS_CITES = "succes.tipuscites.save";
+	public static final String SUCCESS_FRONT_UPDATE_TIPUS_CITES = "succes.tipuscites.update";
 	public static final String SUCCESS_FRONT_UPDATE_AGENDES = "succes.agendes.update";
 	public static final String SUCCESS_FRONT_DELETE_AGENDES = "succes.agendes.delete";
 	
