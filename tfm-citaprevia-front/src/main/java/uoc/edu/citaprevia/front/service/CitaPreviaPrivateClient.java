@@ -24,8 +24,6 @@ public interface CitaPreviaPrivateClient {
 
 	CitaDto updateCita(Long con, CitaDto dto, Locale locale);
 
-	List<UbicacioDto> getUbicacions(Locale locale);
-
 	List<HorariDto> getHorarisBySubaplicacio(String subaplCoa, Locale locale);
 
 	AgendaDto updateAgenda(Long ageCon, AgendaDto dto, Locale locale);
@@ -61,6 +59,14 @@ public interface CitaPreviaPrivateClient {
 	TipusCitaDto updateTipusCita(Long tipCitCon, TipusCitaDto dto, Locale locale);
 
 	ErrorDto deleteTipusCita(Long tipCitCon, Locale locale);
+
+	UbicacioDto saveUbicacio(UbicacioDto ubicacio, Locale locale);
+
+	UbicacioDto updateTipusCita(Long ubiCon, UbicacioDto dto, Locale locale);
+
+	ErrorDto deleteUbicacio(Long ubiCon, Locale locale);
+
+	List<UbicacioDto> getUbicacionsBySubaplicacio(String subaplCoa, Locale locale);
 
 
 }

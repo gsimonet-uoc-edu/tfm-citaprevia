@@ -35,10 +35,9 @@ public class CitaPreviaPrivateClientImpl implements CitaPreviaPrivateClient{
 	
 	private static final String PARAM_SUBAPL_COA = "subaplCoa";
 	private static final String PARAM_TIPCIT_CON = "tipCitCon";
+	private static final String PARAM_UBI_CON = "ubiCon";
 	private static final String PARAM_AGE_CON = "ageCon";
 	private static final String PARAM_HOR_CON = "horCon";
-	private static final String DATA_HORA_INICI = "dathorini";
-	private static final String DATA_HORA_FINAL = "dathorfin";
 	private static final String PARAM_TEC_COA = "tecCoa";
 	private static final String PARAM_LOCALE = "lang";
 	private static final String PARAM_CIT_CON = "citCon";
@@ -205,10 +204,11 @@ public class CitaPreviaPrivateClientImpl implements CitaPreviaPrivateClient{
 	}
 	
 	@Override
-	public List<UbicacioDto> getUbicacions(Locale locale) {
-		Map<String, Object> params = new HashMap<>();	
+	public List<UbicacioDto> getUbicacionsBySubaplicacio(String subaplCoa, Locale locale) {	
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_SUBAPL_COA, subaplCoa);
 		params.put(PARAM_LOCALE, locale);
-		String url = getBaseApiUrl() + "/ubicacions?lang={lang}";	
+		String url = getBaseApiUrl() + "/ubicacions/subaplicacions/{subaplCoa}?lang={lang}";	
 		UbicacioDto[] list = restTemplate.getForObject(url, UbicacioDto[].class, params);
 		return list == null ? new ArrayList<>() : Arrays.asList(list);
 	}
@@ -341,6 +341,47 @@ public class CitaPreviaPrivateClientImpl implements CitaPreviaPrivateClient{
 		params.put(PARAM_TIPCIT_CON, tipCitCon);
 		params.put(PARAM_LOCALE, locale);
 		String url = getBaseApiUrl() + "/tipus-cites/{tipCitCon}?lang={lang}";
+	    ResponseEntity<ErrorDto> response = restTemplate.exchange(url, 
+	        HttpMethod.DELETE, 
+	        null,               
+	        ErrorDto.class,     
+	        params             
+	    );
+	    return response.getBody();
+	}
+	
+	
+	@Override
+	public UbicacioDto saveUbicacio(UbicacioDto ubicacio, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_LOCALE, locale);
+		String url = getBaseApiUrl() + "/ubicacions?lang={lang}";
+	    ResponseEntity<UbicacioDto> response = restTemplate.postForEntity(url, ubicacio, UbicacioDto.class, params
+	        );
+		return response.getBody() == null ? new UbicacioDto() : response.getBody();
+	}
+	
+	@Override
+	public UbicacioDto updateTipusCita(Long ubiCon, UbicacioDto dto, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_UBI_CON, ubiCon);
+		params.put(PARAM_LOCALE, locale);
+		String url = getBaseApiUrl() + "/ubicacions/{ubiCon}?lang={lang}";	
+	    ResponseEntity<UbicacioDto> response = restTemplate.exchange(url, 
+		        HttpMethod.PUT, 
+		        new HttpEntity<>(dto),               
+		        UbicacioDto.class,     
+		        params             
+		    );
+		return response.getBody() == null ? new UbicacioDto() : response.getBody();
+	}
+	
+	@Override
+	public ErrorDto deleteUbicacio(Long ubiCon, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_UBI_CON, ubiCon);
+		params.put(PARAM_LOCALE, locale);
+		String url = getBaseApiUrl() + "/ubicacions/{ubiCon}?lang={lang}";
 	    ResponseEntity<ErrorDto> response = restTemplate.exchange(url, 
 	        HttpMethod.DELETE, 
 	        null,               

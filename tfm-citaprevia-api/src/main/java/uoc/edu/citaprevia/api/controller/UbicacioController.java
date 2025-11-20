@@ -44,7 +44,7 @@ public class UbicacioController {
 	
 	@GetMapping(value="/subaplicacions/{subaplCoa}")
 	@Operation(summary="obtenir llista d'ubicacions d'una subaplicació")
-	public List<UbicacioDto> getUbicacions(@PathVariable String subaplCoa, Locale locale) {
+	public List<UbicacioDto> getUbicacionsBySubaplicacio(@PathVariable String subaplCoa, Locale locale) {
 		return ubicacioService.getUbicacionsByUbicacio(subaplCoa, locale);
 	}
 

@@ -52,6 +52,7 @@ import uoc.edu.citaprevia.front.privat.dto.SetmanaTipusDeleteFormDto;
 import uoc.edu.citaprevia.front.privat.dto.SetmanaTipusFormDto;
 import uoc.edu.citaprevia.front.privat.dto.TecnicFormDto;
 import uoc.edu.citaprevia.front.privat.dto.TipusCitaFormDto;
+import uoc.edu.citaprevia.front.privat.dto.UbicacioFormDto;
 import uoc.edu.citaprevia.front.service.CitaPreviaPrivateClient;
 import uoc.edu.citaprevia.front.service.CitaPreviaPublicClient;
 import uoc.edu.citaprevia.front.service.MetacamapService;
@@ -437,18 +438,16 @@ public class PrivateController {
     	try {
 	        // 1. Obtenir el tècnic connectat (assumint que el 'name' és el 'coa')
 	        String tecCoa = authentication.getName();
-	        String subaplCoa = null;
-	        // Obtenir subaplicacio del perfil de l'usuari
-	        if (authentication.getAuthorities() != null && !authentication.getAuthorities().isEmpty()) {
-	            for (GrantedAuthority authority : authentication.getAuthorities()) {
-	                subaplCoa = StringUtils.substringAfter(authority.getAuthority(), "_");
-	                break;
-	            }
+
+	        String subaplCoa = getSubaplCoa(authentication);
+	        
+	        if (Utils.isEmpty(subaplCoa)) {
+	            model.addAttribute("error", bundle.getMessage("error.subapl.no.trobada", null, locale));
+	            return "redirect:/private/calendari";
 	        }
 	        
-	        
 	        // 2. Obtenir llistes de lookups
-	        List<UbicacioDto> ubicacions = citaPreviaPrivateClient.getUbicacions(locale);
+	        List<UbicacioDto> ubicacions = citaPreviaPrivateClient.getUbicacionsBySubaplicacio(subaplCoa, locale);
 	        List<HorariDto> horaris = citaPreviaPrivateClient.getHorarisBySubaplicacio(subaplCoa, locale);
 	
 	        // 3. Obtenir llistat d'agendes del tècnic connectat
@@ -1139,5 +1138,114 @@ public class PrivateController {
         return "redirect:/private/gestio/tipus-cites";
     }
 
+    /**
+     * GESTIÓ D'UBICACIONS (CENTRES)
+     */
 
+    @GetMapping("/gestio/ubicacions")
+    public String gestioUbicacions(Model model,
+                                    Authentication authentication,
+                                    Locale locale) {
+
+        String subaplCoa = getSubaplCoa(authentication);
+        if (Utils.isEmpty(subaplCoa)) {
+            model.addAttribute("error", bundle.getMessage("error.subapl.no.trobada", null, locale));
+            return "redirect:/private/calendari";
+        }
+
+        try {
+            List<UbicacioDto> ubicacions = citaPreviaPrivateClient.getUbicacionsBySubaplicacio(subaplCoa, locale);
+            model.addAttribute("ubicacions", ubicacions != null ? ubicacions : Collections.emptyList());
+
+            // Formulari per alta/edició
+            model.addAttribute("ubicacioForm", new UbicacioFormDto());
+
+        } catch (Exception e) {
+            LOG.error("### Error carregant ubicacions per subaplCoa={}", subaplCoa, e);
+            model.addAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_UBICACIONS, null, locale));
+        }
+
+        return "private/gestio-ubicacions";
+    }
+/*
+    @PostMapping("/gestio/ubicacions/save")
+    public String saveUbicacio(@Valid @ModelAttribute("ubicacioForm") UbicacioFormDto ubicacioForm,
+                               BindingResult bindingResult,
+                               RedirectAttributes redirect,
+                               Authentication authentication,
+                               Locale locale) {
+
+        String subaplCoa = obtenirSubaplCoa(authentication);
+        if (Utils.isEmpty(subaplCoa)) {
+            redirect.addFlashAttribute("error", bundle.getMessage("error.subapl.no.trobada", null, locale));
+            return "redirect:/private/gestio/ubicacions";
+        }
+
+        // Sempre enviem la subaplicació
+        ubicacioForm.setSubaplCoa(subaplCoa);
+
+        if (bindingResult.hasErrors()) {
+            redirect.addFlashAttribute("org.springframework.validation.BindingResult.ubicacioForm", bindingResult);
+            redirect.addFlashAttribute("ubicacioForm", ubicacioForm);
+            return "redirect:/private/gestio/ubicacions";
+        }
+
+        try {
+            ErrorDto error;
+            if (ubicacioForm.getCon() == null) {
+                // ALTA
+                error = citaPreviaPrivateClient.crearUbicacio(ubicacioForm, locale);
+            } else {
+                // ACTUALITZACIÓ
+                error = citaPreviaPrivateClient.actualitzarUbicacio(ubicacioForm, locale);
+            }
+
+            if (error != null && !Utils.isEmpty(error.getDem())) {
+                redirect.addFlashAttribute("error", error.getDem());
+                redirect.addFlashAttribute("ubicacioForm", ubicacioForm);
+            } else {
+                String missatge = (ubicacioForm.getCon() == null)
+                        ? bundle.getMessage("ubicacio.creada.ok", null, locale)
+                        : bundle.getMessage("ubicacio.actualitzada.ok", null, locale);
+                redirect.addFlashAttribute("success", missatge);
+            }
+
+        } catch (Exception e) {
+            LOG.error("### Error guardant ubicació: {}", ubicacioForm, e);
+            redirect.addFlashAttribute("error", bundle.getMessage("error.guardar.ubicacio", null, locale));
+            redirect.addFlashAttribute("ubicacioForm", ubicacioForm);
+        }
+
+        return "redirect:/private/gestio/ubicacions";
+    }
+
+    @PostMapping("/gestio/ubicacions/delete")
+    public String deleteUbicacio(@RequestParam("con") Long con,
+                                 RedirectAttributes redirect,
+                                 Authentication authentication,
+                                 Locale locale) {
+
+        String subaplCoa = obtenirSubaplCoa(authentication);
+        if (Utils.isEmpty(subaplCoa)) {
+            redirect.addFlashAttribute("error", bundle.getMessage("error.subapl.no.trobada", null, locale));
+            return "redirect:/private/gestio/ubicacions";
+        }
+
+        try {
+            ErrorDto error = citaPreviaPrivateClient.eliminarUbicacio(con, subaplCoa, locale);
+
+            if (error != null && !Utils.isEmpty(error.getDem())) {
+                redirect.addFlashAttribute("error", error.getDem());
+            } else {
+                redirect.addFlashAttribute("success", bundle.getMessage("ubicacio.esborrada.ok", null, locale));
+            }
+
+        } catch (Exception e) {
+            LOG.error("### Error esborrant ubicació con={}", con, e);
+            redirect.addFlashAttribute("error", bundle.getMessage("error.esborrar.ubicacio", null, locale));
+        }
+
+        return "redirect:/private/gestio/ubicacions";
+    }
+    */
 }
