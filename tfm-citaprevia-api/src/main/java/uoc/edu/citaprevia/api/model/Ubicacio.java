@@ -1,9 +1,12 @@
 package uoc.edu.citaprevia.api.model;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -24,5 +27,8 @@ public class Ubicacio {
 	private String nom;
 	private String nomcar;
 	private String obs;
+	@ManyToOne(fetch=FetchType.LAZY) 
+	@JoinColumn(name="SUBAPL_COA")
+	private Subaplicacio subapl;
 
 }

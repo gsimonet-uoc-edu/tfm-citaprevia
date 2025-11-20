@@ -4,15 +4,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import uoc.edu.citaprevia.dto.generic.ErrorsDto;
 
 @Getter @Setter @NoArgsConstructor @ToString
-public class TipusCitaFormDto {
-
-	private Long con;
-	private String dec;
-	private String dem;
-	private String tipcitmod;
-	private String subaplCoa;
+public class UbicacioFormDto {
 	
+	private Long con;	
+	private String nom;
+	private String nomcar;
+	private String obs;
+	private String subaplCoa;
 }

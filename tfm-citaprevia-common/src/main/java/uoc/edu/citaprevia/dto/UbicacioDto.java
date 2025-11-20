@@ -13,6 +13,7 @@ public class UbicacioDto extends ErrorsDto {
 	private String nom;
 	private String nomcar;
 	private String obs;
+	private SubaplicacioDto subapl;
 
 
 }
