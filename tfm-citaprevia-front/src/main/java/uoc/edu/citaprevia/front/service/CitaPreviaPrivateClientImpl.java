@@ -362,7 +362,7 @@ public class CitaPreviaPrivateClientImpl implements CitaPreviaPrivateClient{
 	}
 	
 	@Override
-	public UbicacioDto updateTipusCita(Long ubiCon, UbicacioDto dto, Locale locale) {
+	public UbicacioDto updateUbicacio(Long ubiCon, UbicacioDto dto, Locale locale) {
 		Map<String, Object> params = new HashMap<>();
 		params.put(PARAM_UBI_CON, ubiCon);
 		params.put(PARAM_LOCALE, locale);

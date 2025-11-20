@@ -62,11 +62,11 @@ public interface CitaPreviaPrivateClient {
 
 	UbicacioDto saveUbicacio(UbicacioDto ubicacio, Locale locale);
 
-	UbicacioDto updateTipusCita(Long ubiCon, UbicacioDto dto, Locale locale);
-
 	ErrorDto deleteUbicacio(Long ubiCon, Locale locale);
 
 	List<UbicacioDto> getUbicacionsBySubaplicacio(String subaplCoa, Locale locale);
+
+	UbicacioDto updateUbicacio(Long ubiCon, UbicacioDto dto, Locale locale);
 
 
 }

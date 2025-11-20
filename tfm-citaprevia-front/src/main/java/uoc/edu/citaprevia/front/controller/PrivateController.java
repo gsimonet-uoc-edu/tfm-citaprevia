@@ -1094,9 +1094,9 @@ public class PrivateController {
         	savedTipusCita = citaPreviaPrivateClient.saveTipusCita(tipusCitaToSave, locale);
         }
 
-        if (tipusCitaToSave.hasErrors()) {
+        if (savedTipusCita.hasErrors()) {
             // Maneig d'errors del backend
-            redirect.addFlashAttribute("error", tipusCitaToSave.getErrors().get(0).getDem());
+            redirect.addFlashAttribute("error", savedTipusCita.getErrors().get(0).getDem());
         } else {
             redirect.addFlashAttribute("success", form.getCon() == null ? bundle.getMessage(Constants.SUCCESS_FRONT_SAVE_TIPUS_CITES, null, locale) : bundle.getMessage(Constants.SUCCESS_FRONT_UPDATE_TIPUS_CITES, null, locale));
         }
@@ -1167,58 +1167,64 @@ public class PrivateController {
 
         return "private/gestio-ubicacions";
     }
-/*
+
     @PostMapping("/gestio/ubicacions/save")
-    public String saveUbicacio(@Valid @ModelAttribute("ubicacioForm") UbicacioFormDto ubicacioForm,
+    public String saveUpdateUbicacio(@Valid @ModelAttribute("ubicacioForm") UbicacioFormDto form,
                                BindingResult bindingResult,
                                RedirectAttributes redirect,
                                Authentication authentication,
                                Locale locale) {
+    	try {
+	        String subaplCoa = getSubaplCoa(authentication);
+	        if (Utils.isEmpty(subaplCoa)) {
+	            redirect.addFlashAttribute("error", bundle.getMessage("error.subapl.no.trobada", null, locale));
+	            return "redirect:/private/gestio/ubicacions";
+	        }
+	
+	        // Sempre enviem la subaplicació
+	        form.setSubaplCoa(subaplCoa);
+	
+	        if (bindingResult.hasErrors()) {
+	            redirect.addFlashAttribute("org.springframework.validation.BindingResult.ubicacioForm", bindingResult);
+	            redirect.addFlashAttribute("ubicacioForm", form);
+	            return "redirect:/private/gestio/ubicacions";
+	        }
 
-        String subaplCoa = obtenirSubaplCoa(authentication);
-        if (Utils.isEmpty(subaplCoa)) {
-            redirect.addFlashAttribute("error", bundle.getMessage("error.subapl.no.trobada", null, locale));
-            return "redirect:/private/gestio/ubicacions";
-        }
+       
+        	
+        	// 4. Guardar
+            UbicacioDto savedUbicacio = new UbicacioDto();
+            UbicacioDto ubicacioToSave = new UbicacioDto();
+            ubicacioToSave.setCon(form.getCon());
+            ubicacioToSave.setNom(form.getNom());
+            ubicacioToSave.setNomcar(form.getNomcar());
+            ubicacioToSave.setObs(form.getObs());
+            SubaplicacioDto subaplicacio = new SubaplicacioDto();
+            subaplicacio.setCoa(subaplCoa);
+            ubicacioToSave.setSubapl(subaplicacio);
 
-        // Sempre enviem la subaplicació
-        ubicacioForm.setSubaplCoa(subaplCoa);
-
-        if (bindingResult.hasErrors()) {
-            redirect.addFlashAttribute("org.springframework.validation.BindingResult.ubicacioForm", bindingResult);
-            redirect.addFlashAttribute("ubicacioForm", ubicacioForm);
-            return "redirect:/private/gestio/ubicacions";
-        }
-
-        try {
-            ErrorDto error;
-            if (ubicacioForm.getCon() == null) {
-                // ALTA
-                error = citaPreviaPrivateClient.crearUbicacio(ubicacioForm, locale);
+            if (!Utils.isEmpty(form.getCon())) {
+            	savedUbicacio = citaPreviaPrivateClient.updateUbicacio(form.getCon(), ubicacioToSave, locale);
             } else {
-                // ACTUALITZACIÓ
-                error = citaPreviaPrivateClient.actualitzarUbicacio(ubicacioForm, locale);
+            	savedUbicacio = citaPreviaPrivateClient.saveUbicacio(ubicacioToSave, locale);
             }
 
-            if (error != null && !Utils.isEmpty(error.getDem())) {
-                redirect.addFlashAttribute("error", error.getDem());
-                redirect.addFlashAttribute("ubicacioForm", ubicacioForm);
+            if (savedUbicacio.hasErrors()) {
+                // Maneig d'errors del backend
+                redirect.addFlashAttribute("error", savedUbicacio.getErrors().get(0).getDem());
             } else {
-                String missatge = (ubicacioForm.getCon() == null)
-                        ? bundle.getMessage("ubicacio.creada.ok", null, locale)
-                        : bundle.getMessage("ubicacio.actualitzada.ok", null, locale);
-                redirect.addFlashAttribute("success", missatge);
+                redirect.addFlashAttribute("success", form.getCon() == null ? bundle.getMessage(Constants.SUCCESS_FRONT_SAVE_UBICACIONS, null, locale) : bundle.getMessage(Constants.SUCCESS_FRONT_UPDATE_UBICACIONS, null, locale));
             }
-
+            
         } catch (Exception e) {
-            LOG.error("### Error guardant ubicació: {}", ubicacioForm, e);
-            redirect.addFlashAttribute("error", bundle.getMessage("error.guardar.ubicacio", null, locale));
-            redirect.addFlashAttribute("ubicacioForm", ubicacioForm);
+            LOG.error("### Error guardant ubicació: {}", form, e);
+            redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_UBICACIONS, null, locale));
+            redirect.addFlashAttribute("ubicacioForm", form);
         }
 
         return "redirect:/private/gestio/ubicacions";
     }
-
+/*
     @PostMapping("/gestio/ubicacions/delete")
     public String deleteUbicacio(@RequestParam("con") Long con,
                                  RedirectAttributes redirect,

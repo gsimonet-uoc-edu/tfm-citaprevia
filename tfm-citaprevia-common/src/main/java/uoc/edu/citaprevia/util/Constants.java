@@ -45,13 +45,18 @@ public class Constants {
 	
 	public static final String SUCCESS_FRONT_SAVE_AGENDES = "succes.agendes.save";
 	public static final String SUCCESS_FRONT_SAVE_TIPUS_CITES = "succes.tipuscites.save";
+	public static final String SUCCESS_FRONT_SAVE_UBICACIONS = "succes.ubicacions.save";
 	public static final String SUCCESS_FRONT_UPDATE_TIPUS_CITES = "succes.tipuscites.update";
 	public static final String SUCCESS_FRONT_UPDATE_AGENDES = "succes.agendes.update";
+	public static final String SUCCESS_FRONT_UPDATE_UBICACIONS = "succes.ubicacions.update";
+	
+	
 	public static final String SUCCESS_FRONT_DELETE_AGENDES = "succes.agendes.delete";
 	public static final String SUCCESS_FRONT_DELETE_TIPUS_CITES = "succes.tipuscites.delete";
 	
 	public static final String SUCCESS_FRONT_SAVE_TECNICS = "succes.tecnics.save";
 	public static final String SUCCESS_FRONT_UPDATE_TECNICS = "succes.tecnics.update";
 	public static final String SUCCESS_FRONT_DELETE_TECNICS= "succes.tecnics.delete";
-	public static final String ERROR_FRONT_PRF_TECNICS = "error.tecnics.prf";
+	public static final String ERROR_FRONT_PRF_TECNICS = "error.tecnics.prf";	
+	
 }
