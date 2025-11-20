@@ -51,6 +51,7 @@ import uoc.edu.citaprevia.front.privat.dto.HorariFormDto;
 import uoc.edu.citaprevia.front.privat.dto.SetmanaTipusDeleteFormDto;
 import uoc.edu.citaprevia.front.privat.dto.SetmanaTipusFormDto;
 import uoc.edu.citaprevia.front.privat.dto.TecnicFormDto;
+import uoc.edu.citaprevia.front.privat.dto.TipusCitaFormDto;
 import uoc.edu.citaprevia.front.service.CitaPreviaPrivateClient;
 import uoc.edu.citaprevia.front.service.CitaPreviaPublicClient;
 import uoc.edu.citaprevia.front.service.MetacamapService;
@@ -408,6 +409,22 @@ public class PrivateController {
             }
         }
         return false;
+    }
+    
+    /**
+     * Mètode auxiliar per obtenir la subaplicació de l'usuari autenticat
+     */
+   private String getSubaplCoa(Authentication authentication) {
+        if (authentication == null || authentication.getAuthorities() == null) {
+            return null;
+        }
+        for (GrantedAuthority auth : authentication.getAuthorities()) {
+            String authority = auth.getAuthority();
+            if (authority.contains("_")) {
+                return StringUtils.substringAfter(authority, "_");
+            }
+        }
+        return null;
     }
     
     
@@ -1006,4 +1023,117 @@ public class PrivateController {
 
         return "redirect:/private/gestio/tecnics";
     }
+    
+    
+    /**
+     * GESTIÓ DE TIPUS DE CITES
+     */
+
+    @GetMapping("/gestio/tipus-cites")
+    public String gestioTipusCites(Model model,
+                                    Authentication authentication,
+                                    Locale locale) {
+
+        String subaplCoa = getSubaplCoa(authentication);
+        if (Utils.isEmpty(subaplCoa)) {
+            model.addAttribute("error", bundle.getMessage("error.subapl.no.trobada", null, locale));
+            return "redirect:/private/calendari";
+        }
+
+        try {
+            List<TipusCitaDto> tipusCites = citaPreviaPrivateClient.getTipusCitesBySubaplicacio(subaplCoa, locale);
+            model.addAttribute("tipusCites", tipusCites != null ? tipusCites : Collections.emptyList());
+
+            // Per al formulari d'alta/edició
+            model.addAttribute("tipusCitaForm", new TipusCitaFormDto());
+
+        } catch (Exception e) {
+            LOG.error("### Error carregant tipus de cites per subaplCoa={}", subaplCoa, e);
+            model.addAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TIPUS_CITES, null, locale));
+        }
+
+        return "private/gestio-tipus-cites";
+    }
+/*
+    @PostMapping("/gestio/tipuscites/save")
+    public String saveTipusCita(@Valid @ModelAttribute("tipusCitaForm") TipusCitaFormDto tipusCitaForm,
+                                BindingResult bindingResult,
+                                RedirectAttributes redirect,
+                                Authentication authentication,
+                                Locale locale) {
+
+        String subaplCoa = obtenirSubaplCoa(authentication);
+        if (Utils.isEmpty(subaplCoa)) {
+            redirect.addFlashAttribute("error", bundle.getMessage("error.subapl.no.trobada", null, locale));
+            return "redirect:/private/gestio/tipuscites";
+        }
+
+        // Afegim la subaplicació al DTO
+        tipusCitaForm.setSubaplCoa(subaplCoa);
+
+        if (bindingResult.hasErrors()) {
+            redirect.addFlashAttribute("org.springframework.validation.BindingResult.tipusCitaForm", bindingResult);
+            redirect.addFlashAttribute("tipusCitaForm", tipusCitaForm);
+            return "redirect:/private/gestio/tipuscites";
+        }
+
+        try {
+            ErrorDto error;
+            if (tipusCitaForm.getCon() == null) {
+                // ALTA
+                error = citaPreviaPrivateClient.crearTipusCita(tipusCitaForm, locale);
+            } else {
+                // ACTUALITZACIÓ
+                error = citaPreviaPrivateClient.actualitzarTipusCita(tipusCitaForm, locale);
+            }
+
+            if (error != null && !Utils.isEmpty(error.getDem())) {
+                redirect.addFlashAttribute("error", error.getDem());
+                redirect.addFlashAttribute("tipusCitaForm", tipusCitaForm);
+            } else {
+                String missatge = (tipusCitaForm.getCon() == null)
+                        ? bundle.getMessage("tipuscita.creat.ok", null, locale)
+                        : bundle.getMessage("tipuscita.actualitzat.ok", null, locale);
+                redirect.addFlashAttribute("success", missatge);
+            }
+
+        } catch (Exception e) {
+            LOG.error("### Error guardant tipus de cita: {}", tipusCitaForm, e);
+            redirect.addFlashAttribute("error", bundle.getMessage("error.guardar.tipuscita", null, locale));
+            redirect.addFlashAttribute("tipusCitaForm", tipusCitaForm);
+        }
+
+        return "redirect:/private/gestio/tipuscites";
+    }
+
+    @PostMapping("/gestio/tipuscites/delete")
+    public String deleteTipusCita(@RequestParam("con") Long con,
+                                  RedirectAttributes redirect,
+                                  Authentication authentication,
+                                  Locale locale) {
+
+        String subaplCoa = obtenirSubaplCoa(authentication);
+        if (Utils.isEmpty(subaplCoa)) {
+            redirect.addFlashAttribute("error", bundle.getMessage("error.subapl.no.trobada", null, locale));
+            return "redirect:/private/gestio/tipuscites";
+        }
+
+        try {
+            ErrorDto error = citaPreviaPrivateClient.eliminarTipusCita(con, subaplCoa, locale);
+
+            if (error != null && !Utils.isEmpty(error.getDem())) {
+                redirect.addFlashAttribute("error", error.getDem());
+            } else {
+                redirect.addFlashAttribute("success", bundle.getMessage("tipuscita.esborrat.ok", null, locale));
+            }
+
+        } catch (Exception e) {
+            LOG.error("### Error esborrant tipus de cita con={}", con, e);
+            redirect.addFlashAttribute("error", bundle.getMessage("error.esborrar.tipuscita", null, locale));
+        }
+
+        return "redirect:/private/gestio/tipuscites";
+    }
+*/
+
 }

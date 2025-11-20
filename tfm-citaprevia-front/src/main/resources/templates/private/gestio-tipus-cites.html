@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{gestio_tipus_cites}">Gestió de Tipus de Cites</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <th:block th:replace="~{common/header :: header}"></th:block>
+
+    <div class="container py-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 th:text="#{gestio_tipus_cites}">Gestió de Tipus de Cites</h2>
+            <a th:href="@{/private/calendari}" class="btn btn-secondary">
+                <i class="fas fa-calendar-alt me-2"></i>
+                <span th:text="#{tornar_calendari_privat}">Tornar al Calendari Privat</span>
+            </a>
+        </div>
+
+        <p class="text-muted" th:text="#{tipuscites_desc}">Administració dels tipus de cita disponibles per a la teva subaplicació.</p>
+
+        <hr>
+
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0" th:text="#{llistat_tipus_cites}">Llistat de Tipus de Cites</h5>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#tipusCitaModal" onclick="clearTipusCitaModal()">
+                    <i class="fas fa-plus me-1"></i> <span th:text="#{nou_tipus_cita}">Nou Tipus de Cita</span>
+                </button>
+            </div>
+
+            <div class="card-body">
+                <div th:if="${#lists.isEmpty(tipusCites)}" class="alert alert-info text-center py-4">
+                    <em th:text="#{no_hi_ha_tipus_cites}">No hi ha tipus de cites configurats.</em>
+                </div>
+
+                <div th:if="${not #lists.isEmpty(tipusCites)}" class="table-responsive">
+                    <table class="table table-striped table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th th:text="#{con}">Codi</th>
+                                <th th:text="#{dec}">Descripció</th>
+                                <th th:text="#{dem}">Demanda</th>
+                                <th th:text="#{tipcitmod}">Modalitat</th>
+                                <th class="text-end" th:text="#{accions}">Accions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="tipus : ${tipusCites}">
+                                <td th:text="${tipus.con}"></td>
+                                <td th:text="${tipus.dec}"></td>
+                                <td th:text="${tipus.dem}"></td>
+                                <td>
+                                    <span th:switch="${tipus.tipcitmod}">
+                                        <span th:case="'P'">Presencial</span>
+                                        <span th:case="'T'">Telèfon</span>
+                                        <span th:case="'V'">Videoconferència</span>
+                                        <span th:case="*">-</span>
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <button type="button"
+                                            class="btn btn-sm btn-info me-2"
+                                            th:title="#{editar}"
+                                            th:data-con="${tipus.con}"
+                                            th:data-dec="${tipus.dec}"
+                                            th:data-dem="${tipus.dem}"
+                                            th:data-tipcitmod="${tipus.tipcitmod}"
+                                            onclick="editTipusCitaFromButton(this)">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+
+                                    <button type="button"
+                                            class="btn btn-sm btn-danger"
+                                            th:title="#{esborrar}"
+                                            th:data-con="${tipus.con}"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#esborrarTipusC´itaModal"
+                                            onclick="prepararEsborrarTipusCita(this)">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL CREAR / EDITAR TIPUS DE CITA -->
+        <div class="modal fade" id="tipusCitaModal" tabindex="-1" aria-labelledby="tipusCitaModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form th:action="@{/private/gestio/tipuscites/save}" th:object="${tipusCitaForm}" method="post" id="formTipusCita">
+                        <input type="hidden" th:field="*{con}" id="tipusCitaCon">
+
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="tipusCitaModalLabel" th:text="#{nou_tipus_cita}">Nou Tipus de Cita</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <div class="modal-body">
+
+                            <div class="mb-3">
+                                <label for="dec" class="form-label" th:text="#{dec} + ' *'">Descripció *</label>
+                                <input type="text" class="form-control" id="dec" th:field="*{dec}" required maxlength="100"
+                                       th:classappend="${#fields.hasErrors('dec')} ? 'is-invalid' : ''">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('dec')}" th:errors="*{dec}"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="dem" class="form-label" th:text="#{dem}">Demanda</label>
+                                <input type="text" class="form-control" id="dem" th:field="*{dem}" maxlength="100"
+                                       th:classappend="${#fields.hasErrors('dem')} ? 'is-invalid' : ''">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('dem')}" th:errors="*{dem}"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="tipcitmod" class="form-label" th:text="#{tipcitmod} + ' *'">Modalitat *</label>
+                                <select class="form-select" id="tipcitmod" th:field="*{tipcitmod}" required
+                                        th:classappend="${#fields.hasErrors('tipcitmod')} ? 'is-invalid' : ''">
+                                    <option value="" th:text="#{selecciona_modalitat}">Selecciona una modalitat</option>
+                                    <option value="P">Presencial</option>
+                                    <option value="T">Telèfon</option>
+                                    <option value="V">Videoconferència</option>
+                                </select>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('tipcitmod')}" th:errors="*{tipcitmod}"></div>
+                            </div>
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{cancelar}">Cancel·lar</button>
+                            <button type="submit" class="btn btn-success" th:text="#{guardar}">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL ESBORRAR -->
+        <div class="modal fade" id="esborrarTipusCitaModal" tabindex="-1">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <form id="formEsborrarTipusCita" th:action="@{/private/gestio/tipuscites/delete}" method="post">
+                        <input type="hidden" id="esborrarTipusCitaCon" name="con">
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title" th:text="#{confirmacio_esborrat}">Confirmació</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body text-center py-4">
+                            <i class="fas fa-trash-alt fa-3x text-danger mb-3"></i>
+                            <p th:text="#{confirmar_esborrar_tipus_cita}">Segur que vols esborrar aquest tipus de cita?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{cancelar}">Cancel·lar</button>
+                            <button type="submit" class="btn btn-danger" th:text="#{esborrar}">Esborrar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <th:block th:replace="~{common/footer :: footer}"></th:block>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if ([/*[[${#fields.hasErrors('tipusCitaForm.*')}]]*/ false]) {
+                const modal = new bootstrap.Modal(document.getElementById('tipusCitaModal'));
+                modal.show();
+                if (document.getElementById('tipusCitaCon').value) {
+                    document.getElementById('tipusCitaModalLabel').textContent = /*[[#{editar_tipus_cita}]]*/ 'Editar Tipus de Cita';
+                }
+            }
+        });
+
+        function clearTipusCitaModal() {
+            document.getElementById('formTipusCita').reset();
+            document.getElementById('tipusCitaCon').value = '';
+            document.getElementById('tipusCitaModalLabel').textContent = /*[[#{nou_tipus_cita}]]*/ 'Nou Tipus de Cita';
+        }
+
+        function editTipusCitaFromButton(btn) {
+            document.getElementById('tipusCitaModalLabel').textContent = /*[[#{editar_tipus_cita}]]*/ 'Editar Tipus de Cita';
+            document.getElementById('tipusCitaCon').value = btn.dataset.con;
+            document.getElementById('dec').value = btn.dataset.dec || '';
+            document.getElementById('dem').value = btn.dataset.dem || '';
+            document.getElementById('tipcitmod').value = btn.dataset.tipcitmod || '';
+            new bootstrap.Modal(document.getElementById('tipusCitaModal')).show();
+        }
+
+        function prepararEsborrarTipusCita(btn) {
+            document.getElementById('esborrarTipusCitaCon').value = btn.dataset.con;
+        }
+
+        /*]]>*/
+    </script>
+</body>
+</html>
