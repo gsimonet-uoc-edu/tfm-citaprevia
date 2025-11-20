@@ -36,6 +36,10 @@ public class AgendaDao {
         return agendaRepository.findByTecnicCoa(tecCoa);
     }
     
+	public List<Agenda> findAgendesByUbicacio (Long ubiCon) {
+		return agendaRepository.findByCentreCon(ubiCon);
+	}
+    
 	public Agenda saveAgenda(Agenda entity) {
 		return (entity != null ? agendaRepository.save(entity) : null);
 	}

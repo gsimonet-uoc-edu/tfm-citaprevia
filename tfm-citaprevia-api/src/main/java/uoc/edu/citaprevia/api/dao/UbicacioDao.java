@@ -14,8 +14,29 @@ public class UbicacioDao {
 	@Autowired
 	private UbicacioRepository ubicacioRepository;
 	
+	public Ubicacio findUbicacioByCon (Long con) {
+		return ubicacioRepository.findByCon(con);
+	}
+	
 	public List<Ubicacio> findUbicacions () {
 		return ubicacioRepository.findAll();
+	}
+	
+	public List<Ubicacio> findUbicacionsBySubaplicacio (String subaplCoa) {
+		return ubicacioRepository.findBySubaplCoa(subaplCoa);
+	}
+	
+	public Ubicacio saveUbicacio(Ubicacio entity) {
+		return (entity != null ? ubicacioRepository.save(entity) : null);
+	}
+	
+	public Ubicacio updateUbicacio(Ubicacio entity) {	
+		Ubicacio dao = this.findUbicacioByCon(entity.getCon());
+		return (dao != null) ? ubicacioRepository.save(entity) : null;
+	}
+	
+	public void deleteUbicacio (Ubicacio entity) {
+		ubicacioRepository.delete(entity);
 	}
 
 }

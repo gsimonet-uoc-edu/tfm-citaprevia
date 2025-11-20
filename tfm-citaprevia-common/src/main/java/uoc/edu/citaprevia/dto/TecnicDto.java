@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import uoc.edu.citaprevia.dto.generic.ErrorsDto;
-import uoc.edu.citaprevia.model.SiNo;
 
 @Getter @Setter @NoArgsConstructor @ToString @EqualsAndHashCode
 public class TecnicDto extends ErrorsDto{

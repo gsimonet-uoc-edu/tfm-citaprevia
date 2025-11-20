@@ -6,7 +6,6 @@ import lombok.Setter;
 import lombok.ToString;
 import uoc.edu.citaprevia.dto.generic.ErrorsDto;
 import uoc.edu.citaprevia.model.ModalitatTipusCita;
-import uoc.edu.citaprevia.model.SiNo;
 
 @Getter @Setter @NoArgsConstructor @ToString
 public class TipusCitaDto extends ErrorsDto{

@@ -22,5 +22,7 @@ public class SubaplicacioServiceImpl implements SubaplicacioService{
 		}
 		return dto;
 	}
+	
+	
 
 }

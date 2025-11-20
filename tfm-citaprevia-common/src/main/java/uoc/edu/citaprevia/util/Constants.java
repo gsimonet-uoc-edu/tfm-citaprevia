@@ -14,6 +14,7 @@ public class Constants {
 	public static final String ERROR_API_CRUD_TIPUS_CITA = "error.tipuscita.crud";
 	public static final String ERROR_API_CRUD_TECNIC = "error.tecnics.crud";
 	public static final String ERROR_API_CRUD_HORARI = "error.horaris.crud";
+	public static final String ERROR_API_CRUD_UBICACIONS = "error.ubicacions.crud";
 	public static final String ERROR_API_CRUD_SETMANES_TIPUS = "error.setmanestipus.crud";
 	public static final String ERROR_API_DELETE_AGENDA = "error.agendas.delete";
 	public static final String ERROR_API_DELETE_HORARI = "error.horaris.delete";
@@ -21,6 +22,7 @@ public class Constants {
 	public static final String ERROR_API_DELETE_SETMANES_TIPUS = "error.setmanestipus.delete";
 	public static final String ERROR_API_DELETE_TIPUS_CITES_HORARIS = "error.tipuscites.horaris.delete";
 	public static final String ERROR_API_ADD_CITES_SETMANES_TIPUS = "error.setmanestipus.cites.add";
+	public static final String ERROR_API_DELETE_AGENDES_UBICACIONS = "error.ubicacions.agendes.delete";
 	public static final String ERROR_API_UPDATE_CITES_SETMANES_TIPUS = "error.setmanestipus.cites.update";
 	
 	

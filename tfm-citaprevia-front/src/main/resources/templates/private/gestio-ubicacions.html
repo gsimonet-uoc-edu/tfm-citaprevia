@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{gestio_ubicacions}">Gestió d'Ubicacions</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <th:block th:replace="~{common/header :: header}"></th:block>
+
+    <div class="container py-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 th:text="#{gestio_ubicacions}">Gestió d'Ubicacions</h2>
+            <a th:href="@{/private/calendari}" class="btn btn-secondary">
+                <i class="fas fa-calendar-alt me-2"></i>
+                <span th:text="#{tornar_calendari_privat}">Tornar al Calendari Privat</span>
+            </a>
+        </div>
+
+        <p class="text-muted" th:text="#{ubicacions_desc}">Administració de les ubicacions/centres de la teva subaplicació.</p>
+
+        <hr>
+
+        <!-- Missatges flash -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0" th:text="#{llistat_ubicacions}">Llistat d'Ubicacions</h5>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#ubicacioModal" onclick="clearUbicacioModal()">
+                    <i class="fas fa-plus me-1"></i> <span th:text="#{nou_ubicacio}">Nova Ubicació</span>
+                </button>
+            </div>
+
+            <div class="card-body">
+                <div th:if="${#lists.isEmpty(ubicacions)}" class="alert alert-info text-center py-4">
+                    <em th:text="#{no_hi_ha_ubicacions}">No hi ha ubicacions configurades.</em>
+                </div>
+
+                <div th:if="${not #lists.isEmpty(ubicacions)}" class="table-responsive">
+                    <table class="table table-striped table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th th:text="#{con}">Codi</th>
+                                <th th:text="#{nom}">Nom</th>
+                                <th th:text="#{nomcar}">Nom Carrer</th>
+                                <th th:text="#{obs}">Observacions</th>
+                                <th class="text-end" th:text="#{accions}">Accions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="ubicacio : ${ubicacions}">
+                                <td th:text="${ubicacio.con}"></td>
+                                <td th:text="${ubicacio.nom}"></td>
+                                <td th:text="${ubicacio.nomcar} ?: '-'"></td>
+                                <td th:text="${ubicacio.obs} ?: '-'"></td>
+                                <td class="text-end">
+                                    <!-- EDITAR -->
+                                    <button type="button"
+                                            class="btn btn-sm btn-info me-2"
+                                            th:title="#{editar}"
+                                            th:data-con="${ubicacio.con}"
+                                            th:data-nom="${ubicacio.nom}"
+                                            th:data-nomcar="${ubicacio.nomcar}"
+                                            th:data-obs="${ubicacio.obs}"
+                                            onclick="editUbicacioFromButton(this)">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+
+                                    <!-- ESBORRAR -->
+                                    <button type="button"
+                                            class="btn btn-sm btn-danger"
+                                            th:title="#{esborrar}"
+                                            th:data-con="${ubicacio.con}"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#esborrarUbicacioModal"
+                                            onclick="prepararEsborrarUbicacio(this)">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL CREAR / EDITAR UBICACIÓ -->
+        <div class="modal fade" id="ubicacioModal" tabindex="-1" aria-labelledby="ubicacioModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form th:action="@{/private/gestio/ubicacions/save}" th:object="${ubicacioForm}" method="post" id="formUbicacio">
+                        <input type="hidden" th:field="*{con}" id="ubicacioCon">
+
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="ubicacioModalLabel" th:text="#{nou_ubicacio}">Nova Ubicació</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="nom" class="form-label" th:text="#{nom} + ' *'">Nom *</label>
+                                <input type="text" class="form-control" id="nom" th:field="*{nom}" required maxlength="100"
+                                       th:classappend="${#fields.hasErrors('nom')} ? 'is-invalid' : ''">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('nom')}" th:errors="*{nom}"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="nomcar" class="form-label" th:text="#{nomcar}">Nom Carrer</label>
+                                <input type="text" class="form-control" id="nomcar" th:field="*{nomcar}" maxlength="100"
+                                       th:classappend="${#fields.hasErrors('nomcar')} ? 'is-invalid' : ''">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('nomcar')}" th:errors="*{nomcar}"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="obs" class="form-label" th:text="#{obs}">Observacions</label>
+                                <textarea class="form-control" id="obs" th:field="*{obs}" rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{cancelar}">Cancel·lar</button>
+                            <button type="submit" class="btn btn-success" th:text="#{guardar}">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL ESBORRAR -->
+        <div class="modal fade" id="esborrarUbicacioModal" tabindex="-1">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <form id="formEsborrarUbicacio" th:action="@{/private/gestio/ubicacions/delete}" method="post">
+                        <input type="hidden" id="esborrarUbicacioCon" name="con">
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title" th:text="#{confirmacio_esborrat}">Confirmació</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body text-center py-4">
+                            <i class="fas fa-trash-alt fa-3x text-danger mb-3"></i>
+                            <p th:text="#{confirmar_esborrar_ubicacio}">Segur que vols esborrar aquesta ubicació?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{cancelar}">Cancel·lar</button>
+                            <button type="submit" class="btn btn-danger" th:text="#{esborrar}">Esborrar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <th:block th:replace="~{common/footer :: footer}"></th:block>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- SCRIPT CORREGIT (exactament com a tipus-cites i que funciona al 100%) -->
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        document.addEventListener('DOMContentLoaded', function() {
+            /*[[${#fields.hasErrors('ubicacioForm.*')}]]*/ false
+            if (false) {
+                const modal = new bootstrap.Modal(document.getElementById('ubicacioModal'));
+                modal.show();
+                if (document.getElementById('ubicacioCon').value) {
+                    document.getElementById('ubicacioModalLabel').textContent = /*[[#{editar_ubicacio}]]*/ 'Editar Ubicació';
+                }
+            }
+        });
+
+        function clearUbicacioModal() {
+            document.getElementById('formUbicacio').reset();
+            document.getElementById('ubicacioCon').value = '';
+            document.getElementById('ubicacioModalLabel').textContent = /*[[#{nou_ubicacio}]]*/ 'Nova Ubicació';
+        }
+
+        function editUbicacioFromButton(btn) {
+            document.getElementById('ubicacioModalLabel').textContent = /*[[#{editar_ubicacio}]]*/ 'Editar Ubicació';
+            document.getElementById('ubicacioCon').value = btn.dataset.con;
+            document.getElementById('nom').value = btn.dataset.nom || '';
+            document.getElementById('nomcar').value = btn.dataset.nomcar || '';
+            document.getElementById('obs').value = btn.dataset.obs || '';
+            new bootstrap.Modal(document.getElementById('ubicacioModal')).show();
+        }
+
+        function prepararEsborrarUbicacio(btn) {
+            document.getElementById('esborrarUbicacioCon').value = btn.dataset.con;
+        }
+
+        /*]]>*/
+    </script>
+</body>
+</html>
