@@ -1224,34 +1224,33 @@ public class PrivateController {
 
         return "redirect:/private/gestio/ubicacions";
     }
-/*
+
     @PostMapping("/gestio/ubicacions/delete")
     public String deleteUbicacio(@RequestParam("con") Long con,
                                  RedirectAttributes redirect,
                                  Authentication authentication,
                                  Locale locale) {
+    	try {
+	        String subaplCoa = getSubaplCoa(authentication);
+	        if (Utils.isEmpty(subaplCoa)) {
+	            redirect.addFlashAttribute("error", bundle.getMessage("error.subapl.no.trobada", null, locale));
+	            return "redirect:/private/gestio/ubicacions";
+	        }
 
-        String subaplCoa = obtenirSubaplCoa(authentication);
-        if (Utils.isEmpty(subaplCoa)) {
-            redirect.addFlashAttribute("error", bundle.getMessage("error.subapl.no.trobada", null, locale));
-            return "redirect:/private/gestio/ubicacions";
-        }
-
-        try {
-            ErrorDto error = citaPreviaPrivateClient.eliminarUbicacio(con, subaplCoa, locale);
+            ErrorDto error = citaPreviaPrivateClient.deleteUbicacio(con, locale);
 
             if (error != null && !Utils.isEmpty(error.getDem())) {
                 redirect.addFlashAttribute("error", error.getDem());
             } else {
-                redirect.addFlashAttribute("success", bundle.getMessage("ubicacio.esborrada.ok", null, locale));
+                redirect.addFlashAttribute("success", bundle.getMessage(Constants.SUCCESS_FRONT_DELETE_UBICACIONS, null, locale));
             }
 
         } catch (Exception e) {
-            LOG.error("### Error esborrant ubicació con={}", con, e);
-            redirect.addFlashAttribute("error", bundle.getMessage("error.esborrar.ubicacio", null, locale));
+            LOG.error("### Error esborrant tipus de cita con={}", con, e);
+            redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_UBICACIONS, null, locale));
         }
 
         return "redirect:/private/gestio/ubicacions";
     }
-    */
+    
 }

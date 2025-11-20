@@ -53,6 +53,8 @@ public class Constants {
 	
 	public static final String SUCCESS_FRONT_DELETE_AGENDES = "succes.agendes.delete";
 	public static final String SUCCESS_FRONT_DELETE_TIPUS_CITES = "succes.tipuscites.delete";
+	public static final String SUCCESS_FRONT_DELETE_UBICACIONS = "succes.ubicacions.delete";
+	
 	
 	public static final String SUCCESS_FRONT_SAVE_TECNICS = "succes.tecnics.save";
 	public static final String SUCCESS_FRONT_UPDATE_TECNICS = "succes.tecnics.update";
