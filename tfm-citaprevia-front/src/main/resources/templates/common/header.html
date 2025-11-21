@@ -6,28 +6,65 @@
 </head>
 <body>
 
-<!-- Fragmento: header -->
-<header th:fragment="header" class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-<!-- common/header.html -->
-<div class="ms-auto">
-    <form th:action="@{'/public/' + ${subaplCoa} + '/lang'}" method="post" class="d-inline">
-        <input type="hidden" name="lang" value="ca">
-        <button type="submit" 
-                class="btn btn-outline-secondary btn-sm me-1"
-                th:classappend="${#locale.language == 'ca'} ? 'active' : ''">
-            Català
+<!-- ====================== HEADER ====================== -->
+<header th:fragment="header" class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm sticky-top">
+    <div class="container-fluid">
+
+        <!-- Logo / Nom aplicació -->
+        <a class="navbar-brand fw-bold d-flex align-items-center" th:href="@{/}">
+            <i class="fas fa-calendar-check me-2 fs-4"></i>
+            <span class="d-none d-sm-inline">Cita Prèvia</span>
+        </a>
+
+        <!-- Botó mòbil -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
         </button>
-    </form>
-    <form th:action="@{'/public/' + ${subaplCoa} + '/lang'}" method="post" class="d-inline">
-        <input type="hidden" name="lang" value="es">
-        <button type="submit" 
-                class="btn btn-outline-secondary btn-sm"
-                th:classappend="${#locale.language == 'es'} ? 'active' : ''">
-            Español
-        </button>
-    </form>
-</div>
+
+        <!-- Contingut del navbar -->
+        <div class="collapse navbar-collapse" id="navbarContent">
+
+            <!-- Menú esquerra (futurs enllaços privats) -->
+            <ul class="navbar-nav me-auto">
+                <!-- Exemple per àrea privada (es mostrarà només si estàs autenticat) -->
+                <!--
+                <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')}">
+                    <a class="nav-link" th:href="@{/private/calendari}">
+                        <i class="fas fa-cog me-1"></i> Àrea Privada
+                    </a>
+                </li>
+                -->
+            </ul>
+
+            <!-- Selector d'idioma (FORÇA POST + estil perfecte) -->
+            <div class="d-flex align-items-center gap-2">
+                <form th:action="@{/changeLang}" method="post" class="m-0">
+                    <input type="hidden" name="lang" value="ca">
+                    <button type="submit"
+                            class="btn btn-sm rounded-pill px-3"
+                            th:classappend="${#locale.language == 'ca'} ? 'btn-light fw-bold text-primary' : 'btn-outline-light'">
+                        <span class="fi fi-ca me-1"></span>
+                        <span class="d-none d-md-inline">Català</span>
+                    </button>
+                </form>
+
+                <form th:action="@{/changeLang}" method="post" class="m-0">
+                    <input type="hidden" name="lang" value="es">
+                    <button type="submit"
+                            class="btn btn-sm rounded-pill px-3"
+                            th:classappend="${#locale.language == 'es'} ? 'btn-light fw-bold text-primary' : 'btn-outline-light'">
+                        <span class="fi fi-es me-1"></span>
+                        <span class="d-none d-md-inline">Español</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 </header>
+
+<!-- Flag Icons CSS (banderes de Catalunya i Espanya) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css"/>
 
 </body>
 </html>

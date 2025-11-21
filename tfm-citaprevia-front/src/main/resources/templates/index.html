@@ -34,7 +34,7 @@
                         <th:block th:replace="~{common/errors :: errors(errors = ${errors})}" />
 
                         <!-- Formulario: POST a /seleccio -->
-                        <form th:action="@{'/public/' + ${subaplCoa} + '/seleccio'}" method="post">
+                        <form th:action="@{'/public/' + ${subaplCoa} + '/seleccio'}" method="get">
                             <div th:if="${llistaTipusCites != null and #lists.size(llistaTipusCites.tipusCites) > 1}"
                                  class="mb-4">
                                 <label class="form-label fw-bold" th:utext="#{selecciona_tipus_cita}"></label>

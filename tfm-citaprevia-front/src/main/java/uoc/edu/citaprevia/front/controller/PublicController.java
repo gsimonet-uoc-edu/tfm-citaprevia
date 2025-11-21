@@ -108,7 +108,7 @@ public class PublicController {
 	    model.addAttribute("errors", errors);
 	}
 	
-	@PostMapping("/{subaplCoa}/seleccio")
+	@GetMapping("/{subaplCoa}/seleccio")
     public String seleccio(@PathVariable String subaplCoa,
                            @RequestParam Long tipcitCon,
                            Model model, Locale locale, HttpServletRequest request) throws Exception {
