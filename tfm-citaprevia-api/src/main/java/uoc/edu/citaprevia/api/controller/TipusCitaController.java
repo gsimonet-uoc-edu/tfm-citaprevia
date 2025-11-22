@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import uoc.edu.citaprevia.api.service.TipusCitaService;
 import uoc.edu.citaprevia.api.utils.ApiUtils;
+import uoc.edu.citaprevia.dto.SeleccioTipusCitaDto;
 import uoc.edu.citaprevia.dto.TipusCitaDto;
 import uoc.edu.citaprevia.dto.generic.ErrorDto;
 import uoc.edu.citaprevia.model.TipusError;
@@ -102,5 +103,15 @@ public class TipusCitaController {
 		
 		return  tipusCitaService.deleteTipusCita(con, locale);
 		 
+	}
+	
+	@GetMapping(value={"/subaplicacions/{subaplCoa}/selecciotipuscites"})
+	@Operation(summary="Obté un objecte que conté una llista de tipus de cita donada una subaplicació")
+	public SeleccioTipusCitaDto getAllTipusCites(@PathVariable String subaplCoa,
+												  Locale locale){
+		SeleccioTipusCitaDto gestioCita= new SeleccioTipusCitaDto();
+		gestioCita.setTipusCites(tipusCitaService.getAllTipusCitaBySubaplCoa(subaplCoa, locale));
+		return gestioCita;
+		
 	}
 }

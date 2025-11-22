@@ -56,7 +56,7 @@ public class CitaPreviaPublicClientImpl  implements CitaPreviaPublicClient{
 		Map<String, Object> params = new HashMap<>();
 		params.put(PARAM_SUBAPL_COA, subaplCoa);
 		params.put(PARAM_LOCALE, locale);
-		String url = getBaseApiUrl() + "/public/subaplicacions/{subaplCoa}/selecciotipuscites?lang={lang}";
+		String url = getBaseApiUrl() + "/tipus-cites/subaplicacions/{subaplCoa}/selecciotipuscites?lang={lang}";
 		return restTemplate.getForObject(url, SeleccioTipusCitaDto.class, params);
 	}
 

@@ -55,7 +55,6 @@ public class CitaController {
 		 
 	}
 	
-	
 	@PostMapping("")
 	@Operation(summary="donar d'alta un cita")
 	public CitaDto saveCita(@Valid @RequestBody CitaDto dto,
