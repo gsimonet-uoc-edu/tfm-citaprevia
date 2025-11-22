@@ -70,7 +70,7 @@ public class UbicacioController {
 	
 	@PutMapping("/{con}")
 	@Operation(summary="actualitzar les dades d'una ubicació")
-	public UbicacioDto updateTipusCita(@PathVariable Long con,
+	public UbicacioDto updateUbicacii(@PathVariable Long con,
 							      @Valid @RequestBody UbicacioDto dto,
 						          BindingResult result,
 						          Locale locale) {
@@ -93,7 +93,7 @@ public class UbicacioController {
 	
 	@DeleteMapping("/{con}")
 	@Operation(summary="eliminar una ubicació per codi")
-	public ErrorDto deleteTipusCita(@PathVariable Long con,
+	public ErrorDto deleteUbicacio(@PathVariable Long con,
 				 			    	Locale locale) {
 		
 		return  ubicacioService.deleteUbicacio(con, locale);

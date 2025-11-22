@@ -10,14 +10,9 @@ import uoc.edu.citaprevia.api.model.Cita;
 public interface CitaRepository extends PagingAndSortingRepository<Cita, Long> {
 	
     Cita findByCon(Long con);
-
-    Cita findByAgendaConAndDathoriniAndDathorfinAndTipcitCon(Long ageCon, LocalDateTime inici, LocalDateTime fi, Long tipcitCon);
-       
-	boolean existsByAgendaConAndDathorini(Long con, LocalDateTime current);
-	
-	boolean existsByAgendaConAndDathoriniLessThanEqualAndDathorfinGreaterThanEqual(
-	        Long agendaCon, LocalDateTime fi, LocalDateTime inici);
-	
+    Cita findByAgendaConAndDathoriniAndDathorfinAndTipcitCon(Long ageCon, LocalDateTime inici, LocalDateTime fi, Long tipcitCon);       
+	boolean existsByAgendaConAndDathorini(Long con, LocalDateTime current);	
+	boolean existsByAgendaConAndDathoriniLessThanEqualAndDathorfinGreaterThanEqual(Long agendaCon, LocalDateTime fi, LocalDateTime inici);	
 	List<Cita> findByAgendaCon(Long ageCon);
 	List<Cita> findByAgendaHorariCon(Long horCon);
 	List<Cita> findByAgendaTecnicCoa(String tecCoa);

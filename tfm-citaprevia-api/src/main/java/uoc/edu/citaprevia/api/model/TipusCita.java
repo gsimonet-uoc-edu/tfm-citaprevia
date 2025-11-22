@@ -16,7 +16,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import uoc.edu.citaprevia.model.ModalitatTipusCita;
-import uoc.edu.citaprevia.model.SiNo;
 
 @Entity
 @Table(name = "TIPUS_CITA")
