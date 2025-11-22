@@ -10,19 +10,16 @@
 <header th:fragment="header" class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm sticky-top">
     <div class="container-fluid">
 
-        <!-- Logo / Nom aplicació -->
-        <a class="navbar-brand fw-bold d-flex align-items-center" th:href="@{/}">
+        <a class="navbar-brand fw-bold d-flex align-items-center">
             <i class="fas fa-calendar-check me-2 fs-4"></i>
             <span class="d-none d-sm-inline">Cita Prèvia</span>
         </a>
 
-        <!-- Botó mòbil -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
                 aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <!-- Contingut del navbar -->
         <div class="collapse navbar-collapse" id="navbarContent">
 
             <!-- Menú esquerra (futurs enllaços privats) -->
@@ -37,7 +34,6 @@
                 -->
             </ul>
 
-            <!-- Selector d'idioma (FORÇA POST + estil perfecte) -->
             <div class="d-flex align-items-center gap-2">
                 <form th:action="@{/changeLang}" method="post" class="m-0">
                     <input type="hidden" name="lang" value="ca">
@@ -62,9 +58,6 @@
         </div>
     </div>
 </header>
-
-<!-- Flag Icons CSS (banderes de Catalunya i Espanya) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css"/>
 
 </body>
 </html>
