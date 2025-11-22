@@ -50,10 +50,6 @@
                             <div th:if="${llistaTipusCites != null and #lists.size(llistaTipusCites.tipusCites) == 1}"
                                  th:with="tip = ${llistaTipusCites.tipusCites[0]}">
                                 <input type="hidden" name="tipcitCon" th:value="${tip.con}">
-                                <div class="alert alert-info text-center">
-                                    <i class="fas fa-info-circle me-2"></i>
-                                    <span th:utext="#{continuant_amb} + ' ' + ${tip.dem}"></span>
-                                </div>
                             </div>
 
                             <!-- SIN TIPOS DE CITA -->
