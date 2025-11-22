@@ -53,11 +53,11 @@ public class CitaServiceImpl implements CitaService{
 		Cita dao = citaDao.findCitaByCon(con);
 		
 		if (dao == null) {
-			return new ErrorDto(9999L,bundle.getMessage(Constants.MSG_ERR_DELETE_CIT, null, locale));
+			return new ErrorDto(9999L,bundle.getMessage(Constants.ERROR_API_CRUD_CITA, null, locale));
 		} else {
 			// Comprovar que la cita està assignada a la persona (numdoc) per a ser esborrada
 			if (!StringUtils.upperCase(numdoc).equals(StringUtils.upperCase(dao.getNumdoc()))) {
-				return new ErrorDto(9999L,bundle.getMessage(Constants.MSG_ERR_DELETE_CIT, null, locale));
+				return new ErrorDto(9999L,bundle.getMessage(Constants.ERROR_API_CRUD_CITA, null, locale));
 			}
 			citaDao.deleteCita(dao);
 		}
@@ -72,7 +72,7 @@ public class CitaServiceImpl implements CitaService{
 		Cita dao = citaDao.findCitaByCon(con);
 		
 		if (dao == null) {
-			return new ErrorDto(9999L,bundle.getMessage(Constants.MSG_ERR_DELETE_CIT, null, locale));
+			return new ErrorDto(9999L,bundle.getMessage(Constants.ERROR_API_CRUD_CITA, null, locale));
 		} else {
 			citaDao.deleteCita(dao);
 		}

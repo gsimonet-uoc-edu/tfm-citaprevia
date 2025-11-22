@@ -93,6 +93,11 @@ public class TecnicServiceImpl implements TecnicService{
 		TecnicDto dto = new TecnicDto();
 		try {
 			if (tecnic != null && !Utils.isEmpty(tecnic.getCoa())) {
+				Tecnic aux = tecnicDao.findTecnicByCoa(tecnic.getCoa());
+				// Si des del formulari d'actualització ve el password == null, es manté el de BDDD
+				if (aux != null && Utils.isEmpty(tecnic.getPass()) && !Utils.isEmpty(aux.getPass())) {
+					tecnic.setPass(aux.getPass());
+				}
 				dto = Converter.toDto(tecnicDao.updateTecnic(Converter.toDao(tecnic)));
 			} else {
 				dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL, bundle.getMessage(Constants.ERROR_API_CRUD_TECNIC, null, locale)));
