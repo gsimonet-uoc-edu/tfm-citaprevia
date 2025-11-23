@@ -726,12 +726,12 @@ public class PrivateController {
                 redirect.addFlashAttribute("error", bundle.getMessage("error.horari.no.trobat", null, locale));
                 return "redirect:/private/gestio/horaris";
             }
-            
+            List<SetmanaTipusDto> setmanesTipus = citaPreviaPublicClient.getSetmanesTipusByHorari(horCon, locale);
             // 2. Afegir dades al model
             model.addAttribute("horariDto", horariDto);
             model.addAttribute("horariCon", horCon); // Per simplicitat al JS i form
             model.addAttribute("diesSetmana", getDiesSetmana()); // Mètode que retorna Map<Integer, String> dels dies
-            
+            model.addAttribute("setmanesTipus", setmanesTipus);
             // 3. Afegir HorariFormDto per al modal d'afegir franja (important per a la validació)
             model.addAttribute("setmanaTipusForm", new SetmanaTipusFormDto()); // <-- Haureu de crear aquest DTO
             
@@ -748,108 +748,96 @@ public class PrivateController {
         }
     }
     
- // 1. Endpoint per OBTENIR TOTA LA LLISTA (GET)
-    @GetMapping("/horaris/{horCon}/setmanes-tipus") // <--- Patró de URL COMPLET
-    @ResponseBody
-    public List<SetmanaTipusDto> getSetmanesTipus(@PathVariable("horCon") Long horCon, Locale locale) {
-        long startTime = System.currentTimeMillis();
-        LOG.info("### Inici PrivateController.getSetmanesTipus startTime={}, horCon={}", startTime, horCon);
-
-        try {
-            // CRÍTIC: Cridar al client de backend per obtenir la llista
-            List<SetmanaTipusDto> llista = citaPreviaPublicClient.getSetmanesTipusByHorari(horCon, locale);
-            return llista;
-
-        } catch (Exception e) {
-            LOG.error("### Error getSetmanesTipus horCon={}", horCon, e);
-            // Retornar una llista buida o gestionar l'excepció segons la política d'errors de l'API
-            return Collections.emptyList();
-        } finally {
-            long totalTime = (System.currentTimeMillis() - startTime);
-            LOG.info("### Final PrivateController.getSetmanesTipus totalTime={}", totalTime);
-        }
-    }
+ 
 
     @PostMapping("/horaris/{horCon}/setmanes-tipus/add")
-    @ResponseBody
-    public SetmanaTipusDto addSetmanaTipusToHorari(@PathVariable Long horCon,
-    											   @RequestBody SetmanaTipusFormDto form,
-    										        Locale locale) {
-        long startTime = System.currentTimeMillis();
-        LOG.info("### Inici PrivateController.addSetmanaTipus startTime={}, horCon={}, form={}", startTime, horCon, form.toString());
+ // IMPORTANT: S'elimina @ResponseBody i es canvia @RequestBody per un binding de formulari simple
+ public String addSetmanaTipusToHorari(@PathVariable Long horCon,
+                                       SetmanaTipusFormDto form, // Form binding MVC
+                                       RedirectAttributes redirect, // Per als missatges flash
+                                       Locale locale) {
+     long startTime = System.currentTimeMillis();
+     LOG.info("### Inici PrivateController.addSetmanaTipus (MVC) startTime={}, horCon={}, form={}", startTime, horCon, form.toString());
 
-        SetmanaTipusDto settipSave = new SetmanaTipusDto();
-        
-        try {
-            // 1. Assignar l'Horari CON al DTO del formulari (obligatori per a la crida al backend)
-        	HorariDto horari = new HorariDto();
-        	horari.setCon(horCon);
-        	settipSave.setHorari(horari);
-        	settipSave.setDiasetCon(form.getDiasetCon());
-        	settipSave.setHorini(form.getHorini());
-        	settipSave.setHorfin(form.getHorfin());
-        	
-            // 2. Cridar al client de backend per afegir la nova SetmanaTipus
-            // El client s'encarregarà de la validació (hores, superposicions, etc.)
-            settipSave = citaPreviaPrivateClient.addSetmanaTipusToHorari(settipSave, locale);
+     SetmanaTipusDto settipSave = new SetmanaTipusDto();
+     String redirectUrl = "redirect:/private/gestio/horaris/" + horCon + "/setmanes-tipus";
+     
+     try {
+         // 1. Assignar l'Horari CON al DTO
+         HorariDto horari = new HorariDto();
+         horari.setCon(horCon);
+         settipSave.setHorari(horari);
+         settipSave.setDiasetCon(form.getDiasetCon());
+         settipSave.setHorini(form.getHorini());
+         settipSave.setHorfin(form.getHorfin());
+         
+         // 2. Cridar al client de backend per afegir
+         settipSave = citaPreviaPrivateClient.addSetmanaTipusToHorari(settipSave, locale);
 
-            if (settipSave.hasErrors()) {
-                // Maneig d'errors del backend
-            	throw new ResponseStatusException(HttpStatus.BAD_REQUEST, settipSave.getErrors().get(0).getDem());
-            } else {
-            	return settipSave;            
-            }
-        } catch (ResponseStatusException e) {
-            throw e; 
-        }  catch (Exception e) {
-            LOG.error("### Error save setmana tipus {}", e);
-            String errorMessage = bundle.getMessage(Constants.ERROR_FRONT_GESTIO_SETMANES_TIPUS, null, locale);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage);
-        } finally {
-			long totalTime = (System.currentTimeMillis() - startTime);
-			LOG.info("### Final PrivateController.saveUpdateHorari totalTime={}", totalTime);
-		}
+         if (settipSave.hasErrors()) {
+             // Error de negoci del backend
+             String errorMessage = settipSave.getErrors().get(0).getDem();
+             redirect.addFlashAttribute("error", errorMessage);
+         } else {
+             // Èxit
+             redirect.addFlashAttribute("success", bundle.getMessage("franja_afegida_ok", null, locale));
+         }
+         
+     } catch (Exception e) {
+         LOG.error("### Error add setmana tipus {}", e);
+         // Error general
+         String errorMessage = bundle.getMessage(Constants.ERROR_FRONT_GESTIO_SETMANES_TIPUS, null, locale);
+         redirect.addFlashAttribute("error", errorMessage);
+     } finally {
+         long totalTime = (System.currentTimeMillis() - startTime);
+         LOG.info("### Final PrivateController.addSetmanaTipus (MVC) totalTime={}", totalTime);
+     }
+     
+     // Redirigir a la pàgina de la llista per veure els missatges flash.
+     return redirectUrl;
+ }
 
-    }
-
- // Mètode Actualitzat
     @PostMapping("/horaris/{horCon}/setmanes-tipus/delete")
-    @ResponseBody
-    public void deleteSetmanaTipusOfHorari(@PathVariable Long horCon,
-                                             @RequestBody SetmanaTipusDeleteFormDto form, 
-                                             Locale locale) {
-        long startTime = System.currentTimeMillis();
-        LOG.info("### Inici PrivateController.deleteSetmanaTipusOfHorari startTime={}, horCon={}, form={}", startTime, horCon, form.toString());
+ // IMPORTANT: S'elimina @ResponseBody i es canvia @RequestBody per un binding de formulari simple
+ public String deleteSetmanaTipusOfHorari(@PathVariable Long horCon,
+                                          SetmanaTipusDeleteFormDto form, // Form binding MVC
+                                          RedirectAttributes redirect,
+                                          Locale locale) {
+     long startTime = System.currentTimeMillis();
+     LOG.info("### Inici PrivateController.deleteSetmanaTipusOfHorari (MVC) startTime={}, horCon={}, form={}", startTime, horCon, form.toString());
 
-        try {
-            // Implementar la crida amb els 3 camps de la clau.
-            // Assumim que citaPreviaPrivateClient.deleteSetmanaTipus existeix i accepta aquests paràmetres.
-        	SetmanaTipusDto settipDelete = new SetmanaTipusDto();
-        	HorariDto horari = new HorariDto();
-        	horari.setCon(horCon);
-        	settipDelete.setHorari(horari);
-        	settipDelete.setDiasetCon(form.getDiasetCon());
-        	settipDelete.setHorini(form.getHorini());
-        	settipDelete.setHorfin(form.getHorfin());
-            ErrorDto resultatDelete = citaPreviaPrivateClient.deleteSetmanaTipusOfHorari(horCon, settipDelete, locale);
-            // Si no hi ha excepció, retorna un 200 OK / 204 No Content (amb 'void')
-            if (resultatDelete != null && !Utils.isEmpty(resultatDelete.getDem())) {
-            	String errorMessage = resultatDelete.getDem(); 
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage);
-            }
-        } catch (Exception e) {
-            LOG.error("### Error deleteSetmanaTipusOfHorari horCon={}", horCon, e);            
-            // Llençar una ResponseStatusException amb el missatge d'error per al client.
-            // Aquest missatge serà capturat pel JS.
-            String errorMessage = bundle.getMessage("error.eliminar.franja", null, locale);           
-            // Si la teva capa de negoci ja retorna un missatge personalitzat, pots capturar-lo i usar-lo aquí.
-            // Per defecte, usem un error genèric si no podem obtenir un missatge específic de la lògica de negoci.
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage);
-        } finally {
-            long totalTime = (System.currentTimeMillis() - startTime);
-            LOG.info("### Final PrivateController.deleteSetmanaTipusOfHorari totalTime={}, horCon={}, form={}", totalTime, horCon, form.toString());
-        }
-    }
+     String redirectUrl = "redirect:/private/gestio/horaris/" + horCon + "/setmanes-tipus";
+
+     try {
+         SetmanaTipusDto settipDelete = new SetmanaTipusDto();
+         HorariDto horari = new HorariDto();
+         horari.setCon(horCon);
+         settipDelete.setHorari(horari);
+         settipDelete.setDiasetCon(form.getDiasetCon());
+         settipDelete.setHorini(form.getHorini());
+         settipDelete.setHorfin(form.getHorfin());
+
+         ErrorDto resultatDelete = citaPreviaPrivateClient.deleteSetmanaTipusOfHorari(horCon, settipDelete, locale);
+
+         if (resultatDelete != null && !Utils.isEmpty(resultatDelete.getDem())) {
+             // Error de negoci del backend
+             redirect.addFlashAttribute("error", resultatDelete.getDem());
+         } else {
+             // Èxit
+             redirect.addFlashAttribute("success", bundle.getMessage("franja_esborrada_ok", null, locale));
+         }
+     } catch (Exception e) {
+         LOG.error("### Error deleteSetmanaTipusOfHorari {}", e);
+         // Error general
+         redirect.addFlashAttribute("error", bundle.getMessage("error.eliminar.franja", null, locale));
+     } finally {
+         long totalTime = (System.currentTimeMillis() - startTime);
+         LOG.info("### Final PrivateController.deleteSetmanaTipusOfHorari (MVC) totalTime={}, horCon={}, form={}", totalTime, horCon, form.toString());
+     }
+
+     // Redirigir sempre a la pàgina de la llista per veure els missatges flash.
+     return redirectUrl;
+ }
     
     
     /**

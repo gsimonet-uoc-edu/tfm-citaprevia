@@ -21,7 +21,7 @@
             </a>
         </div>
         
-        <div class="alert alert-info shadow-sm mb-4">
+        <div class="alert alert-info shadow-sm mb-4" th:if="${horariDto != null}">
             <p class="mb-1">
                 <strong th:text="#{horari}">Horari:</strong> 
                 <span th:text="${horariDto.dec}">Horari Estàndard</span> 
@@ -30,14 +30,21 @@
             <p class="mb-0 text-muted" th:text="${horariDto.dem}">Descripció extensa de l'horari.</p>
         </div>
 
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
         <div class="d-flex justify-content-end mb-3">
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#franjaModal" onclick="clearFranjaModal()">
                 <i class="fas fa-plus me-1"></i> <span th:text="#{afegir_franja}">Afegir Nova Franja</span>
             </button>
         </div>
         
-        <div id="alertContainer" class="mb-3"></div>
-
         <div class="card shadow-sm">
             <div class="card-header" th:text="#{franges_setmanals}">Franges Setmanals</div>
             <div class="card-body p-0">
@@ -52,8 +59,22 @@
                             </tr>
                         </thead>
                         <tbody id="setmanaTipusList">
-                            <tr>
-                                <td colspan="4" class="text-center text-muted" th:text="#{carregant_franges}">Carregant franges...</td>
+                            <tr th:each="franja : ${setmanesTipus}">
+                                <td th:text="${diesSetmana.get(franja.diasetCon)}">Dia</td>
+                                <td th:text="${franja.horini}">08:00</td>
+                                <td th:text="${franja.horfin}">14:00</td>
+                                <td class="text-end">
+                                    <button type="button" class="btn btn-sm btn-outline-danger" 
+                                            th:attr="onclick=|prepararEsborrarFranja('${franja.diasetCon}', '${franja.horini}', '${franja.horfin}', '${diesSetmana.get(franja.diasetCon)}')|"
+                                            title="[[#{esborrar}]]" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#deleteFranjaModal">
+                                        <i class="fas fa-trash"></i> [[#{esborrar}]]
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(setmanesTipus)}">
+                                <td colspan="4" class="text-center text-muted" th:text="#{no_hi_ha_franges}">No hi ha franges definides.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -66,20 +87,18 @@
     <div class="modal fade" id="franjaModal" tabindex="-1" aria-labelledby="franjaModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form id="formFranja"> 
+                <form th:action="@{/private/horaris/{horCon}/setmanes-tipus/add(horCon=${horariCon})}" method="post" id="formFranja"> 
                     <div class="modal-header">
                         <h5 class="modal-title" id="franjaModalLabel" th:text="#{afegir_franja}">Afegir Franja</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         
-                        <div id="modalAlertContainer"></div>
-
                         <input type="hidden" name="horariCon" th:value="${horariCon}" id="formHorariCon"/>
                         
                         <div class="mb-3">
                             <label for="diasetCon" class="form-label" th:text="#{dia_setmana}">Dia de la Setmana</label>
-                            <select class="form-select" name="diasetCon" id="diasetCon" required>
+                            <select class="form-select" th:field="${setmanaTipusForm.diasetCon}" id="diasetCon" required>
                                 <option value="">[[#{selecciona}]]</option>
                                 <option th:each="dia : ${diesSetmana}" 
                                         th:value="${dia.key}" 
@@ -90,10 +109,10 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="horini" class="form-label" th:text="#{hora_inici}">Hora Inici</label>
-                                <input type="time" class="form-control" name="horini" id="horini" required step="60"/> </div>
+                                <input type="time" class="form-control" th:field="${setmanaTipusForm.horini}" id="horini" required step="60"/> </div>
                             <div class="col-md-6 mb-3">
                                 <label for="horfin" class="form-label" th:text="#{hora_fi}">Hora Fi</label>
-                                <input type="time" class="form-control" name="horfin" id="horfin" required step="60"/>
+                                <input type="time" class="form-control" th:field="${setmanaTipusForm.horfin}" id="horfin" required step="60"/>
                             </div>
                         </div>
                     </div>
@@ -105,11 +124,12 @@
             </div>
         </div>
     </div>
-    
+
+
     <div class="modal fade" id="deleteFranjaModal" tabindex="-1" aria-labelledby="deleteFranjaModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form id="formDeleteFranja">
+                <form th:action="@{/private/horaris/{horCon}/setmanes-tipus/delete(horCon=${horariCon})}" method="post" id="formDeleteFranja">
                     <div class="modal-header bg-danger text-white">
                         <h5 class="modal-title" id="deleteFranjaModalLabel" th:text="#{confirmar_esborrat}">Confirmar Esborrat</h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -142,243 +162,34 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
 
-        const HORARI_CON = /*[[${horariCon}]]*/ 0;
-        const API_URL = /*[[@{/private/horaris}]]*/ '/private/horaris';
-        const DIES_SETMANA = /*[[${diesSetmana}]]*/ {}; // Map<Integer, String>
-
         // ===================================
-        // GESTIÓ INICIAL I LISTENERS
+        // GESTIÓ DELS MODALS (Sense AJAX per afegir/esborrar)
         // ===================================
-        document.addEventListener('DOMContentLoaded', function() {
-            if (HORARI_CON > 0) {
-                loadSetmanaTipusList(HORARI_CON);
-            }
-            
-            document.getElementById('formFranja').addEventListener('submit', handleFormSubmit);
-            
-            // Listener per enviar la petició d'eliminació des del modal
-            document.getElementById('formDeleteFranja').addEventListener('submit', function(event) {
-                event.preventDefault();
-                const diasetCon = document.getElementById('delete_diasetCon').value;
-                const horini = document.getElementById('delete_horini').value;
-                const horfin = document.getElementById('delete_horfin').value;
-                
-                // Cridar la funció d'esborrat AJAX
-                deleteFranja(diasetCon, horini, horfin);
-            });
-            
-            const franjaModalEl = document.getElementById('franjaModal');
-            franjaModalEl.addEventListener('hidden.bs.modal', clearModalError);
-        });
-
-        // ===================================
-        // GESTIÓ DE MISSATGES D'ALERTA
-        // ===================================
-
-        function showAlert(message, type = 'success', targetId = 'alertContainer') {
-            const container = document.getElementById(targetId);
-            container.innerHTML = ''; 
-            const alertHtml = `
-                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            `;
-            container.insertAdjacentHTML('beforeend', alertHtml);
-        }
-
-        function clearModalError() {
-            const errorContainer = document.getElementById('modalAlertContainer');
-            if (errorContainer) {
-                errorContainer.innerHTML = '';
-            }
-        }
         
-        // ===================================
-        // GESTIÓ DE LA LLISTA (AJAX)
-        // ===================================
-
-        function loadSetmanaTipusList(horariCon) {
-            const tbody = document.getElementById('setmanaTipusList');
-            tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">[[#{carregant_franges}]]</td></tr>`; 
-
-            fetch(`${API_URL}/${horariCon}/setmanes-tipus`)
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(err => { throw new Error(err.dem || '[[#{error_carregar_franges}]]'); });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    tbody.innerHTML = ''; 
-                    if (data.length === 0) {
-                        tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">[[#{no_hi_ha_franges}]]</td></tr>`; 
-                        return;
-                    }
-
-                    data.forEach(franja => {
-                        const diaNom = DIES_SETMANA[franja.diasetCon] || 'Dia Desconegut';
-                        const row = `
-                            <tr>
-                                <td>${diaNom}</td>
-                                <td>${franja.horini}</td>
-                                <td>${franja.horfin}</td>
-                                <td class="text-end">
-                                    <button type="button" class="btn btn-sm btn-outline-danger" 
-                                            onclick="prepararEsborrarFranja(${franja.diasetCon}, '${franja.horini}', '${franja.horfin}', '${diaNom}')"
-                                            title="[[#{esborrar}]]" 
-                                            data-bs-toggle="modal" 
-                                            data-bs-target="#deleteFranjaModal">
-                                        <i class="fas fa-trash"></i> [[#{esborrar}]]
-                                    </button>
-                                </td>
-                            </tr>
-                        `;
-                        tbody.insertAdjacentHTML('beforeend', row);
-                    });
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    tbody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">${error.message}</td></tr>`; 
-                    showAlert(error.message, 'danger');
-                });
-        }
-        
-        // ===================================
-        // GESTIÓ DEL MODAL D'AFEGIR/EDITAR
-        // ===================================
-
+        /**
+         * Neteja el formulari i el títol del modal d'afegir.
+         */
         function clearFranjaModal() {
             document.getElementById('formFranja').reset();
             document.getElementById('franjaModalLabel').textContent = /*[[#{afegir_franja}]]*/ 'Afegir Franja';
-            clearModalError(); 
-        }
-
-        /**
-         * Envia el formulari d'afegir franja via AJAX.
-         */
-        function handleFormSubmit(event) {
-            event.preventDefault();
-            const form = event.target;
-            
-            clearModalError(); 
-
-            const url = `${API_URL}/${HORARI_CON}/setmanes-tipus/add`;
-
-            const payload = {
-                diasetCon: form.diasetCon.value,
-                horini: form.horini.value,
-                horfin: form.horfin.value
-            };
-
-            fetch(url, { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    // *** GESTIÓ D'ERROR ROBUSTA (amb clonació) ***
-                    const clonedResponse = response.clone();
-                    
-                    return response.json()
-                        .then(err => {
-                            const errorMessage = err.message || err.dem || '[[#{error_guardar_franja}]]';
-                            throw new Error(errorMessage);
-                        })
-                        .catch(jsonError => {
-                            return clonedResponse.text().then(text => {
-                                if (text && text.trim().length > 0) {
-                                    const shortText = text.length > 300 ? text.substring(0, 300) + '...' : text;
-                                    throw new Error(shortText);
-                                }
-                                throw new Error('[[#{error_guardar_franja}]]');
-                            });
-                        });
-                }
-                return response.text(); 
-            })
-            .then(() => {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('franjaModal'));
-                if (modal) modal.hide();
-                showAlert('[[#{franja_afegida_ok}]]', 'success');
-                loadSetmanaTipusList(HORARI_CON); 
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showAlert(error.message, 'danger', 'modalAlertContainer'); 
-            });
         }
         
-        // ===================================
-        // GESTIÓ DEL MODAL D'ELIMINACIÓ
-        // ===================================
-
         /**
          * Funció per carregar la clau de la franja al formulari ocult del modal d'eliminació.
+         * Prepara el formulari per a la submissió MVC (POST).
          */
         function prepararEsborrarFranja(diasetCon, horini, horfin, diaNom) {
             document.getElementById('delete_diasetCon').value = diasetCon;
             document.getElementById('delete_horini').value = horini;
             document.getElementById('delete_horfin').value = horfin;
             document.getElementById('deleteFranjaInfo').textContent = `${diaNom}: de ${horini} a ${horfin}`;
-            showAlert('', 'info', 'alertContainer'); // Neteja l'alerta principal
         }
-
-        /**
-         * Elimina una franja horària mitjançant AJAX (Cridada des del modal).
-         */
-        function deleteFranja(diasetCon, horini, horfin) {
-            // Tancar el modal de confirmació
-            const modalEl = document.getElementById('deleteFranjaModal');
-            const modal = bootstrap.Modal.getInstance(modalEl);
-            if (modal) modal.hide();
-
-            showAlert(/*[[#{esborrant_franja}]]*/ 'Esborrant franja...', 'info', 'alertContainer'); 
-            
-            const payload = {
-                diasetCon: diasetCon,
-                horini: horini,
-                horfin: horfin
-            };
-
-            fetch(`${API_URL}/${HORARI_CON}/setmanes-tipus/delete`, { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            })
-            // *** GESTIÓ D'ERROR ROBUSTA (amb clonació) ***
-            .then(response => {
-                if (!response.ok) {
-                    const clonedResponse = response.clone();
-                    
-                    return response.json()
-                        .then(err => {
-                            const errorMessage = err.message || err.dem || '[[#{error_eliminar_franja}]]';
-                            throw new Error(errorMessage);
-                        })
-                        .catch(jsonError => {
-                            return clonedResponse.text().then(text => {
-                                if (text && text.trim().length > 0) {
-                                    const shortText = text.length > 300 ? text.substring(0, 300) + '...' : text;
-                                    throw new Error(shortText);
-                                }
-                                throw new Error('[[#{error_eliminar_franja}]]');
-                            });
-                        });
-                }
-                return response.text(); 
-            })
-            .then(() => {
-                showAlert(/*[[#{franja_esborrada_ok}]]*/ 'Franja horària esborrada correctament.', 'success');
-                loadSetmanaTipusList(HORARI_CON); 
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showAlert(error.message, 'danger'); 
-            });
-        }
-
+        
+        // S'han ELIMINAT totes les funcions JavaScript relacionades amb AJAX:
+        // - loadSetmanaTipusList()
+        // - handleFormSubmit()
+        // - deleteFranja()
+        // - showAlert() (ja que els missatges són gestionats per Thymeleaf)
 
         /*]]>*/
     </script>
