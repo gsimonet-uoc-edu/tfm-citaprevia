@@ -130,7 +130,7 @@
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title" id="modalEsborrarHorariLabel" th:text="#{confirmar_eliminacio}">Confirmar eliminació</h5>
+                    <h5 class="modal-title" id="modalEsborrarHorariLabel" th:text="#{confirmar_eliminacio_horari}">Confirmar eliminació</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
@@ -141,7 +141,7 @@
                     <form th:action="@{/private/gestio/horaris/delete}" method="post" id="formEsborrarHorari" class="mt-4">
                         <input type="hidden" name="con" id="esborrarHorariCon">
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-danger" th:text="#{eliminar_confirmar}">Eliminar Horari</button>
+                            <button type="submit" class="btn btn-danger" th:text="#{eliminar_confirmar_horari}">Eliminar Horari</button>
                             <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" th:text="#{cancelar}">Cancel·lar</button>
                         </div>
                     </form>
