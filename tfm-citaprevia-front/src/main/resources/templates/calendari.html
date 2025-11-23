@@ -14,26 +14,24 @@
 
     <div class="container-fluid py-4">
         <div class="row">
-            <!-- Sidebar (leyenda) -->
             <div class="col-lg-2 d-none d-lg-block">
                 <div class="card shadow-sm">
                     <div class="card-header bg-primary text-white">
                         <h6 class="mb-0" th:text="#{filtres}"></h6>
                     </div>
                     <div class="card-body">
-                        <p class="text-success"><i class="fas fa-square me-2"></i><span th:text="#{franja_lliure}"></span></p>
-                        <p class="text-danger"><i class="fas fa-square me-2"></i><span th:text="#{franja_ocupada}"></span></p>
+                        <p class="text-success"><i class="fas fa-square me-2"></i><span th:text="#{franja_lliure}">Cita lliure</span></p>
+                        <p class="text-danger"><i class="fas fa-square me-2"></i><span th:text="#{franja_ocupada}">Cita ocupada</span></p>
                     </div>
                 </div>
             </div>
 
-            <!-- Calendario -->
             <div class="col-lg-10">
                 <div class="card shadow">
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                         <h5 class="mb-0" th:text="#{selecciona_data_hora} + ' - ' + ${tipusCita.dem}"></h5>
                         <a th:href="@{'/public/' + ${subaplCoa}}" class="btn btn-sm btn-outline-light">
-                            <i class="fas fa-home me-1"></i> <span th:text="#{tornar_index}"></span>
+                            <i class="fas fa-home me-1"></i> <span th:text="#{tornar_index}">Tornar a l'inici</span>
                         </a>
                     </div>
                     <div class="card-body p-3">
@@ -44,7 +42,6 @@
         </div>
     </div>
 
-    <!-- Modal de reserva -->
     <div class="modal fade" id="reservaModal" tabindex="-1" aria-labelledby="reservaModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -81,7 +78,7 @@
                             </div>
                         </div>
                         <div class="mt-4 p-3 bg-light rounded">
-                            <small class="text-muted"><i class="fas fa-clock me-1"></i><span th:text="#{hora_seleccionada}"></span>: <strong id="horaSeleccionada"></strong></small>
+                            <small class="text-muted"><i class="fas fa-clock me-1"></i><span th:text="#{hora_seleccionada}">Hora seleccionada</span>: <strong id="horaSeleccionada"></strong></small>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -97,18 +94,42 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales-all.global.min.js'></script> 
+    
     <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', function() {
             const calendarEl = document.getElementById('calendar');
             const events = /*[[${frangesHorariesGrouped}]]*/ [];
             const modal = new bootstrap.Modal(document.getElementById('reservaModal'));
 
+            // OBTENIR DATA I HORA ACTUALS PER RESTRICCIÓ
+            const now = new Date();
+            // Format ISO 8601 (YYYY-MM-DD) necessari per a validRange (només data, per no invalidar el dia actual complet)
+            const todayISO = now.toISOString().slice(0, 10); 
+            
             const calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'timeGridWeek',
                 locale: /*[[${#locale.language}]]*/ 'ca',
                 headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
                 slotMinTime: '08:00:00', slotMaxTime: '20:00:00', slotDuration: '00:30:00', slotLabelInterval: '00:30',
                 allDaySlot: false, nowIndicator: true, height: 'auto',
+
+                // **********************************************
+                // INICI RESTRICCIONS PER EVITAR DATES PASSADES
+                // **********************************************
+                
+                // 1. Limita la data d'inici (no es pot navegar a res anterior a avui)
+                validRange: { 
+                    start: todayISO // Només permet des d'avui en endavant
+                },
+                
+                // 2. Defineix la data inicial (per defecte obre al dia actual)
+                // initialDate: now.toISOString(), // Pot ser útil si voleu una data concreta
+
+                // **********************************************
+                // FI RESTRICCIONS
+                // **********************************************
+
                 events: Object.keys(events).flatMap(date => {
                     return events[date].map(event => {
                         const isLliure = event.lliure;
@@ -139,11 +160,17 @@
                 eventClick: function(info) {
                     if (!info.event.extendedProps.lliure) return;
 
-                    // ENVIAR EN HORA LOCAL (NO UTC)
+                    // OBTENIR DATA/HORA EN FORMAT LOCAL (ISO Sense TimeZone)
                     const offset = info.event.start.getTimezoneOffset() * 60000;
                     const startLocal = new Date(info.event.start.getTime() - offset).toISOString().slice(0, 19);
                     const endLocal = info.event.end ? new Date(info.event.end.getTime() - offset).toISOString().slice(0, 19) : '';
 
+                    // 3. Comprovació addicional en el click per si la franja ja ha passat (útil per al dia actual)
+                    if (new Date(info.event.start) < now) {
+                        alert(/*[[#{franja_passada}]]*/ 'Aquesta franja horària ja ha passat.'); // Missatge a traduir
+                        return;
+                    }
+                    
                     document.getElementById('modalDataHoraInici').value = startLocal;
                     document.getElementById('modalDataHoraFin').value = endLocal;
                     document.getElementById('modalAgendaCon').value = info.event.extendedProps.agendaCon;
