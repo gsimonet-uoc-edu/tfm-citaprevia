@@ -16,6 +16,7 @@ import uoc.edu.citaprevia.api.model.Cita;
 import uoc.edu.citaprevia.api.model.Horari;
 import uoc.edu.citaprevia.api.utils.Converter;
 import uoc.edu.citaprevia.dto.HorariDto;
+import uoc.edu.citaprevia.dto.SetmanaTipusDto;
 import uoc.edu.citaprevia.dto.generic.ErrorDto;
 import uoc.edu.citaprevia.util.Constants;
 import uoc.edu.citaprevia.util.Utils;
@@ -27,6 +28,9 @@ public class HorariServiceImpl implements HorariService{
 
 	@Autowired
 	private HorariDao horariDao;
+	
+	@Autowired
+	private SetmanaTipusService setmanaTipusService;
 	
 	@Autowired
 	private CitaDao citaDao;
@@ -146,6 +150,17 @@ public class HorariServiceImpl implements HorariService{
 				if (teCites != null && !teCites.isEmpty() && teCites.size() > 0) {
 					return new ErrorDto(9999L,bundle.getMessage(Constants.ERROR_API_DELETE_HORARI, null, locale));
 				} else {
+					// Comprovar si te setmanes tipus associades
+					List<SetmanaTipusDto> settips = setmanaTipusService.getSetmanaTipusByHorari(con, locale);
+					ErrorDto error = new ErrorDto();
+					for (SetmanaTipusDto settip : settips) {
+						error = setmanaTipusService.deleteSetmanaTipus(settip, locale);
+						if (error != null && !Utils.isEmpty(error.getDem())) {
+							LOG.error("### Error HorariServiceImpl.deleteHorari={} ", bundle.getMessage(Constants.ERROR_API_CRUD_SETMANES_TIPUS, null, locale));		
+							dto = new ErrorDto(9999L,bundle.getMessage(Constants.ERROR_API_CRUD_SETMANES_TIPUS, null, locale));
+							break;
+						}
+					}
 					horariDao.deleteHorari(dao);
 				}			
 			}
