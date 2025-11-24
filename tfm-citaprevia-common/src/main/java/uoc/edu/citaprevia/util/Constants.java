@@ -78,7 +78,8 @@ public final class Constants {
 
     // Franges horàries (setmanes tipus)
     public static final String SUCCESS_FRONT_SAVE_SETMANES_TIPUS = "success.setmanestipus.save";
-
+    public static final String SUCCESS_FRONT_DELETE_SETMANES_TIPUS  = "success.setmanestipus.delete";
+    
     // Tipus de cites
     public static final String SUCCESS_FRONT_SAVE_TIPUS_CITES    = "success.tipuscites.save";
     public static final String SUCCESS_FRONT_UPDATE_TIPUS_CITES  = "success.tipuscites.update";

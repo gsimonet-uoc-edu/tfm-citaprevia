@@ -780,7 +780,7 @@ public class PrivateController {
              redirect.addFlashAttribute("error", errorMessage);
          } else {
              // Èxit
-             redirect.addFlashAttribute("success", bundle.getMessage("franja_afegida_ok", null, locale));
+             redirect.addFlashAttribute("success", bundle.getMessage(Constants.SUCCESS_FRONT_SAVE_SETMANES_TIPUS, null, locale));
          }
          
      } catch (Exception e) {
@@ -824,12 +824,12 @@ public class PrivateController {
              redirect.addFlashAttribute("error", resultatDelete.getDem());
          } else {
              // Èxit
-             redirect.addFlashAttribute("success", bundle.getMessage("franja_esborrada_ok", null, locale));
+             redirect.addFlashAttribute("success", bundle.getMessage(Constants.SUCCESS_FRONT_DELETE_SETMANES_TIPUS, null, locale));
          }
      } catch (Exception e) {
          LOG.error("### Error deleteSetmanaTipusOfHorari {}", e);
          // Error general
-         redirect.addFlashAttribute("error", bundle.getMessage("error.eliminar.franja", null, locale));
+         redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_API_CRUD_SETMANES_TIPUS, null, locale));
      } finally {
          long totalTime = (System.currentTimeMillis() - startTime);
          LOG.info("### Final PrivateController.deleteSetmanaTipusOfHorari (MVC) totalTime={}, horCon={}, form={}", totalTime, horCon, form.toString());
