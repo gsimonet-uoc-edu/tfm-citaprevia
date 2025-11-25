@@ -189,7 +189,9 @@ public class PublicController {
 	                    event.put("end", fi);
 	                    event.put("classNames", ocupada ? "hora-ocupada" : "hora-lliure");
 	                    event.put("lliure", !ocupada);
-	                    event.put("tecnic", agenda.getTecnic().getNom());
+	                    event.put("tecnicNom", agenda.getTecnic().getNom());
+	                    event.put("tecnicLl1", agenda.getTecnic().getLl1());
+	                    event.put("centreNom", agenda.getCentre().getNom());
 	                    event.put("agendaCon", agenda.getCon());
 	                    events.add(event);
 	                }

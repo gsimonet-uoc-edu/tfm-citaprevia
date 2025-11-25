@@ -150,7 +150,9 @@
                             start: event.start,
                             end: event.end || null,
                             classNames: isLliure ? 'hora-lliure' : 'hora-ocupada',
-                            extendedProps: { lliure: isLliure, agendaCon: event.agendaCon, title: event.title, tecnic: event.tecnic },
+                            extendedProps: { lliure: isLliure, agendaCon: event.agendaCon, title: event.title, tecnicNom: event.tecnicNom, 
+							                                tecnicLlinatge1: event.tecnicLl1, 
+							                                centreNom: event.centreNom},
                             title: isLliure ? event.title : 'Ocupada'
                         };
                     });
@@ -158,7 +160,13 @@
                 eventContent: function(info) {
                     const props = info.event.extendedProps;
                     if (props.lliure) {
-                        return { html: `<div class="event-title">${info.event.title}</div><div class="event-subtitle">${props.tecnic}</div>` };
+						const nomCompletTecnic = `${props.tecnicNom} ${props.tecnicLlinatge1 || ''}`;
+						const centre = props.centreNom || 'Sense ubicació';
+						return { html: `
+						                            <div class="event-title">${info.event.title}</div>
+						                            <div class="event-subtitle">${nomCompletTecnic}</div>
+						                            <div class="event-centre small text-muted">${centre}</div>
+						                        ` };
                     } else {
                         return { html: `<div class="event-title">Ocupada</div>` };
                     }
@@ -166,7 +174,7 @@
                 eventDidMount: function(info) {
                     const props = info.event.extendedProps;
                     let tooltip = props.lliure 
-                        ? `<strong>${info.event.title}</strong><br><small>${props.tecnic}</small>`
+                        ? `<strong>${info.event.title}</strong><br><small>${props.tecnicNom}</small>`
                         : `<em>Ocupada</em>`;
                     new bootstrap.Tooltip(info.el, { title: tooltip, html: true, placement: 'top', trigger: 'hover', container: 'body' });
                 },
