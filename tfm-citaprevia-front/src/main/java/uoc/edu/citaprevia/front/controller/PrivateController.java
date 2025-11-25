@@ -91,11 +91,6 @@ public class PrivateController {
 	@GetMapping("/calendari") 
 	public String calendari(Authentication authentication, Model model, Locale locale) throws Exception {
 		
-        /*TODO if (authentication == null || authentication.getAuthorities() == null) {
-	        redirect.addFlashAttribute("error", "Dades incorrectes");
-	        return "redirect:/private/calendari";
-        }*/
-        
 		String coa = authentication.getName();
 		TecnicDto tecnic = citaPreviaPrivateClient.getTecnic(coa, locale);
 
@@ -113,7 +108,11 @@ public class PrivateController {
             agendes = citaPreviaPrivateClient.getAgendasByTecnic(tecnic.getCoa(), locale);    
         }
         
-
+        if (!Utils.isEmpty(subaplCoa)) {
+        	SubaplicacioDto subAplicacio = citaPreviaPublicClient.getSubaplicacio(subaplCoa, locale);
+        	model.addAttribute("subAplicacio", subAplicacio); 
+        }
+        
         model.addAttribute("isAdministrador", isAdministrador);
 		model.addAttribute("subaplCoa", subaplCoa); 
 		model.addAttribute("tipusCita", new TipusCitaDto()); //TODO: mirar

@@ -40,7 +40,6 @@ import uoc.edu.citaprevia.front.dto.CampConfigDto;
 import uoc.edu.citaprevia.front.dto.CitaFormDto;
 import uoc.edu.citaprevia.front.service.CitaPreviaPublicClient;
 import uoc.edu.citaprevia.front.service.MetacamapService;
-import uoc.edu.citaprevia.front.service.SubaplicacioClient;
 import uoc.edu.citaprevia.util.Utils;
 
 
@@ -55,9 +54,6 @@ public class PublicController {
 
 	@Autowired
 	private CitaPreviaPublicClient citaPreviaPublicClient;
-	
-	@Autowired
-	private SubaplicacioClient subaplicacioClient;
 	
 	@Autowired
 	private MetacamapService metacamapService;
@@ -75,7 +71,7 @@ public class PublicController {
 		
 		//final SubaplicacioDto subAplicacioSessio = SubaplicacioUtil.getSubaplicacioAndSetSessionPublic(
 		//	request, bundle, application, subaplCoa, locale);
-		SubaplicacioDto subAplicacioSessio = subaplicacioClient.getSubaplicacio(subaplCoa, locale);
+		SubaplicacioDto subAplicacioSessio = citaPreviaPublicClient.getSubaplicacio(subaplCoa, locale);
 		model.addAttribute("subaplCoa", subAplicacioSessio.getCoa());
 		model.addAttribute("subAplicacio", subAplicacioSessio);
 	}

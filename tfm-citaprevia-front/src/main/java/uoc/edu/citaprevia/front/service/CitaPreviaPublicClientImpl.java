@@ -21,6 +21,7 @@ import uoc.edu.citaprevia.dto.CalendariDto;
 import uoc.edu.citaprevia.dto.CitaDto;
 import uoc.edu.citaprevia.dto.SeleccioTipusCitaDto;
 import uoc.edu.citaprevia.dto.SetmanaTipusDto;
+import uoc.edu.citaprevia.dto.SubaplicacioDto;
 import uoc.edu.citaprevia.dto.TipusCitaDto;
 import uoc.edu.citaprevia.dto.generic.ErrorDto;
 import uoc.edu.citaprevia.front.util.RestTemplateResponseErrorHandler;
@@ -41,7 +42,7 @@ public class CitaPreviaPublicClientImpl  implements CitaPreviaPublicClient{
 	private static final String DATA_HORA_FINAL = "dathorfin";
 	private static final String PARAM_LOCALE = "lang";
 	private static final String PARAM_CIT_CON = "citCon";
-
+	private static final String SUBAPL_COA = "subaplCoa";
 	
 	
 	private RestTemplate restTemplate = new RestTemplate();
@@ -49,6 +50,16 @@ public class CitaPreviaPublicClientImpl  implements CitaPreviaPublicClient{
 	    this.restTemplate = restTemplateBuilder
 		    .errorHandler(new RestTemplateResponseErrorHandler())
 		    .build();
+	}
+	
+	@Override
+	public SubaplicacioDto getSubaplicacio(String subaplCoa, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(SUBAPL_COA, subaplCoa);
+		params.put("lang", locale);
+		String url = getBaseApiUrl() + "/subaplicacions/{subaplCoa}?lang={lang}";
+		ResponseEntity<SubaplicacioDto> response = restTemplate.exchange(url, HttpMethod.GET, null, SubaplicacioDto.class, params);
+		return response.getBody() == null ? new SubaplicacioDto() : response.getBody();
 	}
 	
 	@Override

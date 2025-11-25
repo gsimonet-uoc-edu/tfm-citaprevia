@@ -9,6 +9,7 @@ import uoc.edu.citaprevia.dto.CalendariDto;
 import uoc.edu.citaprevia.dto.CitaDto;
 import uoc.edu.citaprevia.dto.SeleccioTipusCitaDto;
 import uoc.edu.citaprevia.dto.SetmanaTipusDto;
+import uoc.edu.citaprevia.dto.SubaplicacioDto;
 import uoc.edu.citaprevia.dto.TipusCitaDto;
 import uoc.edu.citaprevia.dto.generic.ErrorDto;
 
@@ -34,6 +35,8 @@ public interface CitaPreviaPublicClient {
 	CitaDto getCita(Long citCon, Locale locale);
 
 	ErrorDto deleteCitaPersona(Long citCon, String numdoc, Locale locale);
+
+	SubaplicacioDto getSubaplicacio(String subaplCoa, Locale locale);
 	
 
 }
