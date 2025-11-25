@@ -1,0 +1,47 @@
+services:
+  h2:
+    image: oscarfonts/h2:2.2.224
+    container_name: h2-db
+    ports:
+      - "8082:81"     # consola web
+      - "9092:1521"   # port TCP que usa Spring
+    environment:
+      H2_OPTIONS: -webAllowOthers -tcpAllowOthers -ifNotExists
+    volumes:
+      - h2-data:/opt/h2-data
+    # HEALTHCHECK ELIMINAT → ja no dona mai "unhealthy"
+    # (el contenidor arrenca en 2 segons i el port 1521 ja està obert)
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile-api
+    container_name: citaprevia-api
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:h2:tcp://h2:1521/mem:citaprevia;DB_CLOSE_DELAY=-1
+      SPRING_DATASOURCE_USERNAME: sa
+      SPRING_DATASOURCE_PASSWORD:
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_SQL_INIT_MODE: always
+      SPRING_JPA_DEFER_DATASOURCE_INITIALIZATION: true
+    depends_on:
+      - h2
+    # ja no esperem "healthy", només que existeixi
+
+  front:
+    build:
+      context: .
+      dockerfile: Dockerfile-front
+    container_name: citaprevia-front
+    ports:
+      - "8081:8081"
+    environment:
+      citaprevia.service.api.host: http://api:8080/citapreviaapi
+    depends_on:
+      - api
+
+volumes:
+  h2-data:

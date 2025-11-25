@@ -1,0 +1,15 @@
+FROM eclipse-temurin:21-jdk-alpine AS build
+WORKDIR /app
+# 1. Copiem pom pare i wrapper primer (cache)
+COPY pom.xml .
+COPY .mvn .mvn
+COPY mvnw mvnw.cmd ./
+COPY . .
+RUN chmod +x mvnw
+RUN ./mvnw clean install -DskipTests -T 1C
+
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /application
+COPY --from=build /app/tfm-citaprevia-front/target/citapreviafront.jar app.jar
+EXPOSE 8081
+ENTRYPOINT ["java", "-jar", "app.jar"]

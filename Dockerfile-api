@@ -1,0 +1,21 @@
+FROM eclipse-temurin:21-jdk-alpine AS build
+WORKDIR /app
+# 1. Copiem primer només el necessari per aprofitar cache (pom + wrapper)
+COPY pom.xml .
+COPY .mvn .mvn
+COPY mvnw mvnw.cmd ./
+# Copiem tot
+COPY . .
+
+# AQUESTA LÍNIA ÉS OBLIGATÒRIA A WINDOWS
+RUN chmod +x mvnw
+
+# Compilem tot el multimòdul i instal·lem al repo local
+RUN ./mvnw clean install -DskipTests -T 1C
+
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /application
+# Copiem el JAR generat (ara sí que existeix!)
+COPY --from=build /app/tfm-citaprevia-api/target/citapreviaapi.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]

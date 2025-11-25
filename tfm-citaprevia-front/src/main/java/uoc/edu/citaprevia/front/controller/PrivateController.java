@@ -128,7 +128,7 @@ public class PrivateController {
 	    List<CampConfigDto> campos = metacamapService.getCampos(subaplCoa, locale);
 	    model.addAttribute("camposCita", campos);
 	    
-		return "/private/calendari-private";
+		return "private/calendari-private";
 	}
 	
 	@PostMapping("/cita/reserva")
