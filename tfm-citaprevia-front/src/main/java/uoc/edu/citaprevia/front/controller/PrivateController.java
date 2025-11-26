@@ -159,7 +159,7 @@ public class PrivateController {
     	try {
 
 		    if (result.hasErrors()) {
-		    	redirectAttributes.addFlashAttribute("error", "Dades incorrectes");
+		    	redirectAttributes.addFlashAttribute("error", Constants.ERROR_BINDINGS_FORM);
 		        return "redirect:/private/calendari";
 		    }
 	
@@ -281,54 +281,77 @@ public class PrivateController {
 	public String actualitzarCita(
 	        @ModelAttribute CitaFormDto form,
 	        BindingResult result,
-	        RedirectAttributes redirect,
+	        RedirectAttributes redirectAttributes,
 	        Authentication authentication,
 	        Locale locale) throws Exception {
-
-	    if (result.hasErrors()) {
-	        redirect.addFlashAttribute("error", "Dades incorrectes");
-	        return "redirect:/private/calendari";
-	    }
-
-	    String coa = authentication.getName();
-	    TecnicDto tecnic = citaPreviaPrivateClient.getTecnic(coa, locale);
-	    if (tecnic == null) return "redirect:/private/login";
-
-	    String subaplCoa = StringUtils.substringAfter(tecnic.getPrf(), "_");
-
-	    CitaDto cita = citaPreviaPublicClient.getCita(form.getCitaCon(), locale);
-	    if (cita == null || !subaplCoa.equals(cita.getAgenda().getHorari().getSubapl().getCoa())) {
-	        redirect.addFlashAttribute("error", "Cita no vàlida");
-	        return "redirect:/private/calendari";
-	    }
-
-	    // Actualitzar camps
-	    cita.setDathorini(form.getDataHoraInici().minusSeconds(1));
-	    cita.setDathorfin(form.getDataHoraFin().minusSeconds(1));
-	    cita.setNom(form.getNom());
-	    cita.setLlis(form.getLlis());
-	    cita.setNumdoc(form.getNumdoc());
-	    cita.setNomcar(form.getNomcar());
-	    cita.setTel(Long.valueOf(form.getTel()));
-	    cita.setEma(form.getEma());
-	    cita.setObs(form.getObs());
-	    cita.setLit1(form.getLit1()); 
-	    cita.setLit2(form.getLit2());
-	    cita.setLit3(form.getLit3()); 
-	    cita.setLit4(form.getLit4());
-	    cita.setLit5(form.getLit5()); 
-	    cita.setLit6(form.getLit6());
-	    cita.setLit7(form.getLit7()); 
-	    cita.setLit8(form.getLit8());
-	    cita.setLit9(form.getLit9()); 
-	    cita.setLit10(form.getLit10());
-
-	    CitaDto updateCita = citaPreviaPrivateClient.updateCita(form.getCitaCon(), cita, locale);
-	    if (updateCita == null || Utils.isEmpty(updateCita.getCon()) || updateCita.hasErrors()) {
-	        redirect.addFlashAttribute("error", "Error al actualitzar");
-	    } else {
-	        return "redirect:/private/cita/confirmacio?con=" + updateCita.getCon() + "&accion=actualitzada";
-	    }
+		long startTime=System.currentTimeMillis();
+		LOG.info("### Inici PrivateController.actualitzarCita startTime={}, citaForm={}", startTime, form.toString());
+		
+		CitaDto citaUpdated = new CitaDto();
+		
+    	try {
+    		
+		    if (result.hasErrors()) {
+		    	redirectAttributes.addFlashAttribute("error", Constants.ERROR_BINDINGS_FORM);
+		        return "redirect:/private/calendari";
+		    }
+	
+			String subaplCoa = this.getSubaplCoa(authentication);
+			
+	        if (Utils.isEmpty(subaplCoa)) {
+	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SUBAPLICACIO_NO_TROBADA, null, locale));
+	        	return "redirect:/private/calendari";
+	        }
+	        
+	        String coa = authentication.getName();
+		    TecnicDto tecnic = citaPreviaPrivateClient.getTecnic(coa, locale);
+		    if (tecnic == null || Utils.isEmpty(tecnic.getCoa())) {
+	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TECNICS, null, locale));
+	        	 return "redirect:/private/calendari";
+		    }
+		    
+	
+		    CitaDto cita = citaPreviaPublicClient.getCita(form.getCitaCon(), locale);
+		    if (cita == null || !subaplCoa.equals(cita.getAgenda().getHorari().getSubapl().getCoa())) {
+		        redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_API_CRUD_CITA, null, locale));
+		        return "redirect:/private/calendari";
+		    }
+	
+		    // Actualitzar camps
+		    cita.setDathorini(form.getDataHoraInici().minusSeconds(1));
+		    cita.setDathorfin(form.getDataHoraFin().minusSeconds(1));
+		    cita.setNom(form.getNom());
+		    cita.setLlis(form.getLlis());
+		    cita.setNumdoc(form.getNumdoc());
+		    cita.setNomcar(form.getNomcar());
+		    cita.setTel(Long.valueOf(form.getTel()));
+		    cita.setEma(form.getEma());
+		    cita.setObs(form.getObs());
+		    cita.setLit1(form.getLit1()); 
+		    cita.setLit2(form.getLit2());
+		    cita.setLit3(form.getLit3()); 
+		    cita.setLit4(form.getLit4());
+		    cita.setLit5(form.getLit5()); 
+		    cita.setLit6(form.getLit6());
+		    cita.setLit7(form.getLit7()); 
+		    cita.setLit8(form.getLit8());
+		    cita.setLit9(form.getLit9()); 
+		    cita.setLit10(form.getLit10());
+	
+		    citaUpdated = citaPreviaPrivateClient.updateCita(form.getCitaCon(), cita, locale);
+		    if (citaUpdated == null || Utils.isEmpty(citaUpdated.getCon()) || citaUpdated.hasErrors()) {
+		        redirectAttributes.addFlashAttribute("error", citaUpdated.hasErrors() ? citaUpdated.getErrors().get(0).getDem() :bundle.getMessage(Constants.ERROR_API_CRUD_CITA, null, locale));
+		    } else {
+		        return "redirect:/private/cita/confirmacio?con=" + citaUpdated.getCon() + "&accion=actualitzada";
+		    }
+	    }  catch (Exception e) {
+	        LOG.error("### Error PrivateController.actualitzarCita {}", e);
+        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_API_CRUD_CITA, null, locale));
+        	return "redirect:/private/calendari";
+	    } finally {
+	    	long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final PrivateController.actualitzarCita totalTime={}, citaUpdated={}", totalTime, citaUpdated.toString());
+		}
 	    return "redirect:/private/calendari";
 	}
 

@@ -60,6 +60,7 @@ public final class Constants {
     public static final String ERROR_FRONT_SUBAPLICACIO_NO_TROBADA  = "error.subapl.no.trobada";
     public static final String ERROR_FRONT_SAVE_AGENDES       = "error.agendes.save";
     public static final String ERROR_FRONT_SAVE_HORARIS       = "error.horaris.save";
+    public static final String ERROR_BINDINGS_FORM = "error.result.bindings";
 
     public static final String ERROR_FRONT_PRF_TECNICS        = "error.tecnics.prf";   // Perfil no permès a la subaplicació
 
