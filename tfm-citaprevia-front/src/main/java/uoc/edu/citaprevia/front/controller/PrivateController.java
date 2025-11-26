@@ -133,7 +133,7 @@ public class PrivateController {
 		    List<CampConfigDto> campos = metacamapService.getCampos(subaplCoa, locale);
 		    model.addAttribute("camposCita", campos);
 	    }  catch (Exception e) {
-	        LOG.error("### Error calendari-privat {}", e);
+	        LOG.error("### Error PrivateController.calendari {}", e);
         	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.MSG_ERR_GET_CALENDARI, null, locale));
 	        return "redirect:/private/login";
 	    } finally {
@@ -148,64 +148,82 @@ public class PrivateController {
 	        @ModelAttribute CitaFormDto form,
 	        BindingResult result,
 	        Model model,
-	        RedirectAttributes redirect,
+	        RedirectAttributes redirectAttributes,
 	        Authentication authentication,
 	        Locale locale) throws Exception {
+		long startTime=System.currentTimeMillis();
+		LOG.info("### Inici PrivateController.reservaCitaPrivada startTime={}, citaForm={}", startTime, form.toString());
+		
+		CitaDto citaSaved = new CitaDto();
+		
+    	try {
 
-	    if (result.hasErrors()) {
-	        redirect.addFlashAttribute("error", "Dades incorrectes");
-	        return "redirect:/private/calendari";
-	    }
-
-	    String coa = authentication.getName();
-	    TecnicDto tecnic = citaPreviaPrivateClient.getTecnic(coa, locale);
-	    if (tecnic == null) {
+		    if (result.hasErrors()) {
+		    	redirectAttributes.addFlashAttribute("error", "Dades incorrectes");
+		        return "redirect:/private/calendari";
+		    }
+	
+			String subaplCoa = this.getSubaplCoa(authentication);
+	
+	        if (Utils.isEmpty(subaplCoa)) {
+	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SUBAPLICACIO_NO_TROBADA, null, locale));
+	        	return "redirect:/private/calendari";
+	        }
+	        
+		    String coa = authentication.getName();
+		    TecnicDto tecnic = citaPreviaPrivateClient.getTecnic(coa, locale);
+		    if (tecnic == null || Utils.isEmpty(tecnic.getCoa())) {
+	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TECNICS, null, locale));
+	        	 return "redirect:/private/calendari";
+		    }
+	
+		    // Obtener agenda y tipus de cita
+		    AgendaDto agenda = citaPreviaPublicClient.getAgenda(form.getAgendaCon(), locale);
+		    if (agenda == null || !subaplCoa.equals(agenda.getHorari().getSubapl().getCoa())) {
+		    	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_AGENDES, null, locale));
+		        return "redirect:/private/calendari";
+		    }
+	
+		    TipusCitaDto tipusCita = agenda.getHorari().getTipusCita();
+	
+		    // Crear cita
+		    CitaDto cita = new CitaDto();
+		    cita.setDathorini(form.getDataHoraInici().minusSeconds(1));
+		    cita.setDathorfin(form.getDataHoraFin().minusSeconds(1));
+		    cita.setNom(form.getNom());
+		    cita.setLlis(form.getLlis());
+		    cita.setNumdoc(form.getNumdoc());
+		    cita.setNomcar(form.getNomcar());
+		    cita.setTel(Long.valueOf(form.getTel()));
+		    cita.setEma(form.getEma());
+		    cita.setObs(form.getObs());
+		    cita.setLit1(form.getLit1());
+		    cita.setLit2(form.getLit2());
+		    cita.setLit3(form.getLit3());
+		    cita.setLit4(form.getLit4());
+		    cita.setLit5(form.getLit5());
+		    cita.setLit6(form.getLit6());
+		    cita.setLit7(form.getLit7());
+		    cita.setLit8(form.getLit8());
+		    cita.setLit9(form.getLit9());
+		    cita.setLit10(form.getLit10());
+		    cita.setAgenda(agenda);
+		    cita.setTipusCita(tipusCita);
+	
+		    citaSaved = citaPreviaPublicClient.saveCita(cita, locale);
+		    if (citaSaved.hasErrors()) {
+		    	redirectAttributes.addFlashAttribute("error", citaSaved.getErrors().get(0).getDem());
+		        return "redirect:/private/calendari";
+		    }
+	    }  catch (Exception e) {
+	        LOG.error("### Error PrivateController.reservaCitaPrivada {}", e);
+        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.MSG_ERR_GET_CALENDARI, null, locale));
 	        return "redirect:/private/login";
-	    }
-
-	    String subaplCoa = StringUtils.substringAfter(tecnic.getPrf(), "_");
-
-	    // Obtener agenda y tipo de cita
-	    AgendaDto agenda = citaPreviaPublicClient.getAgenda(form.getAgendaCon(), locale);
-	    if (agenda == null || !subaplCoa.equals(agenda.getHorari().getSubapl().getCoa())) {
-	        redirect.addFlashAttribute("error", "Agenda no vàlida");
-	        return "redirect:/private/calendari";
-	    }
-
-	    TipusCitaDto tipusCita = agenda.getHorari().getTipusCita();
-
-	    // Crear cita
-	    CitaDto cita = new CitaDto();
-	    cita.setDathorini(form.getDataHoraInici().minusSeconds(1));
-	    cita.setDathorfin(form.getDataHoraFin().minusSeconds(1));
-	    cita.setNom(form.getNom());
-	    cita.setLlis(form.getLlis());
-	    cita.setNumdoc(form.getNumdoc());
-	    cita.setNomcar(form.getNomcar());
-	    cita.setTel(Long.valueOf(form.getTel()));
-	    cita.setEma(form.getEma());
-	    cita.setObs(form.getObs());
-	    cita.setLit1(form.getLit1());
-	    cita.setLit2(form.getLit2());
-	    cita.setLit3(form.getLit3());
-	    cita.setLit4(form.getLit4());
-	    cita.setLit5(form.getLit5());
-	    cita.setLit6(form.getLit6());
-	    cita.setLit7(form.getLit7());
-	    cita.setLit8(form.getLit8());
-	    cita.setLit9(form.getLit9());
-	    cita.setLit10(form.getLit10());
-	    cita.setAgenda(agenda);
-	    cita.setTipusCita(tipusCita);
-
-	    // Guardar TODO
-	    CitaDto insertCita = citaPreviaPublicClient.saveCita(cita, locale);
-	    if (insertCita == null || Utils.isEmpty(insertCita.getCon())) {
-	        redirect.addFlashAttribute("error", "Error al guardar la cita");
-	        return "redirect:/private/calendari";
-	    }
-
-	    return "redirect:/private/cita/confirmacio?con=" + insertCita.getCon() + "&accion=creada";
+	    } finally {
+	    	long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final PrivateController.reservaCitaPrivada totalTime={}, citaSaved={}", totalTime, citaSaved.toString());
+		}
+	    return "redirect:/private/cita/confirmacio?con=" + citaSaved.getCon() + "&accion=creada";
 	}
 
 	@GetMapping("/cita/confirmacio")

@@ -11,8 +11,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
-@Getter @Setter
+@Getter @Setter @ToString
 public class CitaFormDto {
 	private Long citaCon;
     @NotNull private Long tipcitCon;
