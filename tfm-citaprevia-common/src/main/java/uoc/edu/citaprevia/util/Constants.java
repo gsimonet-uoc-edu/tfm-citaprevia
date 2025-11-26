@@ -57,7 +57,7 @@ public final class Constants {
     public static final String ERROR_FRONT_GESTIO_SETMANES_TIPUS = "error.setmanestipus.gestio";
     public static final String ERROR_FRONT_GESTIO_TIPUS_CITES = "error.tipuscites.gestio";
     public static final String ERROR_FRONT_GESTIO_UBICACIONS  = "error.ubicacions.gestio";
-
+    public static final String ERROR_FRONT_SUBAPLICACIO_NO_TROBADA  = "error.subapl.no.trobada";
     public static final String ERROR_FRONT_SAVE_AGENDES       = "error.agendes.save";
     public static final String ERROR_FRONT_SAVE_HORARIS       = "error.horaris.save";
 

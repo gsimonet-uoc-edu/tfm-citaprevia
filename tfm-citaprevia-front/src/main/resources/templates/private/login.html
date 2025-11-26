@@ -26,6 +26,10 @@
                         </div>
 
                         <!-- Missatges d'error o logout -->
+                        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            					<span th:text="${error}"></span>
+            				<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        			    </div>
                         <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show" role="alert">
                             <i class="fas fa-exclamation-triangle me-2"></i>
                             <span th:text="#{login.error.credentials}">Usuari o contrasenya incorrectes</span>
@@ -40,7 +44,7 @@
                         <!-- Formulari de login -->
                         <form th:action="@{/private/login}" method="post" class="mt-4">
                             <div class="mb-3">
-                                <label for="username" class="form-label fw-semibold" th:text="#{login.codi_tecnic}">Codi Tècnic (COA)</label>
+                                <label for="username" class="form-label fw-semibold" th:text="#{login.codi_tecnic}">Codi Tècnic</label>
                                 <input type="text" name="username" id="username" class="form-control form-control-lg" 
                                        placeholder="Ex: 123456" required autofocus>
                             </div>

@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
@@ -28,11 +27,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import uoc.edu.citaprevia.dto.AgendaDto;
@@ -89,44 +85,61 @@ public class PrivateController {
 	}
 	
 	@GetMapping("/calendari") 
-	public String calendari(Authentication authentication, Model model, Locale locale) throws Exception {
+	public String calendari(Authentication authentication, Model model, RedirectAttributes redirectAttributes, Locale locale) throws Exception {
 		
-		String coa = authentication.getName();
-		TecnicDto tecnic = citaPreviaPrivateClient.getTecnic(coa, locale);
+		long startTime=System.currentTimeMillis();
+		LOG.info("### Inici PrivateController.calendari startTime={}", startTime);
+    	try {
+			String subaplCoa = this.getSubaplCoa(authentication);
 
-		if (tecnic == null) {
-			return "redirect:/private/login";
+	        if (Utils.isEmpty(subaplCoa)) {
+	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SUBAPLICACIO_NO_TROBADA, null, locale));
+	            return "redirect:/private/login";
+	        }
+	        
+			String coa = authentication.getName();
+			TecnicDto tecnic = citaPreviaPrivateClient.getTecnic(coa, locale);
+	
+			if (tecnic == null || Utils.isEmpty(tecnic.getCoa())) {
+	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TECNICS, null, locale));
+	            return "redirect:/private/login";
+			}
+	
+	        boolean isAdministrador = this.isAdministrador(authentication);
+	        
+	        List<AgendaDto> agendes;
+	        if (isAdministrador) {
+	            agendes = citaPreviaPrivateClient.getAgendasBySubaplicacio(subaplCoa, locale);
+	        } else {
+	            agendes = citaPreviaPrivateClient.getAgendasByTecnic(tecnic.getCoa(), locale);    
+	        }
+	        
+	        // Obtenir subaplicació per mostrar al header
+	        if (!Utils.isEmpty(subaplCoa)) {
+	        	SubaplicacioDto subAplicacio = citaPreviaPublicClient.getSubaplicacio(subaplCoa, locale);
+	        	model.addAttribute("subAplicacio", subAplicacio); 
+	        }
+	        
+	        model.addAttribute("isAdministrador", isAdministrador);
+			model.addAttribute("subaplCoa", subaplCoa); 
+			model.addAttribute("tipusCita", new TipusCitaDto());
+			model.addAttribute("frangesHorariesGrouped", generarEvents(agendes, citaPreviaPublicClient, locale));
+	
+			model.addAttribute("dataInici", LocalDate.now());
+			model.addAttribute("dataFi", LocalDate.now().plusDays(30));
+			model.addAttribute("tecnic", tecnic);
+	
+			// Camps dinàmics
+		    List<CampConfigDto> campos = metacamapService.getCampos(subaplCoa, locale);
+		    model.addAttribute("camposCita", campos);
+	    }  catch (Exception e) {
+	        LOG.error("### Error calendari-privat {}", e);
+        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.MSG_ERR_GET_CALENDARI, null, locale));
+	        return "redirect:/private/login";
+	    } finally {
+	    	long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final PrivateController.calendari totalTime={}", totalTime);
 		}
-
-        List<AgendaDto> agendes;
-        String subaplCoa = StringUtils.substringAfter(tecnic.getPrf(), "_"); // Extreim el codi de la subaplicació a partir sufixe del perfil.
-        //String prefixePerfil = StringUtils.substringBefore(tecnic.getPrf(), "_");
-        boolean isAdministrador = this.isAdministrador(authentication);
-        if (isAdministrador) {
-            agendes = citaPreviaPrivateClient.getAgendasBySubaplicacio(subaplCoa, locale);
-        } else {
-            agendes = citaPreviaPrivateClient.getAgendasByTecnic(tecnic.getCoa(), locale);    
-        }
-        
-        if (!Utils.isEmpty(subaplCoa)) {
-        	SubaplicacioDto subAplicacio = citaPreviaPublicClient.getSubaplicacio(subaplCoa, locale);
-        	model.addAttribute("subAplicacio", subAplicacio); 
-        }
-        
-        model.addAttribute("isAdministrador", isAdministrador);
-		model.addAttribute("subaplCoa", subaplCoa); 
-		model.addAttribute("tipusCita", new TipusCitaDto()); //TODO: mirar
-		//model.addAttribute("tipusCita", null); // No hay selección de tipo en private
-		model.addAttribute("frangesHorariesGrouped", generarEvents(agendes, citaPreviaPublicClient, locale));
-
-		model.addAttribute("dataInici", LocalDate.now());
-		model.addAttribute("dataFi", LocalDate.now().plusDays(30));
-		model.addAttribute("tecnic", tecnic);
-
-		// AÑADIR CAMPOS DINÁMICOS
-	    List<CampConfigDto> campos = metacamapService.getCampos(subaplCoa, locale);
-	    model.addAttribute("camposCita", campos);
-	    
 		return "private/calendari-private";
 	}
 	
@@ -400,8 +413,6 @@ public class PrivateController {
             return false;
         }
         
-        //String prefixePerfil = StringUtils.substringBefore(tecnic.getPrf(), "_");
-
         // Comprova si l'usuari té el rol "ADMINISTRADOR" o "TECNIC" (Exemple)
         for (GrantedAuthority authority : authentication.getAuthorities()) {
             String prefixePerfil = StringUtils.substringBefore(authority.getAuthority(), "_");
