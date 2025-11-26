@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
+import uoc.edu.citaprevia.util.Utils;
+
 @Controller
 public class LanguageController {
 
@@ -19,21 +21,19 @@ public class LanguageController {
                                  HttpServletRequest request,
                                  HttpServletResponse response) {
 
-        // 1. Canviem l'idioma
+        // Canvi d'idioma
         LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
         if (localeResolver != null) {
             localeResolver.setLocale(request, response, new Locale(lang));
         }
 
-        // 2. Agafem el Referer i el netegem correctament
+        // Neteja del referer
         String referer = request.getHeader("Referer");
-        String redirectTo = "/";  // fallback
+        String redirectTo = "/";
 
-        if (referer != null && referer.contains("/citapreviafront")) {
-            // Extreu només la part després del context path
-            redirectTo = referer.substring(referer.indexOf("/citapreviafront") + 16); // 16 = longitud de "/citapreviafront"
+        if (!Utils.isEmpty(referer) && referer.contains("/citapreviafront")) {
+            redirectTo = referer.substring(referer.indexOf("/citapreviafront") + 16);
             
-            // Si té query string (?...), la mantenim
             if (referer.contains("?")) {
                 String query = referer.substring(referer.indexOf("?"));
                 if (!redirectTo.contains("?")) {
@@ -42,8 +42,8 @@ public class LanguageController {
             }
         }
 
-        // Si per algun motiu està buit o és changeLang → anem a l'inici
-        if (redirectTo == null || redirectTo.isEmpty() || redirectTo.contains("changeLang")) {
+        // Comprovar que redirectTo es null i anar a l'inici
+        if (Utils.isEmpty(redirectTo) || redirectTo.contains("changeLang")) {
             redirectTo = "/";
         }
 
