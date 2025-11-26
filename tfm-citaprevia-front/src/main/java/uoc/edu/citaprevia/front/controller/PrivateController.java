@@ -218,7 +218,7 @@ public class PrivateController {
 	    }  catch (Exception e) {
 	        LOG.error("### Error PrivateController.reservaCitaPrivada {}", e);
         	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.MSG_ERR_GET_CALENDARI, null, locale));
-	        return "redirect:/private/login";
+        	return "redirect:/private/calendari";
 	    } finally {
 	    	long totalTime = (System.currentTimeMillis() - startTime);
 			LOG.info("### Final PrivateController.reservaCitaPrivada totalTime={}, citaSaved={}", totalTime, citaSaved.toString());
@@ -231,30 +231,49 @@ public class PrivateController {
 	        @RequestParam Long con,
 	        @RequestParam String accion,
 	        Model model,
+	        RedirectAttributes redirectAttributes,
 	        Authentication authentication,
 	        Locale locale) throws Exception {
-
-	    String coa = authentication.getName();
-	    TecnicDto tecnic = citaPreviaPrivateClient.getTecnic(coa, locale);
-	    if (tecnic == null) {
-	        return "redirect:/private/login";
-	    }
-
-	    String subaplCoa = StringUtils.substringAfter(tecnic.getPrf(), "_");
-
-	    CitaDto cita = new CitaDto();
-	    if ( !"cancelada".equals(accion)) {
-		    cita = citaPreviaPublicClient.getCita(con, locale);
-		    if (cita == null || Utils.isEmpty(cita.getCon()) || !subaplCoa.equals(cita.getAgenda().getHorari().getSubapl().getCoa())) {
-		        return "redirect:/private/calendari?error";
+		
+		long startTime=System.currentTimeMillis();
+		LOG.info("### Inici PrivateController.confirmacioCita startTime={}, citCon={}, accion={}", startTime, con, accion);
+				
+    	try {
+    		  		
+			String subaplCoa = this.getSubaplCoa(authentication);
+			
+	        if (Utils.isEmpty(subaplCoa)) {
+	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SUBAPLICACIO_NO_TROBADA, null, locale));
+	        	return "redirect:/private/calendari";
+	        }
+	        
+	        String coa = authentication.getName();
+		    TecnicDto tecnic = citaPreviaPrivateClient.getTecnic(coa, locale);
+		    if (tecnic == null || Utils.isEmpty(tecnic.getCoa())) {
+	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TECNICS, null, locale));
+	        	 return "redirect:/private/calendari";
 		    }
-	    } else {
-	    	cita.setCon(con);
-	    }
-	    model.addAttribute("cita", cita);
-	    model.addAttribute("subaplCoa", subaplCoa);
-	    model.addAttribute("accion", accion); // "creada", "actualitzada", "cancelada"
 
+		    CitaDto cita = new CitaDto();
+		    if ( !"cancelada".equals(accion)) {
+			    cita = citaPreviaPublicClient.getCita(con, locale);
+			    if (cita == null || Utils.isEmpty(cita.getCon()) || !subaplCoa.equals(cita.getAgenda().getHorari().getSubapl().getCoa())) {
+			        return "redirect:/private/calendari?error";
+			    }
+		    } else {
+		    	cita.setCon(con);
+		    }
+		    model.addAttribute("cita", cita);
+		    model.addAttribute("subaplCoa", subaplCoa);
+		    model.addAttribute("accion", accion);
+	    }  catch (Exception e) {
+	        LOG.error("### Error PrivateController.confirmacioCita {}", e);
+        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_API_CRUD_CITA, null, locale));
+        	return "redirect:/private/calendari";
+	    } finally {
+	    	long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final PrivateController.confirmacioCita totalTime={}, citCon={}, accion={}", totalTime, con, accion);
+		}
 	    return "private/confirmacio-private";
 	}
 	
