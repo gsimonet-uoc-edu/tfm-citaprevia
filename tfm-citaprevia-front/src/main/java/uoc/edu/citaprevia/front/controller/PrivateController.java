@@ -85,6 +85,15 @@ public class PrivateController {
 	}
 	
 	@GetMapping("/calendari") 
+	/**
+	 * Mostra la vista del calendari privat per a la gestió de cites.
+	 * @param authentication Objecte d'autenticació de Spring Security que conté la informació de l'usuari que ha fet login.
+	 * @param model Model de Spring utilitzat per afegir atributs que es passaran a la vista ThymeLeaf.
+	 * @param redirectAttributes Afegir missatges 'flash' (com errors) que es mantindran després d'una redirecció.
+	 * @param locale La configuració regional (idioma) de l'usuari
+	 * @return El nom de la vista o una redirecció en cas d'error.
+	 * @throws Exception Qualsevol altre error excepcional.
+	 */
 	public String calendari(Authentication authentication, Model model, RedirectAttributes redirectAttributes, Locale locale) throws Exception {
 		
 		long startTime=System.currentTimeMillis();
@@ -144,6 +153,16 @@ public class PrivateController {
 	}
 	
 	@PostMapping("/cita/reserva")
+	/**
+	 * Processa la petició de reserva d'una nova cita en l'àrea privada i la desa a la BBDD
+	 * @param form Objecte de formulari que conté les dades de la cita introduïdes per l'usuari.
+	 * @param result Objecte BindingResult de Spring que comprova i gestiona errors de validació del formulari.
+	 * @param model Model de Spring utilitzat per afegir atributs que es passaran a la vista ThymeLeaf.
+	 * @param redirectAttributes Afegir missatges 'flash' (com errors) que es mantindran després d'una redirecció.
+	 * @param locale La configuració regional (idioma) de l'usuari
+	 * @return El nom de la vista ("private/calendari-private") o una redirecció en cas d'error.
+	 * @throws Exception Qualsevol altre error excepcional.
+	 */
 	public String reservaCitaPrivada(
 	        @ModelAttribute CitaFormDto form,
 	        BindingResult result,
@@ -227,6 +246,16 @@ public class PrivateController {
 	}
 
 	@GetMapping("/cita/confirmacio")
+	/**
+	 * Mostra la pàgina de confirmació després de la creació o cancel·lació d'una cita.
+	 * @param con El codi de la cita sobre la qual s'ha realitzat l'acció.
+	 * @param accion Acció realitzada, actualitzada o cancelada
+	 * @param model Model de Spring utilitzat per afegir atributs que es passaran a la vista ThymeLeaf.
+	 * @param redirectAttributes Afegir missatges 'flash' (com errors) que es mantindran després d'una redirecció.
+	 * @param locale La configuració regional (idioma) de l'usuari
+	 * @return El nom de la vista ("private/calendari-private") o una redirecció en cas d'error.
+	 * @throws Exception Qualsevol altre error excepcional.
+	 */
 	public String confirmacioCita(
 	        @RequestParam Long con,
 	        @RequestParam String accion,
@@ -278,6 +307,16 @@ public class PrivateController {
 	}
 	
 	@PostMapping("/cita/actualitzar")
+	/**
+	 * Processa la petició d'actualització d'una cita existent en l'àrea privada.
+	 * @param form Objecte de formulari que conté les dades de la cita introduïdes per l'usuari.
+	 * @param result Objecte BindingResult de Spring que comprova i gestiona errors de validació del formulari.
+	 * @param redirectAttributes Afegir missatges 'flash' (com errors) que es mantindran després d'una redirecció.
+	 * @param authentication Objecte d'autenticació de Spring Security que conté la informació de l'usuari que ha fet login.
+	 * @param locale La configuració regional (idioma) de l'usuari
+	 * @return Redirecció a la vista de confirmació si l'actualització és correcta.
+	 * @throws Exception Qualsevol altre error excepcional.
+	 */
 	public String actualitzarCita(
 	        @ModelAttribute CitaFormDto form,
 	        BindingResult result,

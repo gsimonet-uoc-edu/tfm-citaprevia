@@ -13,6 +13,10 @@ import lombok.RequiredArgsConstructor;
 import uoc.edu.citaprevia.dto.TecnicDto;
 import uoc.edu.citaprevia.front.service.CitaPreviaPrivateClient;
 
+
+/**
+ * Codi típic que defineix com és comporta la seguretat (autenticació, autorització, gestió de sessions...)
+ **/
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
