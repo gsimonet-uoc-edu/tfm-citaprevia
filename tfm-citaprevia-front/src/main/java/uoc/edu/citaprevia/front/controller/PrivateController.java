@@ -94,7 +94,10 @@ public class PrivateController {
 	 * @return El nom de la vista o una redirecció en cas d'error.
 	 * @throws Exception Qualsevol altre error excepcional.
 	 */
-	public String calendari(Authentication authentication, Model model, RedirectAttributes redirectAttributes, Locale locale) throws Exception {
+	public String calendari(Authentication authentication,
+							Model model,
+							RedirectAttributes redirectAttributes,
+							Locale locale) throws Exception {
 		
 		long startTime=System.currentTimeMillis();
 		LOG.info("### Inici PrivateController.calendari startTime={}", startTime);
@@ -546,15 +549,14 @@ public class PrivateController {
 	}
 	
 	/**
-     * Mètode per determinar si l'usuari autenticat té un rol d'administrador.
-     * CAL ADAPTAR A LA VOSTRA LÒGICA DE SPRING SECURITY (ROLS/GRUPS).
-     */
+	 * Funció per determinar si l'usuari autenticat té un perfil d'administrador.
+	 * @param authentication Objecte d'autenticació de Spring Security que conté la informació de l'usuari que ha fet login.
+	 * @return true si es admistrador, false en cas contrari.
+	 */
     private boolean isAdministrador(Authentication authentication) {
         if (authentication == null || authentication.getAuthorities() == null) {
             return false;
-        }
-        
-        // Comprova si l'usuari té el rol "ADMINISTRADOR" o "TECNIC" (Exemple)
+        }        
         for (GrantedAuthority authority : authentication.getAuthorities()) {
             String prefixePerfil = StringUtils.substringBefore(authority.getAuthority(), "_");
             if (prefixePerfil.equals(Perfil.ADMINISTRADOR.getValor())) {
@@ -563,10 +565,12 @@ public class PrivateController {
         }
         return false;
     }
-    
-    /**
-     * Mètode auxiliar per obtenir la subaplicació de l'usuari autenticat
-     */
+
+   /**
+    * Funció per obtenir la subaplicació de l'usuari autenticat
+	* @param authentication Objecte d'autenticació de Spring Security que conté la informació de l'usuari que ha fet login.
+    * @return codi de l'aplicació
+    */
    private String getSubaplCoa(Authentication authentication) {
         if (authentication == null || authentication.getAuthorities() == null) {
             return null;
@@ -581,21 +585,36 @@ public class PrivateController {
     }
     
     
- // Mètode de Consulta (GET)
     @GetMapping("/gestio/agendes")
-    public String gestioAgendes(Model model, Authentication authentication, RedirectAttributes redirect, Locale locale) {
+    /**
+     * Recupera les llistes d'agendes assignades al tècnic connectat
+	 * @param model Model de Spring utilitzat per afegir atributs que es passaran a la vista ThymeLeaf.
+	 * @param authentication Objecte d'autenticació de Spring Security que conté la informació de l'usuari que ha fet login.
+	 * @param redirectAttributes Afegir missatges 'flash' (com errors) que es mantindran després d'una redirecció.
+	 * @param locale La configuració regional (idioma) de l'usuari
+	 * @return El nom de la vista o una redirecció en cas d'error.
+     */
+    
+    public String gestioAgendes(Model model, Authentication authentication,
+					    		RedirectAttributes redirectAttributes, 
+					    		Locale locale) {
 		long startTime=System.currentTimeMillis();
 		LOG.info("### Inici PrivateController.gestioAgendes startTime={}", startTime);
     	try {
-	        // 1. Obtenir el tècnic connectat (assumint que el 'name' és el 'coa')
-	        String tecCoa = authentication.getName();
-
-	        String subaplCoa = getSubaplCoa(authentication);
-	        
+    		
+			String subaplCoa = this.getSubaplCoa(authentication);
+			
 	        if (Utils.isEmpty(subaplCoa)) {
-	            model.addAttribute("error", bundle.getMessage("error.subapl.no.trobada", null, locale));
-	            return "redirect:/private/calendari";
+	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SUBAPLICACIO_NO_TROBADA, null, locale));
+	        	return "redirect:/private/calendari";
 	        }
+	        
+	        String tecCoa = authentication.getName();
+		    TecnicDto tecnic = citaPreviaPrivateClient.getTecnic(tecCoa, locale);
+		    if (tecnic == null || Utils.isEmpty(tecnic.getCoa())) {
+	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TECNICS, null, locale));
+	        	 return "redirect:/private/calendari";
+		    }
 	        
 	        // 2. Obtenir llistes de lookups
 	        List<UbicacioDto> ubicacions = citaPreviaPrivateClient.getUbicacionsBySubaplicacio(subaplCoa, locale);
@@ -609,11 +628,10 @@ public class PrivateController {
 	        model.addAttribute("ubicacions", ubicacions);
 	        model.addAttribute("horaris", horaris);
 	        model.addAttribute("agendaForm", new AgendaFormDto()); // Formulari buit per a l'alta
-	        // 5. Determinar si l'usuari és administrador (es manté la lògica prèvia)
 	        model.addAttribute("isAdministrador", this.isAdministrador(authentication));
     	}  catch (Exception e) {
             LOG.error("### Error gestio agenda {}", e);
-            redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_AGENDES, null, locale));
+            redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_AGENDES, null, locale));
             return "redirect:/private/calendari";
         } finally {
 			long totalTime = (System.currentTimeMillis() - startTime);
@@ -623,29 +641,39 @@ public class PrivateController {
         return "private/gestio-agendes"; 
     }
     
-    
-    // Mètode de Creació/Actualització (POST)
     @PostMapping("/gestio/agendes/save")
+    /**
+     * Processa la petició de l'alta o modificació d'una agenda en l'àrea privada i la desa a la BBDD
+	 * @param form Objecte de formulari que conté les dades de la cita introduïdes per l'usuari.
+	 * @param result Objecte BindingResult de Spring que comprova i gestiona errors de validació del formulari.
+	 * @param model Model de Spring utilitzat per afegir atributs que es passaran a la vista ThymeLeaf.
+	 * @param redirectAttributes Afegir missatges 'flash' (com errors) que es mantindran després d'una redirecció.
+	 * @param authentication Objecte d'autenticació de Spring Security que conté la informació de l'usuari que ha fet login.
+     * @param locale La configuració regional (idioma) de l'usuari
+     * @return Redirecció a la vista si la petició és correcta.
+     */
     public String saveUpdateAgenda(@ModelAttribute("agendaForm") @Valid AgendaFormDto form,
-                             BindingResult result,
-                             RedirectAttributes redirect,
-                             Authentication authentication, 
-                             Locale locale) {
+		                           BindingResult result,
+		                           RedirectAttributes redirectAttributes,
+		                           Authentication authentication, 
+		                           Locale locale) {
 		long startTime=System.currentTimeMillis();
-		LOG.info("### Inici PrivateController.saveAgenda startTime={}", startTime);
+		LOG.info("### Inici PrivateController.saveUpdateAgenda startTime={}, form={}", startTime, form.toString());
+		AgendaDto savedAgenda = new AgendaDto();
 		try {
+			
 			if (result.hasErrors()) {
-	            redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SAVE_AGENDES, null, locale));
+	            redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SAVE_AGENDES, null, locale));
 	            return "redirect:/private/gestio/agendes"; 
 	        }
      
-            // 1. Crear el DTO per enviar al backend
+            // Crear el dto per enviar a l'api
             AgendaDto agendaToSave = new AgendaDto();
             agendaToSave.setCon(form.getCon());
             agendaToSave.setDatini(form.getDatini());
             agendaToSave.setDatfin(form.getDatfin());
             
-            // 2. Lookup de DTOs per CON
+            // Lookups
             UbicacioDto centre = new UbicacioDto(); 
             centre.setCon(form.getCentreCon());
             HorariDto horari = new HorariDto(); 
@@ -659,37 +687,38 @@ public class PrivateController {
             agendaToSave.setHorari(horari);
             agendaToSave.setTecnic(tecnic);
             
-            // 4. Guardar
-            //AgendaDto savedAgenda = citaPreviaPrivateClient.saveAgenda(agendaSaved, locale);
-            AgendaDto savedAgenda = new AgendaDto();
-            if (form.getCon() != null) {
+            // 4. Guardar/Actualitzar           
+            if (!Utils.isEmpty(form.getCon())) {
             	 savedAgenda = citaPreviaPrivateClient.updateAgenda(form.getCon(), agendaToSave, locale);
             } else {
             	savedAgenda = citaPreviaPrivateClient.saveAgenda(agendaToSave, locale);
             }
 
             if (savedAgenda.hasErrors()) {
-                // Maneig d'errors del backend
-                redirect.addFlashAttribute("error", savedAgenda.getErrors().get(0).getDem());
+                redirectAttributes.addFlashAttribute("error", savedAgenda.getErrors().get(0).getDem());
             } else {
-                redirect.addFlashAttribute("success", form.getCon() == null ? bundle.getMessage(Constants.SUCCESS_FRONT_SAVE_AGENDES, null, locale) : bundle.getMessage(Constants.SUCCESS_FRONT_UPDATE_AGENDES, null, locale));
+                redirectAttributes.addFlashAttribute("success", form.getCon() == null ? bundle.getMessage(Constants.SUCCESS_FRONT_SAVE_AGENDES, null, locale) : bundle.getMessage(Constants.SUCCESS_FRONT_UPDATE_AGENDES, null, locale));
             }
     	}  catch (Exception e) {
-            LOG.error("### Error save/update agenda {}", e);
-            redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_AGENDES, null, locale));
+            LOG.error("### Error PrivateController.saveUpdateAgenda {}", e);
+            redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_AGENDES, null, locale));
         } finally {
 			long totalTime = (System.currentTimeMillis() - startTime);
-			LOG.info("### Final PrivateController.saveAgenda totalTime={}", totalTime);
+			LOG.info("### Final PrivateController.saveUpdateAgenda totalTime={}, savedAgenda={}", totalTime, savedAgenda.toString());
 		}
-        
-        
+            
         return "redirect:/private/gestio/agendes";
     }
     
-    // Mètode d'Eliminació (POST)
     @PostMapping("/gestio/agendes/delete")
-    public String deleteAgenda(@RequestParam("con") Long con, 
-                               RedirectAttributes redirect, 
+    /**
+     * Processa la eliminació d'una agenda en l'àrea privada i la desa a la BBDD
+	 * @param redirectAttributes Afegir missatges 'flash' (com errors) que es mantindran després d'una redirecció.
+     * @param locale La configuració regional (idioma) de l'usuari
+     * @return Redirecció a la vista si la petició és correcta.
+     */
+    public String deleteAgenda(@RequestParam Long con, 
+                               RedirectAttributes redirectAttributes, 
                                Locale locale) {
     	
 		long startTime=System.currentTimeMillis();
@@ -697,15 +726,14 @@ public class PrivateController {
         try {
             ErrorDto error = citaPreviaPrivateClient.deleteAgenda(con, locale);
             if (error != null) {
-                // Maneig d'errors del backend
-                redirect.addFlashAttribute("error", error.getDem());
+                redirectAttributes.addFlashAttribute("error", error.getDem());
             } else {
-            	redirect.addFlashAttribute("success", bundle.getMessage(Constants.SUCCESS_FRONT_DELETE_AGENDES, null, locale));
+            	redirectAttributes.addFlashAttribute("success", bundle.getMessage(Constants.SUCCESS_FRONT_DELETE_AGENDES, null, locale));
             }
             
         } catch (Exception e) {
-            LOG.error("### Error delete agenda {}", e);
-            redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_AGENDES, null, locale));
+            LOG.error("### PrivateController.deleteAgenda {}", e);
+            redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_AGENDES, null, locale));
         } finally {
 			long totalTime = (System.currentTimeMillis() - startTime);
 			LOG.info("### Final PrivateController.deleteAgenda totalTime={}, ageCon={}", totalTime, con);
