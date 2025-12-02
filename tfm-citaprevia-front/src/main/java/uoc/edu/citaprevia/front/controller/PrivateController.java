@@ -636,7 +636,7 @@ public class PrivateController {
 	        
 	        model.addAttribute("isAdministrador", this.isAdministrador(authentication));
     	}  catch (Exception e) {
-            LOG.error("### Error PrivateController.gestioAgendes {}", e);
+            LOG.error("### Error PrivateController.gestioAgendes: ", e);
             redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_AGENDES, null, locale));
             return "redirect:/private/calendari";
         } finally {
@@ -786,7 +786,7 @@ public class PrivateController {
 	            model.addAttribute("horariForm", form);
 	        }
 	    }  catch (Exception e) {
-	        LOG.error("### Error PrivateController.gestioHoraris {}", e);
+	        LOG.error("### Error PrivateController.gestioHoraris:", e);
 	        redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_HORARIS, null, locale));
 	        return "redirect:/private/calendari";
 	    } finally {
@@ -1304,12 +1304,8 @@ public class PrivateController {
 	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SUBAPLICACIO_NO_TROBADA, null, locale));
 	        	return "redirect:/private/calendari";
 	        }
-	
-	        // Afegim la subaplicació al form
-	      //  form.setSubaplCoa(subaplCoa);
-	
-	
-	        //Guardar /Actualitzar       
+
+	        //Guardar/Actualitzar       
 	        TipusCitaDto tipusCitaToSave = new TipusCitaDto();
 	        tipusCitaToSave.setCon(form.getCon());
 	        tipusCitaToSave.setDec(form.getDec());
@@ -1388,61 +1384,85 @@ public class PrivateController {
     }
 
     /**
-     * GESTIÓ D'UBICACIONS (CENTRES)
-     */
-
+     * Recupera el llistat d'ubicacions (part administrativa)
+	 * @param model Model de Spring utilitzat per afegir atributs que es passaran a la vista ThymeLeaf.
+	 * @param authentication Objecte d'autenticació de Spring Security que conté la informació de l'usuari que ha fet login.
+	 * @param redirectAttributes Afegir missatges 'flash' (com errors) que es mantindran després d'una redirecció.
+	 * @param locale La configuració regional (idioma) de l'usuari
+	 * @return El nom de la vista o una redirecció en cas d'error.
+     */   
     @GetMapping("/gestio/ubicacions")
     public String gestioUbicacions(Model model,
-                                    Authentication authentication,
-                                    Locale locale) {
+                                   Authentication authentication,
+                                   RedirectAttributes redirectAttributes, 
+                                   Locale locale) {
 
-        String subaplCoa = getSubaplCoa(authentication);
-        if (Utils.isEmpty(subaplCoa)) {
-            model.addAttribute("error", bundle.getMessage("error.subapl.no.trobada", null, locale));
-            return "redirect:/private/calendari";
-        }
-
-        try {
+		long startTime=System.currentTimeMillis();
+		LOG.info("### Inici PrivateController.gestioUbicacions startTime={}", startTime);
+	    try {	
+	    	
+			String subaplCoa = this.getSubaplCoa(authentication);
+			
+	        if (Utils.isEmpty(subaplCoa)) {
+	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SUBAPLICACIO_NO_TROBADA, null, locale));
+	        	return "redirect:/private/calendari";
+	        }
+	        // Llistat d'ubicacions de la subaplicació
             List<UbicacioDto> ubicacions = citaPreviaPrivateClient.getUbicacionsBySubaplicacio(subaplCoa, locale);
             model.addAttribute("ubicacions", ubicacions != null ? ubicacions : Collections.emptyList());
 
-            // Formulari per alta/edició
-            model.addAttribute("ubicacioForm", new UbicacioFormDto());
+	        // Formulari buit
+	        if (!model.containsAttribute("ubicacioForm")) {
+	        	UbicacioFormDto form = new UbicacioFormDto();
+	            model.addAttribute("ubicacioForm", form);
+	        }
 
-        } catch (Exception e) {
-            LOG.error("### Error carregant ubicacions per subaplCoa={}", subaplCoa, e);
-            model.addAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_UBICACIONS, null, locale));
-        }
+	    }  catch (Exception e) {
+	        LOG.error("### Error PrivateController.gestioUbicacions: ", e);
+	        redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_UBICACIONS, null, locale));
+	        return "redirect:/private/calendari";
+	    } finally {
+	    	long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final PrivateController.gestioUbicacions totalTime={}", totalTime);
+		}
 
         return "private/gestio-ubicacions";
     }
 
     @PostMapping("/gestio/ubicacions/save")
+    /**
+     * Processa la petició de l'alta o modificació d'una ubicació en l'àrea privada i la desa a la BBDD
+	 * @param form Objecte de formulari que conté les dades introduïdes per l'usuari.
+	 * @param result Objecte BindingResult de Spring que comprova i gestiona errors de validació del formulari.
+	 * @param redirectAttributes Afegir missatges 'flash' (com errors) que es mantindran després d'una redirecció.
+	 * @param authentication Objecte d'autenticació de Spring Security que conté la informació de l'usuari que ha fet login.
+     * @param locale La configuració regional (idioma) de l'usuari
+     * @return Redirecció a la vista si la petició és correcta.
+     */
     public String saveUpdateUbicacio(@Valid @ModelAttribute("ubicacioForm") UbicacioFormDto form,
-                               BindingResult bindingResult,
-                               RedirectAttributes redirect,
-                               Authentication authentication,
-                               Locale locale) {
+		                               BindingResult result,
+		                               RedirectAttributes redirectAttributes,
+		                               Authentication authentication,
+		                               Locale locale) {
+        
+    	long startTime = System.currentTimeMillis();
+        LOG.info("### Inici PrivateController.saveUpdateUbicacio startTime, form={}", startTime, form.toString());
+    	
+    	UbicacioDto savedUbicacio = new UbicacioDto();
     	try {
-	        String subaplCoa = getSubaplCoa(authentication);
+	            			
+    		if (result.hasErrors()) {
+    			redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_UBICACIONS, null, locale));
+    	        return "redirect:/private/gestio/ubicacions"; 
+    	    }
+    		   		
+    		String subaplCoa = getSubaplCoa(authentication);
 	        if (Utils.isEmpty(subaplCoa)) {
-	            redirect.addFlashAttribute("error", bundle.getMessage("error.subapl.no.trobada", null, locale));
-	            return "redirect:/private/gestio/ubicacions";
+	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SUBAPLICACIO_NO_TROBADA, null, locale));
+	        	return "redirect:/private/calendari";
 	        }
 	
-	        // Sempre enviem la subaplicació
-	        form.setSubaplCoa(subaplCoa);
-	
-	        if (bindingResult.hasErrors()) {
-	            redirect.addFlashAttribute("org.springframework.validation.BindingResult.ubicacioForm", bindingResult);
-	            redirect.addFlashAttribute("ubicacioForm", form);
-	            return "redirect:/private/gestio/ubicacions";
-	        }
-
-       
-        	
-        	// 4. Guardar
-            UbicacioDto savedUbicacio = new UbicacioDto();
+        	// Guardar
             UbicacioDto ubicacioToSave = new UbicacioDto();
             ubicacioToSave.setCon(form.getCon());
             ubicacioToSave.setNom(form.getNom());
@@ -1459,44 +1479,61 @@ public class PrivateController {
             }
 
             if (savedUbicacio.hasErrors()) {
-                // Maneig d'errors del backend
-                redirect.addFlashAttribute("error", savedUbicacio.getErrors().get(0).getDem());
+                // Maneig d'errors de de l'api
+                redirectAttributes.addFlashAttribute("error", savedUbicacio.getErrors().get(0).getDem());
             } else {
-                redirect.addFlashAttribute("success", form.getCon() == null ? bundle.getMessage(Constants.SUCCESS_FRONT_SAVE_UBICACIONS, null, locale) : bundle.getMessage(Constants.SUCCESS_FRONT_UPDATE_UBICACIONS, null, locale));
+                redirectAttributes.addFlashAttribute("success", form.getCon() == null ? bundle.getMessage(Constants.SUCCESS_FRONT_SAVE_UBICACIONS, null, locale) : bundle.getMessage(Constants.SUCCESS_FRONT_UPDATE_UBICACIONS, null, locale));
             }
             
-        } catch (Exception e) {
-            LOG.error("### Error guardant ubicació: {}", form, e);
-            redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_UBICACIONS, null, locale));
-            redirect.addFlashAttribute("ubicacioForm", form);
+        } catch (Exception e) {       	
+        	LOG.error("### Error PrivateController.saveUpdateUbicacio: ", e);
+            redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_UBICACIONS, null, locale));
+        } finally {
+            long totalTime = (System.currentTimeMillis() - startTime);
+            LOG.info("### Final PrivateController.saveUpdateUbicacio totalTime={}, savedUbicacio={}", totalTime, savedUbicacio.toString());
         }
 
         return "redirect:/private/gestio/ubicacions";
     }
 
     @PostMapping("/gestio/ubicacions/delete")
-    public String deleteUbicacio(@RequestParam("con") Long con,
-                                 RedirectAttributes redirect,
+    /**
+     * Processa la eliminació d'una ubicació en l'àrea privada i la desa a la BBDD
+     * @param coa Codi de la ubicació a eliminar
+	 * @param redirectAttributes Afegir missatges 'flash' (amb errors) que es mantindran després d'una redirecció.
+	 * @param authentication Objecte d'autenticació de Spring Security que conté la informació de l'usuari que ha fet login.
+     * @param locale La configuració regional (idioma) de l'usuari
+     * @return Redirecció a la vista si la petició és correcta.
+     */
+    public String deleteUbicacio(@RequestParam Long con,
+                                 RedirectAttributes redirectAttributes,
                                  Authentication authentication,
                                  Locale locale) {
-    	try {
-	        String subaplCoa = getSubaplCoa(authentication);
+        long startTime = System.currentTimeMillis();
+        LOG.info("### Inici PrivateController.deleteUbicacio startTime, con={}", startTime, con);
+        try {
+			String subaplCoa = this.getSubaplCoa(authentication);
+			
 	        if (Utils.isEmpty(subaplCoa)) {
-	            redirect.addFlashAttribute("error", bundle.getMessage("error.subapl.no.trobada", null, locale));
-	            return "redirect:/private/gestio/ubicacions";
+	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SUBAPLICACIO_NO_TROBADA, null, locale));
+	        	return "redirect:/private/calendari";
 	        }
 
             ErrorDto error = citaPreviaPrivateClient.deleteUbicacio(con, locale);
 
             if (error != null && !Utils.isEmpty(error.getDem())) {
-                redirect.addFlashAttribute("error", error.getDem());
+            	// Error de l'api
+                redirectAttributes.addFlashAttribute("error", error.getDem());
             } else {
-                redirect.addFlashAttribute("success", bundle.getMessage(Constants.SUCCESS_FRONT_DELETE_UBICACIONS, null, locale));
+                redirectAttributes.addFlashAttribute("success", bundle.getMessage(Constants.SUCCESS_FRONT_DELETE_UBICACIONS, null, locale));
             }
 
         } catch (Exception e) {
-            LOG.error("### Error esborrant tipus de cita con={}", con, e);
-            redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_UBICACIONS, null, locale));
+            LOG.error("### Error PrivateController.deleteUbicacio: ", e);
+            redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_UBICACIONS, null, locale));
+        } finally {
+            long totalTime = (System.currentTimeMillis() - startTime);
+            LOG.info("### Final PrivateController.deleteUbicacio totalTime={}, con={}", totalTime, con);
         }
 
         return "redirect:/private/gestio/ubicacions";
