@@ -1214,7 +1214,7 @@ public class PrivateController {
 
         } catch (Exception e) {
             LOG.error("### Error PrivateController.deleteTecnic: ", e);
-            redirectAttributes.addFlashAttribute("tecnicFormError", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TECNICS, null, locale));
+            redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TECNICS, null, locale));
         } finally {
             long totalTime = (System.currentTimeMillis() - startTime);
             LOG.info("### Final PrivateController.deleteTecnic totalTime={}, coa={}", totalTime, coa);
@@ -1344,28 +1344,44 @@ public class PrivateController {
     }
 
     @PostMapping("/gestio/tipus-cites/delete")
-    public String deleteTipusCita(@RequestParam("con") Long con,
-                                  RedirectAttributes redirect,
+    /**
+     * Processa la eliminació d'un tipus de cita en l'àrea privada i la desa a la BBDD
+     * @param coa Codi del tipus de cita a eliminar
+	 * @param redirectAttributes Afegir missatges 'flash' (amb errors) que es mantindran després d'una redirecció.
+	 * @param authentication Objecte d'autenticació de Spring Security que conté la informació de l'usuari que ha fet login.
+     * @param locale La configuració regional (idioma) de l'usuari
+     * @return Redirecció a la vista si la petició és correcta.
+     */
+    public String deleteTipusCita(@RequestParam Long con,
+                                  RedirectAttributes redirectAttributes,
                                   Authentication authentication,
                                   Locale locale) {
-    	try {
-	        String subaplCoa = getSubaplCoa(authentication);
+    	
+        long startTime = System.currentTimeMillis();
+        LOG.info("### Inici PrivateController.deleteTipusCita startTime, con={}", startTime, con);
+        try {
+			String subaplCoa = this.getSubaplCoa(authentication);
+			
 	        if (Utils.isEmpty(subaplCoa)) {
-	            redirect.addFlashAttribute("error", bundle.getMessage("error.subapl.no.trobada", null, locale));
-	            return "redirect:/private/gestio/tipus-cites";
+	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SUBAPLICACIO_NO_TROBADA, null, locale));
+	        	return "redirect:/private/calendari";
 	        }
 
             ErrorDto error = citaPreviaPrivateClient.deleteTipusCita(con, locale);
 
             if (error != null && !Utils.isEmpty(error.getDem())) {
-                redirect.addFlashAttribute("error", error.getDem());
+            	// Error de l'api
+                redirectAttributes.addFlashAttribute("error", error.getDem());
             } else {
-                redirect.addFlashAttribute("success", bundle.getMessage(Constants.SUCCESS_FRONT_DELETE_TIPUS_CITES, null, locale));
+                redirectAttributes.addFlashAttribute("success", bundle.getMessage(Constants.SUCCESS_FRONT_DELETE_TIPUS_CITES, null, locale));
             }
 
         } catch (Exception e) {
-            LOG.error("### Error esborrant tipus de cita con={}", con, e);
-            redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TIPUS_CITES, null, locale));
+            LOG.error("### Error PrivateController.deleteTipusCita: ", e);
+            redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TIPUS_CITES, null, locale));
+        } finally {
+            long totalTime = (System.currentTimeMillis() - startTime);
+            LOG.info("### Final PrivateController.deleteTecnic totalTime={}, con={}", totalTime, con);
         }
 
         return "redirect:/private/gestio/tipus-cites";
