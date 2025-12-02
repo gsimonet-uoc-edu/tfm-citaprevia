@@ -594,7 +594,8 @@ public class PrivateController {
 	 * @param locale La configuració regional (idioma) de l'usuari
 	 * @return El nom de la vista o una redirecció en cas d'error.
      */   
-    public String gestioAgendes(Model model, Authentication authentication,
+    public String gestioAgendes(Model model,
+    							Authentication authentication,
 					    		RedirectAttributes redirectAttributes, 
 					    		Locale locale) {
 		long startTime=System.currentTimeMillis();
@@ -635,7 +636,7 @@ public class PrivateController {
 	        
 	        model.addAttribute("isAdministrador", this.isAdministrador(authentication));
     	}  catch (Exception e) {
-            LOG.error("### Error gestio agenda {}", e);
+            LOG.error("### Error PrivateController.gestioAgendes {}", e);
             redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_AGENDES, null, locale));
             return "redirect:/private/calendari";
         } finally {
@@ -691,7 +692,7 @@ public class PrivateController {
             agendaToSave.setHorari(horari);
             agendaToSave.setTecnic(tecnic);
             
-            // 4. Guardar/Actualitzar           
+            // Guardar/Actualitzar           
             if (!Utils.isEmpty(form.getCon())) {
             	 savedAgenda = citaPreviaPrivateClient.updateAgenda(form.getCon(), agendaToSave, locale);
             } else {
@@ -1062,184 +1063,166 @@ public class PrivateController {
 
      return "redirect:/private/gestio/horaris/" + horCon + "/setmanes-tipus";
  }
-    
-    
+
     /**
-     * Pàgina de gestió de tècnics.
-     */
+     * Recupera el llistat d'agendes del tècnic connectat
+	 * @param model Model de Spring utilitzat per afegir atributs que es passaran a la vista ThymeLeaf.
+	 * @param authentication Objecte d'autenticació de Spring Security que conté la informació de l'usuari que ha fet login.
+	 * @param redirectAttributes Afegir missatges 'flash' (com errors) que es mantindran després d'una redirecció.
+	 * @param locale La configuració regional (idioma) de l'usuari
+	 * @return El nom de la vista o una redirecció en cas d'error.
+     */ 
     @GetMapping("/gestio/tecnics")
-    public String gestioTecnics(Model model, @ModelAttribute("tecnicForm") TecnicFormDto tecnicForm, Authentication authentication, Locale locale) {
+    public String gestioTecnics(Model model,
+					    		RedirectAttributes redirectAttributes,
+					    		Authentication authentication, 
+					    		Locale locale) {
         long startTime = System.currentTimeMillis();
-        LOG.info("### Inici PrivateController.gestioTecnics");
-        String subaplCoa = null;
-        // Obtenir subaplicacio del perfil de l'usuari
-        if (authentication.getAuthorities() != null && !authentication.getAuthorities().isEmpty()) {
-            for (GrantedAuthority authority : authentication.getAuthorities()) {
-                subaplCoa = StringUtils.substringAfter(authority.getAuthority(), "_");
-                break;
-            }
-        }
-
+        LOG.info("### Inici PrivateController.gestioTecnics startTime={}", startTime);
+        
         try {
-            if (Utils.isEmpty(subaplCoa)) {
-                LOG.error("### Error gestioTecnics: No s'ha pogut obtenir la subaplicació (subaplCoa) de l'usuari autenticat.");
-                model.addAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TECNICS, null, locale));
-                return "private/gestio-tecnics";
-            }
+        	
+			String subaplCoa = this.getSubaplCoa(authentication);
+			
+	        if (Utils.isEmpty(subaplCoa)) {
+	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SUBAPLICACIO_NO_TROBADA, null, locale));
+	        	return "redirect:/private/calendari";
+	        }
 
-            // 2. Carregar llista de Tècnics
+            // Llistat de Tècnics
             List<TecnicDto> tecnicsList = citaPreviaPrivateClient.getTecnicsBySubaplicacio(subaplCoa, locale);
-
-            // CRITICAL FIX: El nom de l'atribut a la vista HTML és 'tecnics'
             model.addAttribute("tecnics", tecnicsList);
+            
+	        // Formulari buit
+	        if (!model.containsAttribute("tecnicForm")) {
+	        	TecnicFormDto form = new TecnicFormDto();
+	            model.addAttribute("tecnicForm", form);
+	        }
 
-            // 3. Afegir un DTO buit per al formulari modal si no n'hi ha un per errors de validació
-            // Ja que l'hem injectat a la signatura (@ModelAttribute("tecnicForm") TecnicDto tecnicForm),
-            // ja està disponible amb el nom 'tecnicForm', per això eliminem la comprovació.
-            // Si hi ha errors de validació d'una crida POST, Spring l'haurà afegit automàticament.
-
-        } catch (Exception e) {
-            LOG.error("### Error gestioTecnics per a subaplCoa={}", subaplCoa, e);
-            model.addAttribute("tecnicFormError", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TECNICS, null, locale));
-        } finally {
-            long totalTime = (System.currentTimeMillis() - startTime);
-            LOG.info("### Final PrivateController.gestioTecnics totalTime={}", totalTime);
-        }
+	    }  catch (Exception e) {
+	        LOG.error("### Error PrivateController.gestioTecnics {}", e);
+	        redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_HORARIS, null, locale));
+	        return "redirect:/private/calendari";
+	    } finally {
+	    	long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final PrivateController.gestioHoraris totalTime={}", totalTime);
+		}
+        
         return "private/gestio-tecnics";
     }
     
-    /**
-     * Endpoint per crear o actualitzar un Tècnic.
-     */
     @PostMapping("/gestio/tecnics/save")
-    public String saveUpdateTecnic(@Valid @ModelAttribute("tecnicForm") TecnicFormDto tecnicForm,
-    		Authentication authentication,
-            BindingResult result,
-            RedirectAttributes redirect,
-            Locale locale) {
+    /**
+     * Processa la petició de l'alta o modificació d'un tècnic en l'àrea privada i la desa a la BBDD
+	 * @param form Objecte de formulari que conté les dades introduïdes per l'usuari.
+	 * @param result Objecte BindingResult de Spring que comprova i gestiona errors de validació del formulari.
+	 * @param redirectAttributes Afegir missatges 'flash' (com errors) que es mantindran després d'una redirecció.
+	 * @param authentication Objecte d'autenticació de Spring Security que conté la informació de l'usuari que ha fet login.
+     * @param locale La configuració regional (idioma) de l'usuari
+     * @return Redirecció a la vista si la petició és correcta.
+     */
+    public String saveUpdateTecnic(@Valid @ModelAttribute TecnicFormDto form,
+						    		Authentication authentication,
+						            BindingResult result,
+						            RedirectAttributes redirectAttributes,
+						            Locale locale) {
 
         long startTime = System.currentTimeMillis();
-        LOG.info("### Inici PrivateController.saveTecnic startTime={}, tecnicForm={}", startTime, tecnicForm.toString());
+        LOG.info("### Inici PrivateController.saveUpdateTecnic startTime={}, form={}", startTime, form.toString());   
+        TecnicDto savedTecnic = new TecnicDto();
 
-        String subaplCoa = null;
-        // Obtenir subaplicacio del perfil de l'usuari
-        if (authentication.getAuthorities() != null && !authentication.getAuthorities().isEmpty()) {
-            for (GrantedAuthority authority : authentication.getAuthorities()) {
-                subaplCoa = StringUtils.substringAfter(authority.getAuthority(), "_");
-                break;
-            }
-        }
-        
         try {
-            // 1. Validació del formulari
-            if (result.hasErrors()) {
-                // Afegir BindingResult i DTO amb les dades introduïdes al FlashMap per a la redirecció
-                redirect.addFlashAttribute("org.springframework.validation.BindingResult.tecnicForm", result);
-                redirect.addFlashAttribute("tecnicForm", tecnicForm);
-                // Redirigir al GET de gestio/tecnics per tornar a carregar la vista amb els errors
-                return "redirect:/private/gestio/tecnics";
-            }
+        	
+			if (result.hasErrors()) {
+	            redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TECNICS, null, locale));
+	            return "redirect:/private/gestio/tecnics"; 
+	        }
+			
+			String subaplCoa = this.getSubaplCoa(authentication);
+			
+	        if (Utils.isEmpty(subaplCoa)) {
+	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SUBAPLICACIO_NO_TROBADA, null, locale));
+	        	return "redirect:/private/calendari";
+	        }
 
-            if (Utils.isEmpty(subaplCoa)) {
-                LOG.error("### Error saveTecnic: No s'ha pogut obtenir la subaplicació (subaplCoa) de l'usuari autenticat.");
-                redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TECNICS, null, locale));
-                return "redirect:/private/gestio/tecnics";
-            }
-
-            // 2. Mapeig DTO per a l'API
-            // Només fem servir TecnicDto per enviar dades a l'API.
+            // Crear el dto per enviar a l'api
             TecnicDto tecnicToSave = new TecnicDto();
-            // Si coa no és null, és una edició, altrament és una creació
-            tecnicToSave.setCoa(tecnicForm.getCoa());
-            tecnicToSave.setPass(tecnicForm.getPass());
-            tecnicToSave.setNom(tecnicForm.getNom());
-            tecnicToSave.setLl1(tecnicForm.getLl1());
-            tecnicToSave.setLl2(tecnicForm.getLl2());
-            tecnicToSave.setPrf(tecnicForm.getPrf() + "_" + subaplCoa);
+            tecnicToSave.setCoa(form.getCoa());
+            tecnicToSave.setPass(form.getPass());
+            tecnicToSave.setNom(form.getNom());
+            tecnicToSave.setLl1(form.getLl1());
+            tecnicToSave.setLl2(form.getLl2());
+            tecnicToSave.setPrf(form.getPrf() + "_" + subaplCoa);
+	            
+            // Guardar/Actualitzar  
+	        if (!Utils.isEmpty(form.getOriginalCoa())) {
+	            savedTecnic = citaPreviaPrivateClient.updateTecnic(form.getCoa(), tecnicToSave, locale);
+	        } else {
+	            savedTecnic = citaPreviaPrivateClient.saveTecnic(tecnicToSave, locale);
+	        }
+	        
+            if (savedTecnic.hasErrors()) {
+                redirectAttributes.addFlashAttribute("error", savedTecnic.getErrors().get(0).getDem());
+            } else {
+                redirectAttributes.addFlashAttribute("success", form.getCoa() == null ? bundle.getMessage(Constants.SUCCESS_FRONT_SAVE_TECNICS, null, locale) : bundle.getMessage(Constants.SUCCESS_FRONT_UPDATE_TECNICS, null, locale));
+            }
 
-	            // 4. Guardar
-	            TecnicDto savedTecnic = new TecnicDto();
-	            if (!Utils.isEmpty(tecnicForm.getOriginalCoa())) {
-	            	savedTecnic = citaPreviaPrivateClient.updateTecnic(tecnicForm.getCoa(), tecnicToSave, locale);
-	            } else {
-	            	savedTecnic = citaPreviaPrivateClient.saveTecnic(tecnicToSave, locale);
-	            }
-	
-	            if (savedTecnic.hasErrors()) {
-	                // Maneig d'errors del backend
-	                redirect.addFlashAttribute("error", savedTecnic.getErrors().get(0).getDem());
-	                redirect.addFlashAttribute("tecnicForm", tecnicForm);
-	            } else {
-	                redirect.addFlashAttribute("success", tecnicForm.getCoa() == null ? bundle.getMessage(Constants.SUCCESS_FRONT_SAVE_TECNICS, null, locale) : bundle.getMessage(Constants.SUCCESS_FRONT_UPDATE_TECNICS, null, locale));
-	            }
-            
-        } catch (Exception e) {
-            LOG.error("### Error saveTecnic tecnicForm={}", tecnicForm.toString(), e);
-            redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TECNICS, null, locale));
-            // Torna a afegir el DTO per mantenir les dades al formulari en cas d'error inesperat
-            redirect.addFlashAttribute("tecnicForm", tecnicForm);
+        } catch (Exception e) {       	
+        	LOG.error("### Error PrivateController.saveUpdateTecnic {}", e);
+            redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TECNICS, null, locale));
         } finally {
             long totalTime = (System.currentTimeMillis() - startTime);
-            LOG.info("### Final PrivateController.saveTecnic totalTime={}, tecnicForm={}", totalTime, tecnicForm.toString());
+            LOG.info("### Final PrivateController.saveUpdateTecnic totalTime={}, savedTecnic={}", totalTime, savedTecnic.toString());
         }
 
         return "redirect:/private/gestio/tecnics";
     }
     
-    /**
-     * Elimina un tècnic.
-     */
     @PostMapping("/gestio/tecnics/delete")
-    public String deleteTecnic(@RequestParam("coa") String coa,
-                               RedirectAttributes redirect,
+    /**
+     * Processa la eliminació d'una tècnic en l'àrea privada i la desa a la BBDD
+     * @param coa Codi del tècnic a eliminar
+	 * @param redirectAttributes Afegir missatges 'flash' (com errors) que es mantindran després d'una redirecció.
+	 * @param authentication Objecte d'autenticació de Spring Security que conté la informació de l'usuari que ha fet login.
+     * @param locale La configuració regional (idioma) de l'usuari
+     * @return Redirecció a la vista si la petició és correcta.
+     */
+    public String deleteTecnic(@RequestParam String coa,
+                               RedirectAttributes redirectAttributes,
                                Authentication authentication,
                                Locale locale) {
 
         long startTime = System.currentTimeMillis();
-        LOG.info("### Inici PrivateController.deleteTecnic con={}", coa);
-
-        String subaplCoa = null;
-
-        // Obtenir la subaplicació del perfil de l'usuari (igual que als altres mètodes)
-        if (authentication.getAuthorities() != null && !authentication.getAuthorities().isEmpty()) {
-            for (GrantedAuthority authority : authentication.getAuthorities()) {
-                subaplCoa = StringUtils.substringAfter(authority.getAuthority(), "_");
-                break;
-            }
-        }
-
+        LOG.info("### Inici PrivateController.deleteTecnic startTime, coa={}", startTime, coa);
         try {
-            if (Utils.isEmpty(subaplCoa)) {
-                LOG.error("### Error deleteTecnic: No s'ha pogut obtenir la subaplicació de l'usuari autenticat.");
-                redirect.addFlashAttribute("tecnicFormError", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TECNICS, null, locale));
-                return "redirect:/private/gestio/tecnics";
-            }
+			String subaplCoa = this.getSubaplCoa(authentication);
+			
+	        if (Utils.isEmpty(subaplCoa)) {
+	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SUBAPLICACIO_NO_TROBADA, null, locale));
+	        	return "redirect:/private/calendari";
+	        }
 
-            // Crida al client per esborrar el tècnic
-            // Assumint que tens un mètode deleteTecnic al teu CitaPreviaPrivateClient
+            // Esborrar el tècnic
             ErrorDto error = citaPreviaPrivateClient.deleteTecnic(coa, locale);
 
             if (error != null && !Utils.isEmpty(error.getDem())) {
-                redirect.addFlashAttribute("tecnicFormError", error.getDem());
+            	// Errors de l'api
+                redirectAttributes.addFlashAttribute("error", error.getDem());
             } else {
-                redirect.addFlashAttribute("successMessage", bundle.getMessage("tecnic.esborrat.ok", null, locale));
-            }
+            	redirectAttributes.addFlashAttribute("success", bundle.getMessage(Constants.SUCCESS_FRONT_DELETE_TECNICS, null, locale));
+            }           
 
         } catch (Exception e) {
-            LOG.error("### Error deleteTecnic con={}", coa, e);
-            redirect.addFlashAttribute("tecnicFormError", bundle.getMessage("error.esborrar.tecnic", null, locale));
+            LOG.error("### Error PrivateController.deleteTecnic: ", e);
+            redirectAttributes.addFlashAttribute("tecnicFormError", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TECNICS, null, locale));
         } finally {
             long totalTime = (System.currentTimeMillis() - startTime);
-            LOG.info("### Final PrivateController.deleteTecnic totalTime={}", totalTime);
+            LOG.info("### Final PrivateController.deleteTecnic totalTime={}, coa={}", totalTime, coa);
         }
 
         return "redirect:/private/gestio/tecnics";
     }
-    
-    
-    /**
-     * GESTIÓ DE TIPUS DE CITES
-     */
+
 
     @GetMapping("/gestio/tipus-cites")
     public String gestioTipusCites(Model model,
