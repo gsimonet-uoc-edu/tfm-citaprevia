@@ -896,25 +896,25 @@ public class PrivateController {
         return "redirect:/private/gestio/horaris";
     }
     
-    
-    public Map<Long, String> getDiesSetmana() {
-        // Utilitzem TreeMap per mantenir l'ordre per clau (1, 2, 3...)
+    /**
+     * Obté la lookup de dies de la setmana
+     * @param locale La configuració regional (idioma) de l'usuari
+     * @return dies de la setmana traduits
+     */
+    private Map<Long, String> getDiesSetmana(Locale locale) {
         Map<Long, String> diesSetmana = new TreeMap<>();
-        
-        // Els IDs (1 a 7) han de coincidir amb l'estructura de la teva base de dades/DTO
-        diesSetmana.put(1L, "Dilluns");
-        diesSetmana.put(2L, "Dimarts");
-        diesSetmana.put(3L, "Dimecres");
-        diesSetmana.put(4L, "Dijous");
-        diesSetmana.put(5L, "Divendres");
-        diesSetmana.put(6L, "Dissabte");
-        diesSetmana.put(7L, "Diumenge");
-        
+
+        for (long i = 1; i <= 7; i++) {
+            String key = "dia.setmana." + i; // day.1, day.2, etc.
+            String nomDia = bundle.getMessage(key, null, locale); 
+            diesSetmana.put(i, nomDia);
+        }
+
         return diesSetmana;
     }
     
     @GetMapping("/gestio/horaris/{horCon}/setmanes-tipus")
-    public String gestioSetmanesTipus(@PathVariable("horCon") Long horCon, 
+    private String gestioSetmanesTipus(@PathVariable("horCon") Long horCon, 
                                         Model model, 
                                         RedirectAttributes redirect, 
                                         Locale locale) {
@@ -932,7 +932,7 @@ public class PrivateController {
             // 2. Afegir dades al model
             model.addAttribute("horariDto", horariDto);
             model.addAttribute("horariCon", horCon); // Per simplicitat al JS i form
-            model.addAttribute("diesSetmana", getDiesSetmana()); // Mètode que retorna Map<Integer, String> dels dies
+            model.addAttribute("diesSetmana", getDiesSetmana(locale)); // Mètode que retorna Map<Integer, String> dels dies
             model.addAttribute("setmanesTipus", setmanesTipus);
             // 3. Afegir HorariFormDto per al modal d'afegir franja (important per a la validació)
             model.addAttribute("setmanaTipusForm", new SetmanaTipusFormDto()); // <-- Haureu de crear aquest DTO
