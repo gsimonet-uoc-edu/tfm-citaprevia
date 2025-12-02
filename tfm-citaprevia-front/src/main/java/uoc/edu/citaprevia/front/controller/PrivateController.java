@@ -615,19 +615,19 @@ public class PrivateController {
 	        	 return "redirect:/private/calendari";
 		    }
 	        
-	        // 2. Obtenir llistes de lookups
+	        //  Obtenir llistes de lookups
 	        List<UbicacioDto> ubicacions = citaPreviaPrivateClient.getUbicacionsBySubaplicacio(subaplCoa, locale);
 	        List<HorariDto> horaris = citaPreviaPrivateClient.getHorarisBySubaplicacio(subaplCoa, locale);
 	
-	        // 3. Obtenir llistat d'agendes del tècnic connectat
+	        // Obtenir llistat d'agendes del tècnic connectat
 	        List<AgendaDto> agendes = citaPreviaPrivateClient.getAgendasByTecnic(tecCoa, locale);
 	        
-	        // 4. Afegir a la vista
+	        // Afegir a la vista
 	        model.addAttribute("agendes", agendes);
 	        model.addAttribute("ubicacions", ubicacions);
 	        model.addAttribute("horaris", horaris);
 	        
-	        // 5. Formulari buit per a l'alta
+	        // Formulari buit
 	        if (!model.containsAttribute("agendaForm")) {
 	        	AgendaFormDto form = new AgendaFormDto();
 	            model.addAttribute("agendaForm", form);
@@ -649,9 +649,8 @@ public class PrivateController {
     @PostMapping("/gestio/agendes/save")
     /**
      * Processa la petició de l'alta o modificació d'una agenda en l'àrea privada i la desa a la BBDD
-	 * @param form Objecte de formulari que conté les dades de la cita introduïdes per l'usuari.
+	 * @param form Objecte de formulari que conté les dades introduïdes per l'usuari.
 	 * @param result Objecte BindingResult de Spring que comprova i gestiona errors de validació del formulari.
-	 * @param model Model de Spring utilitzat per afegir atributs que es passaran a la vista ThymeLeaf.
 	 * @param redirectAttributes Afegir missatges 'flash' (com errors) que es mantindran després d'una redirecció.
 	 * @param authentication Objecte d'autenticació de Spring Security que conté la informació de l'usuari que ha fet login.
      * @param locale La configuració regional (idioma) de l'usuari
@@ -772,15 +771,15 @@ public class PrivateController {
 	        	return "redirect:/private/calendari";
 	        }
 	        
-	        // 1. Obtenir llisat d'horaris
+	        // Obtenir llisat d'horaris
 	        List<HorariDto> horaris = citaPreviaPrivateClient.getHorarisBySubaplicacio(subaplCoa, locale);
 	        model.addAttribute("horaris", horaris);
 	        
-	        // 2. Obtener lookups necessàries
+	        // Obtener lookups necessàries
 	        List<TipusCitaDto> tipusCites = citaPreviaPrivateClient.getTipusCitesBySubaplicacio(subaplCoa, locale);
 	        model.addAttribute("tipusCites", tipusCites);
 	        
-	        // 3. Formulari buit per a l'alta
+	        // Formulari buit
 	        if (!model.containsAttribute("horariForm")) {
 	            HorariFormDto form = new HorariFormDto();
 	            model.addAttribute("horariForm", form);
@@ -797,6 +796,15 @@ public class PrivateController {
     }
 
     @PostMapping("/gestio/horaris/save")
+    /**
+     * Processa la petició de l'alta o modificació d'un horari en l'àrea privada i la desa a la BBDD
+	 * @param form Objecte de formulari que conté les dades introduïdes per l'usuari.
+	 * @param result Objecte BindingResult de Spring que comprova i gestiona errors de validació del formulari.
+	 * @param redirectAttributes Afegir missatges 'flash' (com errors) que es mantindran després d'una redirecció.
+	 * @param authentication Objecte d'autenticació de Spring Security que conté la informació de l'usuari que ha fet login.
+     * @param locale La configuració regional (idioma) de l'usuari
+     * @return Redirecció a la vista si la petició és correcta.
+     */
     public String saveUpdateHorari(@ModelAttribute("horariForm") @Valid HorariFormDto form,
                              BindingResult result,
                              Authentication authentication,
@@ -914,131 +922,145 @@ public class PrivateController {
     }
     
     @GetMapping("/gestio/horaris/{horCon}/setmanes-tipus")
-    private String gestioSetmanesTipus(@PathVariable("horCon") Long horCon, 
+    /**
+     * 
+     * Recupera el llistat de setmanes tipus (franges horàries) del horari seleccionat
+	 * @param model Model de Spring utilitzat per afegir atributs que es passaran a la vista ThymeLeaf.
+	 * @param redirectAttributes Afegir missatges 'flash' (com errors) que es mantindran després d'una redirecció.
+     * @param locale La configuració regional (idioma) de l'usuari
+     * @return El nom de la vista o una redirecció en cas d'error.
+     */
+    
+    public String gestioSetmanesTipus(@PathVariable Long horCon, 
                                         Model model, 
-                                        RedirectAttributes redirect, 
+                                        RedirectAttributes redirectAttributes, 
                                         Locale locale) {
         long startTime=System.currentTimeMillis();
         LOG.info("### Inici PrivateController.gestioSetmanesTipus startTime={}, horCon={}", startTime, horCon);
 
         try {
-            // 1. Carregar dades de l'Horari (necessari per a la capçalera)
             HorariDto horariDto = citaPreviaPrivateClient.getHorari(horCon, locale);
             if (horariDto == null || horariDto.getCon() == null) {
-                redirect.addFlashAttribute("error", bundle.getMessage("error.horari.no.trobat", null, locale));
+                redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_SETMANES_TIPUS, null, locale));
                 return "redirect:/private/gestio/horaris";
             }
             List<SetmanaTipusDto> setmanesTipus = citaPreviaPublicClient.getSetmanesTipusByHorari(horCon, locale);
-            // 2. Afegir dades al model
             model.addAttribute("horariDto", horariDto);
-            model.addAttribute("horariCon", horCon); // Per simplicitat al JS i form
-            model.addAttribute("diesSetmana", getDiesSetmana(locale)); // Mètode que retorna Map<Integer, String> dels dies
+            model.addAttribute("horariCon", horCon); 
+            model.addAttribute("diesSetmana", getDiesSetmana(locale)); // Dies de la setmana
             model.addAttribute("setmanesTipus", setmanesTipus);
-            // 3. Afegir HorariFormDto per al modal d'afegir franja (important per a la validació)
-            model.addAttribute("setmanaTipusForm", new SetmanaTipusFormDto()); // <-- Haureu de crear aquest DTO
             
-            // Retorna el nom de la nova plantilla
+            // Formuaro      
+	        if (!model.containsAttribute("setmanaTipusForm")) {
+	        	SetmanaTipusFormDto form = new SetmanaTipusFormDto();
+	            model.addAttribute("setmanaTipusForm", form);
+	        }
+           
             return "private/gestio-setmanes-tipus";
             
         } catch (Exception e) {
             LOG.error("### Error gestioSetmanesTipus horCon={}", horCon, e);
-            redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_HORARIS, null, locale));
+            redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_SETMANES_TIPUS, null, locale));
             return "redirect:/private/gestio/horaris";
         } finally {
             long totalTime = (System.currentTimeMillis() - startTime);
-            LOG.info("### Final PrivateController.gestioSetmanesTipus totalTime={}", totalTime);
+            LOG.info("### Final PrivateController.gestioSetmanesTipus totalTime={}, horCon={}", totalTime, horCon);
         }
     }
     
  
-
     @PostMapping("/horaris/{horCon}/setmanes-tipus/add")
- // IMPORTANT: S'elimina @ResponseBody i es canvia @RequestBody per un binding de formulari simple
- public String addSetmanaTipusToHorari(@PathVariable Long horCon,
-                                       SetmanaTipusFormDto form, // Form binding MVC
-                                       RedirectAttributes redirect, // Per als missatges flash
-                                       Locale locale) {
+    /**
+     * Processa la petició d'afegir una franja a l'horari
+	 * @param form Objecte de formulari que conté les dades introduïdes per l'usuari.
+	 * @param redirectAttributes Afegir missatges 'flash' (com errors) que es mantindran després d'una redirecció.
+     * @param locale La configuració regional (idioma) de l'usuari
+     * @return Redirecció a la vista si la petició és correcta.
+     */
+    public String addSetmanaTipusToHorari(@PathVariable Long horCon,
+                                       	  SetmanaTipusFormDto form,
+                                          RedirectAttributes redirect,
+                                          Locale locale) {
      long startTime = System.currentTimeMillis();
-     LOG.info("### Inici PrivateController.addSetmanaTipus (MVC) startTime={}, horCon={}, form={}", startTime, horCon, form.toString());
-
-     SetmanaTipusDto settipSave = new SetmanaTipusDto();
-     String redirectUrl = "redirect:/private/gestio/horaris/" + horCon + "/setmanes-tipus";
-     
+     LOG.info("### Inici PrivateController.addSetmanaTipusToHorari startTime={}, horCon={}, form={}", startTime, horCon, form.toString());
+     SetmanaTipusDto settipAdded = new SetmanaTipusDto();
+    
      try {
-         // 1. Assignar l'Horari CON al DTO
-         HorariDto horari = new HorariDto();
-         horari.setCon(horCon);
-         settipSave.setHorari(horari);
-         settipSave.setDiasetCon(form.getDiasetCon());
-         settipSave.setHorini(form.getHorini());
-         settipSave.setHorfin(form.getHorfin());
-         
-         // 2. Cridar al client de backend per afegir
-         settipSave = citaPreviaPrivateClient.addSetmanaTipusToHorari(settipSave, locale);
 
-         if (settipSave.hasErrors()) {
-             // Error de negoci del backend
-             String errorMessage = settipSave.getErrors().get(0).getDem();
+    	 HorariDto horari = new HorariDto();
+         horari.setCon(horCon);
+         SetmanaTipusDto settipToAdd = new SetmanaTipusDto();
+         settipToAdd.setHorari(horari);
+         settipToAdd.setDiasetCon(form.getDiasetCon());
+         settipToAdd.setHorini(form.getHorini());
+         settipToAdd.setHorfin(form.getHorfin());
+         
+         // Cridar a l'api per afegir la franja a l'horari
+         settipAdded = citaPreviaPrivateClient.addSetmanaTipusToHorari(settipToAdd, locale);
+
+         if (settipAdded.hasErrors()) {
+             // Error de l'api
+             String errorMessage = settipAdded.getErrors().get(0).getDem();
              redirect.addFlashAttribute("error", errorMessage);
          } else {
-             // Èxit
              redirect.addFlashAttribute("success", bundle.getMessage(Constants.SUCCESS_FRONT_SAVE_SETMANES_TIPUS, null, locale));
          }
          
      } catch (Exception e) {
-         LOG.error("### Error add setmana tipus {}", e);
+         LOG.error("### Error PrivateController.addSetmanaTipusToHorari {}", e);
          // Error general
          String errorMessage = bundle.getMessage(Constants.ERROR_FRONT_GESTIO_SETMANES_TIPUS, null, locale);
          redirect.addFlashAttribute("error", errorMessage);
      } finally {
          long totalTime = (System.currentTimeMillis() - startTime);
-         LOG.info("### Final PrivateController.addSetmanaTipus (MVC) totalTime={}", totalTime);
+         LOG.info("### Final PrivateController.addSetmanaTipusToHorari totalTime={, } horCon={}, settipAdded={}", totalTime, horCon, settipAdded.toString());
      }
      
-     // Redirigir a la pàgina de la llista per veure els missatges flash.
-     return redirectUrl;
+     return "redirect:/private/gestio/horaris/" + horCon + "/setmanes-tipus";
  }
 
     @PostMapping("/horaris/{horCon}/setmanes-tipus/delete")
- // IMPORTANT: S'elimina @ResponseBody i es canvia @RequestBody per un binding de formulari simple
- public String deleteSetmanaTipusOfHorari(@PathVariable Long horCon,
-                                          SetmanaTipusDeleteFormDto form, // Form binding MVC
-                                          RedirectAttributes redirect,
-                                          Locale locale) {
+    /**
+     * Processa la petició d'eliminar una franja horària a l'horari
+     * @param horCon Codi d'horari al qual pertany la franja horària
+	 * @param form Objecte de formulari que conté les dades introduïdes per l'usuari.
+	 * @param redirectAttributes Afegir missatges 'flash' (com errors) que es mantindran després d'una redirecció.
+     * @param locale La configuració regional (idioma) de l'usuari
+     * @return Redirecció a la vista si la petició és correcta.
+     */
+    public String deleteSetmanaTipusOfHorari(@PathVariable Long horCon,
+                                             SetmanaTipusDeleteFormDto form,
+                                             RedirectAttributes redirect,
+                                             Locale locale) {
      long startTime = System.currentTimeMillis();
-     LOG.info("### Inici PrivateController.deleteSetmanaTipusOfHorari (MVC) startTime={}, horCon={}, form={}", startTime, horCon, form.toString());
-
-     String redirectUrl = "redirect:/private/gestio/horaris/" + horCon + "/setmanes-tipus";
+     LOG.info("### Inici PrivateController.deleteSetmanaTipusOfHorari startTime={}, horCon={}, form={}", startTime, horCon, form.toString());
 
      try {
-         SetmanaTipusDto settipDelete = new SetmanaTipusDto();
+         SetmanaTipusDto settipToDelete = new SetmanaTipusDto();
          HorariDto horari = new HorariDto();
          horari.setCon(horCon);
-         settipDelete.setHorari(horari);
-         settipDelete.setDiasetCon(form.getDiasetCon());
-         settipDelete.setHorini(form.getHorini());
-         settipDelete.setHorfin(form.getHorfin());
+         settipToDelete.setHorari(horari);
+         settipToDelete.setDiasetCon(form.getDiasetCon());
+         settipToDelete.setHorini(form.getHorini());
+         settipToDelete.setHorfin(form.getHorfin());
 
-         ErrorDto resultatDelete = citaPreviaPrivateClient.deleteSetmanaTipusOfHorari(horCon, settipDelete, locale);
+         ErrorDto resultatDelete = citaPreviaPrivateClient.deleteSetmanaTipusOfHorari(horCon, settipToDelete, locale);
 
          if (resultatDelete != null && !Utils.isEmpty(resultatDelete.getDem())) {
-             // Error de negoci del backend
+             // Error de l'api
              redirect.addFlashAttribute("error", resultatDelete.getDem());
          } else {
-             // Èxit
              redirect.addFlashAttribute("success", bundle.getMessage(Constants.SUCCESS_FRONT_DELETE_SETMANES_TIPUS, null, locale));
          }
      } catch (Exception e) {
-         LOG.error("### Error deleteSetmanaTipusOfHorari {}", e);
-         // Error general
+         LOG.error("### Error PrivateController.deleteSetmanaTipusOfHorari {}", e);
          redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_API_CRUD_SETMANES_TIPUS, null, locale));
      } finally {
          long totalTime = (System.currentTimeMillis() - startTime);
-         LOG.info("### Final PrivateController.deleteSetmanaTipusOfHorari (MVC) totalTime={}, horCon={}, form={}", totalTime, horCon, form.toString());
+         LOG.info("### Final PrivateController.deleteSetmanaTipusOfHorari totalTime={}, horCon={}", totalTime, horCon);
      }
 
-     // Redirigir sempre a la pàgina de la llista per veure els missatges flash.
-     return redirectUrl;
+     return "redirect:/private/gestio/horaris/" + horCon + "/setmanes-tipus";
  }
     
     
