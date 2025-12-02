@@ -54,7 +54,7 @@
                             <tr>
                                 <th th:text="#{con}">Codi</th>
                                 <th th:text="#{dec}">Descripció</th>
-                                <th th:text="#{dem}">Demanda</th>
+                                <th th:text="#{dem}">Descripció llarga</th>
                                 <th th:text="#{tipcitmod}">Modalitat</th>
                                 <th class="text-end" th:text="#{accions}">Accions</th>
                             </tr>
@@ -117,7 +117,7 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="dem" class="form-label" th:text="#{dem}">Demanda</label>
+                                <label for="dem" class="form-label" th:text="#{dem}">Descripció llarga</label>
                                 <input type="text" class="form-control" id="dem" th:field="*{dem}" maxlength="100"
                                        th:classappend="${#fields.hasErrors('dem')} ? 'is-invalid' : ''">
                                 <div class="invalid-feedback" th:if="${#fields.hasErrors('dem')}" th:errors="*{dem}"></div>

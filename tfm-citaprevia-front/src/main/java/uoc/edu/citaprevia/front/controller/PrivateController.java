@@ -1225,82 +1225,120 @@ public class PrivateController {
 
 
     @GetMapping("/gestio/tipus-cites")
+    /**
+     * Recupera el llistat de tipus de cites (part administrativa)
+	 * @param model Model de Spring utilitzat per afegir atributs que es passaran a la vista ThymeLeaf.
+	 * @param authentication Objecte d'autenticació de Spring Security que conté la informació de l'usuari que ha fet login.
+	 * @param redirectAttributes Afegir missatges 'flash' (com errors) que es mantindran després d'una redirecció.
+	 * @param locale La configuració regional (idioma) de l'usuari
+	 * @return El nom de la vista o una redirecció en cas d'error.
+     */   
     public String gestioTipusCites(Model model,
                                     Authentication authentication,
+    					    		RedirectAttributes redirectAttributes, 
                                     Locale locale) {
-
-        String subaplCoa = getSubaplCoa(authentication);
-        if (Utils.isEmpty(subaplCoa)) {
-            model.addAttribute("error", bundle.getMessage("error.subapl.no.trobada", null, locale));
-            return "redirect:/private/calendari";
-        }
-
-        try {
+        
+        long startTime = System.currentTimeMillis();
+        LOG.info("### Inici PrivateController.gestioTipusCites startTime, coa={}", startTime);
+        
+    	try {
+        	
+			String subaplCoa = this.getSubaplCoa(authentication);
+			
+	        if (Utils.isEmpty(subaplCoa)) {
+	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SUBAPLICACIO_NO_TROBADA, null, locale));
+	        	return "redirect:/private/calendari";
+	        }
+        	
+	        // Afegir al model el llistat de tipus de cites
             List<TipusCitaDto> tipusCites = citaPreviaPrivateClient.getTipusCitesBySubaplicacio(subaplCoa, locale);
             model.addAttribute("tipusCites", tipusCites != null ? tipusCites : Collections.emptyList());
+        
+	        // Formulari buit
+	        if (!model.containsAttribute("tipusCitaForm")) {
+	        	TipusCitaFormDto form = new TipusCitaFormDto();
+	            model.addAttribute("tipusCitaForm", form);
+	        }
 
-            // Per al formulari d'alta/edició
-            model.addAttribute("tipusCitaForm", new TipusCitaFormDto());
-
-        } catch (Exception e) {
-            LOG.error("### Error carregant tipus de cites per subaplCoa={}", subaplCoa, e);
-            model.addAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TIPUS_CITES, null, locale));
-        }
+    	}  catch (Exception e) {
+            LOG.error("### Error PrivateController.gestioTipusCites", e);
+            redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TIPUS_CITES, null, locale));
+            return "redirect:/private/calendari";
+        } finally {
+			long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final PrivateController.gestioTipusCites totalTime={}", totalTime);
+		}
 
         return "private/gestio-tipus-cites";
     }
 
     @PostMapping("/gestio/tipus-cites/save")
+    /**
+     * Processa la petició de l'alta o modificació d'un tipus de cita en l'àrea privada i la desa a la BBDD
+	 * @param form Objecte de formulari que conté les dades introduïdes per l'usuari.
+	 * @param result Objecte BindingResult de Spring que comprova i gestiona errors de validació del formulari.
+	 * @param redirectAttributes Afegir missatges 'flash' (com errors) que es mantindran després d'una redirecció.
+	 * @param authentication Objecte d'autenticació de Spring Security que conté la informació de l'usuari que ha fet login.
+     * @param locale La configuració regional (idioma) de l'usuari
+     * @return Redirecció a la vista si la petició és correcta.
+     */
     public String saveUpdateTipusCita(@Valid @ModelAttribute("tipusCitaForm") TipusCitaFormDto form,
-                                BindingResult bindingResult,
-                                RedirectAttributes redirect,
-                                Authentication authentication,
-                                Locale locale) {
+                                	  BindingResult result,
+                                	  RedirectAttributes redirectAttributes,
+                                	  Authentication authentication,
+                                	  Locale locale) {
 
-    try {
-        String subaplCoa = getSubaplCoa(authentication);
-        if (Utils.isEmpty(subaplCoa)) {
-            redirect.addFlashAttribute("error", bundle.getMessage("error.subapl.no.trobada", null, locale));
-            return "redirect:/private/gestio/tipus-cites";
-        }
-
-        // Afegim la subaplicació al DTO
-        form.setSubaplCoa(subaplCoa);
-
-        if (bindingResult.hasErrors()) {
-            redirect.addFlashAttribute("org.springframework.validation.BindingResult.tipusCitaForm", bindingResult);
-            redirect.addFlashAttribute("tipusCitaForm", form);
-            return "redirect:/private/gestio/tipus-cites";
-        }
-
-        // 4. Guardar
-        TipusCitaDto savedTipusCita = new TipusCitaDto();
-        TipusCitaDto tipusCitaToSave = new TipusCitaDto();
-        tipusCitaToSave.setCon(form.getCon());
-        tipusCitaToSave.setDec(form.getDec());
-        tipusCitaToSave.setDem(form.getDem());
-        tipusCitaToSave.setTipcitmod(ModalitatTipusCita.valueOf(form.getTipcitmod()));
-        SubaplicacioDto subapl = new SubaplicacioDto();
-        subapl.setCoa(subaplCoa);
-        tipusCitaToSave.setSubapl(subapl);
-        if (!Utils.isEmpty(form.getCon())) {
-        	savedTipusCita = citaPreviaPrivateClient.updateTipusCita(form.getCon(), tipusCitaToSave, locale);
-        } else {
-        	savedTipusCita = citaPreviaPrivateClient.saveTipusCita(tipusCitaToSave, locale);
-        }
-
-        if (savedTipusCita.hasErrors()) {
-            // Maneig d'errors del backend
-            redirect.addFlashAttribute("error", savedTipusCita.getErrors().get(0).getDem());
-        } else {
-            redirect.addFlashAttribute("success", form.getCon() == null ? bundle.getMessage(Constants.SUCCESS_FRONT_SAVE_TIPUS_CITES, null, locale) : bundle.getMessage(Constants.SUCCESS_FRONT_UPDATE_TIPUS_CITES, null, locale));
-        }
-        
-        } catch (Exception e) {
-            LOG.error("### Error guardant tipus de cita: {}", form, e);
-            redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TIPUS_CITES, null, locale));
-            redirect.addFlashAttribute("tipusCitaForm", form);
-        }
+        long startTime = System.currentTimeMillis();
+        LOG.info("### Inici PrivateController.saveUpdateTipusCita startTime, form={}", startTime, form.toString());
+    	TipusCitaDto savedTipusCita = new TipusCitaDto();	
+    	try {    	
+    			if (result.hasErrors()) {
+    				redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TECNICS, null, locale));
+    				return "redirect:/private/gestio/tipus-cites"; 
+    			}
+		  	
+	        // Assignar Subaplicació
+			String subaplCoa = this.getSubaplCoa(authentication);
+			
+	        if (Utils.isEmpty(subaplCoa)) {
+	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SUBAPLICACIO_NO_TROBADA, null, locale));
+	        	return "redirect:/private/calendari";
+	        }
+	
+	        // Afegim la subaplicació al form
+	      //  form.setSubaplCoa(subaplCoa);
+	
+	
+	        //Guardar /Actualitzar       
+	        TipusCitaDto tipusCitaToSave = new TipusCitaDto();
+	        tipusCitaToSave.setCon(form.getCon());
+	        tipusCitaToSave.setDec(form.getDec());
+	        tipusCitaToSave.setDem(form.getDem());
+	        tipusCitaToSave.setTipcitmod(ModalitatTipusCita.valueOf(form.getTipcitmod()));
+	        SubaplicacioDto subapl = new SubaplicacioDto();
+	        subapl.setCoa(subaplCoa);
+	        tipusCitaToSave.setSubapl(subapl);
+	        
+	        if (!Utils.isEmpty(form.getCon())) {
+	        	savedTipusCita = citaPreviaPrivateClient.updateTipusCita(form.getCon(), tipusCitaToSave, locale);
+	        } else {
+	        	savedTipusCita = citaPreviaPrivateClient.saveTipusCita(tipusCitaToSave, locale);
+	        }
+	
+	        if (savedTipusCita.hasErrors()) {
+	            // Errors de l'api
+	            redirectAttributes.addFlashAttribute("error", savedTipusCita.getErrors().get(0).getDem());
+	        } else {
+	            redirectAttributes.addFlashAttribute("success", form.getCon() == null ? bundle.getMessage(Constants.SUCCESS_FRONT_SAVE_TIPUS_CITES, null, locale) : bundle.getMessage(Constants.SUCCESS_FRONT_UPDATE_TIPUS_CITES, null, locale));
+	        }
+	        
+    	}  catch (Exception e) {
+            LOG.error("### Error PrivateController.saveUpdateTipusCita: ", e);
+            redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TIPUS_CITES, null, locale));
+        } finally {
+			long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final PrivateController.saveUpdateTipusCita totalTime={}, savedTipusCita={}", totalTime, savedTipusCita.toString());
+		}
 
         return "redirect:/private/gestio/tipus-cites";
     }
