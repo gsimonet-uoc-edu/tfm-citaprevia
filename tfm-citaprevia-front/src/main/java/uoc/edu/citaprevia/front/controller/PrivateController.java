@@ -587,14 +587,13 @@ public class PrivateController {
     
     @GetMapping("/gestio/agendes")
     /**
-     * Recupera les llistes d'agendes assignades al tècnic connectat
+     * Recupera el llistat d'agendes del tècnic connectat
 	 * @param model Model de Spring utilitzat per afegir atributs que es passaran a la vista ThymeLeaf.
 	 * @param authentication Objecte d'autenticació de Spring Security que conté la informació de l'usuari que ha fet login.
 	 * @param redirectAttributes Afegir missatges 'flash' (com errors) que es mantindran després d'una redirecció.
 	 * @param locale La configuració regional (idioma) de l'usuari
 	 * @return El nom de la vista o una redirecció en cas d'error.
-     */
-    
+     */   
     public String gestioAgendes(Model model, Authentication authentication,
 					    		RedirectAttributes redirectAttributes, 
 					    		Locale locale) {
@@ -627,7 +626,13 @@ public class PrivateController {
 	        model.addAttribute("agendes", agendes);
 	        model.addAttribute("ubicacions", ubicacions);
 	        model.addAttribute("horaris", horaris);
-	        model.addAttribute("agendaForm", new AgendaFormDto()); // Formulari buit per a l'alta
+	        
+	        // 5. Formulari buit per a l'alta
+	        if (!model.containsAttribute("agendaForm")) {
+	        	AgendaFormDto form = new AgendaFormDto();
+	            model.addAttribute("agendaForm", form);
+	        }
+	        
 	        model.addAttribute("isAdministrador", this.isAdministrador(authentication));
     	}  catch (Exception e) {
             LOG.error("### Error gestio agenda {}", e);
@@ -679,7 +684,7 @@ public class PrivateController {
             HorariDto horari = new HorariDto(); 
             horari.setCon(form.getHorariCon());
             
-            // 3. Tècnic connectat
+            // Tècnic connectat
             TecnicDto tecnic = new TecnicDto(); 
             tecnic.setCoa(authentication.getName());
             
@@ -713,6 +718,7 @@ public class PrivateController {
     @PostMapping("/gestio/agendes/delete")
     /**
      * Processa la eliminació d'una agenda en l'àrea privada i la desa a la BBDD
+     * @param con Codi de l'agenda a eliminar
 	 * @param redirectAttributes Afegir missatges 'flash' (com errors) que es mantindran després d'una redirecció.
      * @param locale La configuració regional (idioma) de l'usuari
      * @return Redirecció a la vista si la petició és correcta.
@@ -726,6 +732,7 @@ public class PrivateController {
         try {
             ErrorDto error = citaPreviaPrivateClient.deleteAgenda(con, locale);
             if (error != null) {
+            	// Errors de l'api
                 redirectAttributes.addFlashAttribute("error", error.getDem());
             } else {
             	redirectAttributes.addFlashAttribute("success", bundle.getMessage(Constants.SUCCESS_FRONT_DELETE_AGENDES, null, locale));
@@ -742,37 +749,45 @@ public class PrivateController {
     }
     
     @GetMapping("/gestio/horaris")
-    public String gestioHoraris(Model model, Authentication authentication, RedirectAttributes redirect, Locale locale) {
+    /**
+     * Recupera el llistat d'horaris del tècnic connectat
+	 * @param model Model de Spring utilitzat per afegir atributs que es passaran a la vista ThymeLeaf.
+	 * @param authentication Objecte d'autenticació de Spring Security que conté la informació de l'usuari que ha fet login.
+	 * @param redirectAttributes Afegir missatges 'flash' (com errors) que es mantindran després d'una redirecció.
+	 * @param locale La configuració regional (idioma) de l'usuari
+	 * @return El nom de la vista o una redirecció en cas d'error.
+     */
+    public String gestioHoraris(Model model,
+					    		Authentication authentication,
+					    		RedirectAttributes redirectAttributes,
+					    		Locale locale) {
 		long startTime=System.currentTimeMillis();
 		LOG.info("### Inici PrivateController.gestioHoraris startTime={}", startTime);
-	    try {	      
-	    	// 1. Obtenir el tècnic connectat (assumint que el 'name' és el 'coa')
-		    String subaplCoa = null;
-		    // Obtenir subaplicacio del perfil de l'usuari
-		    if (authentication.getAuthorities() != null && !authentication.getAuthorities().isEmpty()) {
-		        for (GrantedAuthority authority : authentication.getAuthorities()) {
-		            subaplCoa = StringUtils.substringAfter(authority.getAuthority(), "_");
-		            break;
-		         }
-		     }
+	    try {	
+	    	
+			String subaplCoa = this.getSubaplCoa(authentication);
+			
+	        if (Utils.isEmpty(subaplCoa)) {
+	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SUBAPLICACIO_NO_TROBADA, null, locale));
+	        	return "redirect:/private/calendari";
+	        }
 	        
-	        // 1. Obtener listado de Horarios
+	        // 1. Obtenir llisat d'horaris
 	        List<HorariDto> horaris = citaPreviaPrivateClient.getHorarisBySubaplicacio(subaplCoa, locale);
 	        model.addAttribute("horaris", horaris);
 	        
-	        // 2. Obtener Lookups: Tipos de Cita
-	        // Solo se necesitan los Tipos de Cita asociados a esta subaplicación
+	        // 2. Obtener lookups necessàries
 	        List<TipusCitaDto> tipusCites = citaPreviaPrivateClient.getTipusCitesBySubaplicacio(subaplCoa, locale);
 	        model.addAttribute("tipusCites", tipusCites);
 	        
-	        // 3. Inicializar el DTO para el formulario modal
+	        // 3. Formulari buit per a l'alta
 	        if (!model.containsAttribute("horariForm")) {
 	            HorariFormDto form = new HorariFormDto();
 	            model.addAttribute("horariForm", form);
 	        }
 	    }  catch (Exception e) {
-	        LOG.error("### Error gestio horari {}", e);
-	        redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_AGENDES, null, locale));
+	        LOG.error("### Error PrivateController.gestioHoraris {}", e);
+	        redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_HORARIS, null, locale));
 	        return "redirect:/private/calendari";
 	    } finally {
 	    	long totalTime = (System.currentTimeMillis() - startTime);
@@ -785,44 +800,43 @@ public class PrivateController {
     public String saveUpdateHorari(@ModelAttribute("horariForm") @Valid HorariFormDto form,
                              BindingResult result,
                              Authentication authentication,
-                             RedirectAttributes redirect,
+                             RedirectAttributes redirectAttributes,
                              Locale locale) {
 		long startTime=System.currentTimeMillis();
-		LOG.info("### Inici PrivateController.saveUpdateHorari startTime={}", startTime);
+		LOG.info("### Inici PrivateController.saveUpdateHorari startTime={}, form={}", startTime, form.toString());
     	try {
         
     		if (result.hasErrors()) {
-            redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SAVE_HORARIS, null, locale));
-            return "redirect:/private/gestio/agendes"; 
+    			redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SAVE_HORARIS, null, locale));
+    			return "redirect:/private/gestio/agendes"; 
     		}
 
-            // Mapear DTO del formulario a DTO de la API
+            // Crear el dto per enviar a l'api
             HorariDto horariToSave = new HorariDto();
             horariToSave.setCon(form.getCon());
             horariToSave.setDec(form.getDec());
             horariToSave.setDem(form.getDem());
             
-            // Crear objetos DTO de Lookup
+            // Lookups
             TipusCitaDto tipusCita = new TipusCitaDto();
             tipusCita.setCon(form.getTipusCitaCon());
             horariToSave.setTipusCita(tipusCita);
             
-            // Asignar Subaplicació
-		    String subaplCoa = null;
-		    // Obtenir subaplicacio del perfil de l'usuari
-		    if (authentication.getAuthorities() != null && !authentication.getAuthorities().isEmpty()) {
-		        for (GrantedAuthority authority : authentication.getAuthorities()) {
-		            subaplCoa = StringUtils.substringAfter(authority.getAuthority(), "_");
-		            break;
-		         }
-		     }
+            // Assignar Subaplicació
+			String subaplCoa = this.getSubaplCoa(authentication);
+			
+	        if (Utils.isEmpty(subaplCoa)) {
+	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SUBAPLICACIO_NO_TROBADA, null, locale));
+	        	return "redirect:/private/calendari";
+	        }
+	        
             SubaplicacioDto subapl = new SubaplicacioDto();
             subapl.setCoa(subaplCoa);
             horariToSave.setSubapl(subapl);
             
-            // 4. Guardar
+            // Guardar o actualitzar
             HorariDto savedAgenda = new HorariDto();
-            if (form.getCon() != null) {
+            if (!Utils.isEmpty(form.getCon())) {
             	 savedAgenda = citaPreviaPrivateClient.updateHorari(form.getCon(), horariToSave, locale);
             } else {
             	savedAgenda = citaPreviaPrivateClient.saveHorari(horariToSave, locale);
@@ -830,33 +844,42 @@ public class PrivateController {
 
             if (savedAgenda.hasErrors()) {
                 // Maneig d'errors del backend
-                redirect.addFlashAttribute("error", savedAgenda.getErrors().get(0).getDem());
+                redirectAttributes.addFlashAttribute("error", savedAgenda.getErrors().get(0).getDem());
             } else {
-                redirect.addFlashAttribute("success", form.getCon() == null ? bundle.getMessage(Constants.SUCCESS_FRONT_SAVE_HORARIS, null, locale) : bundle.getMessage(Constants.SUCCESS_FRONT_UPDATE_HORARIS, null, locale));
+                redirectAttributes.addFlashAttribute("success", form.getCon() == null ? bundle.getMessage(Constants.SUCCESS_FRONT_SAVE_HORARIS, null, locale) : bundle.getMessage(Constants.SUCCESS_FRONT_UPDATE_HORARIS, null, locale));
             }
             
     	}  catch (Exception e) {
-            LOG.error("### Error save/update horari {}", e);
-            redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_HORARIS, null, locale));
+            LOG.error("### Error PrivateController.saveUpdateHorari {}", e);
+            redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_HORARIS, null, locale));
         } finally {
 			long totalTime = (System.currentTimeMillis() - startTime);
-			LOG.info("### Final PrivateController.saveUpdateHorari totalTime={}", totalTime);
+			LOG.info("### Final PrivateController.saveUpdateHorari , totalTime={}, form={}", totalTime, form.toString());
 		}
-        
-        
+              
         return "redirect:/private/gestio/horaris";
     }
 
     @PostMapping("/gestio/horaris/delete")
+    
+    /**
+     * Processa la eliminació d'un horari a en l'àrea privada i la desa a la BBDD
+     * @param con Codi de l'horari a eliminar
+     * Processa la eliminació d'una agenda en l'àrea privada i la desa a la BBDD
+	 * @param redirectAttributes Afegir missatges 'flash' (com errors) que es mantindran després d'una redirecció.
+     * @param locale La configuració regional (idioma) de l'usuari
+     * @return Redirecció a la vista si la petició és correcta.
+     */
     public String deleteHorari(@RequestParam("con") Long horCon,
                                RedirectAttributes redirect,
                                Locale locale) {
 		long startTime=System.currentTimeMillis();
 		LOG.info("### Inici PrivateController.deleteHorari startTime={}, horCon={}", startTime, horCon);
         try {
+        	    	
             ErrorDto error = citaPreviaPrivateClient.deleteHorari(horCon, locale);
             if (error != null) {
-                // Maneig d'errors del backend
+            	// Errors de l'api
                 redirect.addFlashAttribute("error", error.getDem());
             } else {
             	redirect.addFlashAttribute("success", bundle.getMessage(Constants.SUCCESS_FRONT_DELETE_HORARIS, null, locale));
@@ -867,7 +890,7 @@ public class PrivateController {
             redirect.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_HORARIS, null, locale));
         } finally {
 			long totalTime = (System.currentTimeMillis() - startTime);
-			LOG.info("### Final PrivateController.deleteHorari totalTime={}, ageCon={}", totalTime, horCon);
+			LOG.info("### Final PrivateController.deleteHorari totalTime={}, horCon={}", totalTime, horCon);
 		}
         
         return "redirect:/private/gestio/horaris";
