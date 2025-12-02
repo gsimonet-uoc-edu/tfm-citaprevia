@@ -52,6 +52,7 @@ public final class Constants {
     // ERRORS FRONTEND (missatges mostrats a l'usuari final)
     // ==================================================================
     public static final String ERROR_FRONT_GESTIO_TECNICS      = "error.tecnics.gestio";
+    public static final String ERROR_FRONT_GESTIO_CITES      = "error.cita.gestio";
     public static final String ERROR_FRONT_GESTIO_AGENDES      = "error.agendes.gestio";
     public static final String ERROR_FRONT_GESTIO_HORARIS      = "error.horaris.gestio";
     public static final String ERROR_FRONT_GESTIO_SETMANES_TIPUS = "error.setmanestipus.gestio";

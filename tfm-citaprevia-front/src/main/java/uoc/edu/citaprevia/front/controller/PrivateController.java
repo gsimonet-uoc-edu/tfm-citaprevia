@@ -253,7 +253,7 @@ public class PrivateController {
 	 * @param model Model de Spring utilitzat per afegir atributs que es passaran a la vista ThymeLeaf.
 	 * @param redirectAttributes Afegir missatges 'flash' (com errors) que es mantindran després d'una redirecció.
 	 * @param locale La configuració regional (idioma) de l'usuari
-	 * @return El nom de la vista ("private/calendari-private") o una redirecció en cas d'error.
+	 * @return El nom de la vista  o una redirecció en cas d'error.
 	 * @throws Exception Qualsevol altre error excepcional.
 	 */
 	public String confirmacioCita(
@@ -314,7 +314,7 @@ public class PrivateController {
 	 * @param redirectAttributes Afegir missatges 'flash' (com errors) que es mantindran després d'una redirecció.
 	 * @param authentication Objecte d'autenticació de Spring Security que conté la informació de l'usuari que ha fet login.
 	 * @param locale La configuració regional (idioma) de l'usuari
-	 * @return Redirecció a la vista de confirmació si l'actualització és correcta.
+	 * @return Redirecció a la vista de confirmació si la petició és correcta.
 	 * @throws Exception Qualsevol altre error excepcional.
 	 */
 	public String actualitzarCita(
@@ -395,31 +395,62 @@ public class PrivateController {
 	}
 
 	@PostMapping("/cita/cancelar")
+	/**
+	 * Processa la petició de cancel.lació d'una cita existent en l'àrea privada.
+	 * @param con El codi de la cita sobre la qual s'ha realitzat l'acció.
+	 * @param redirectAttributes Afegir missatges 'flash' (com errors) que es mantindran després d'una redirecció.
+	 * @param authentication Objecte d'autenticació de Spring Security que conté la informació de l'usuari que ha fet login.
+	 * @param locale La configuració regional (idioma) de l'usuari
+	 * @return Redirecció a la vista de confirmació si la petició és correcta.
+	 * @throws Exception Qualsevol altre error excepcional.
+	 */
 	public String cancelarCita(
 	        @RequestParam Long citaCon,
 	        Authentication authentication,
-	        RedirectAttributes redirect,
+	        RedirectAttributes redirectAttributes,
 	        Locale locale) throws Exception {
 
-	    String coa = authentication.getName();
-	    TecnicDto tecnic = citaPreviaPrivateClient.getTecnic(coa, locale);
-	    if (tecnic == null) return "redirect:/private/login";
-
-	    String subaplCoa = StringUtils.substringAfter(tecnic.getPrf(), "_");
-
-	    CitaDto cita = citaPreviaPublicClient.getCita(citaCon, locale);
-	    if (cita == null || !subaplCoa.equals(cita.getAgenda().getHorari().getSubapl().getCoa())) {
-	        redirect.addFlashAttribute("error", "Cita no vàlida");
-	        return "redirect:/private/calendari";
-	    }
-
-	    ErrorDto error = citaPreviaPrivateClient.deleteCita(citaCon, locale);
-	    if (error == null) {
-	        return "redirect:/private/cita/confirmacio?con=" + citaCon + "&accion=cancelada";
-	    } else {
-	        redirect.addFlashAttribute("error", "Error al cancel·lar");
-	        return "redirect:/private/calendari";
-	    }
+		long startTime=System.currentTimeMillis();
+		LOG.info("### Inici PrivateController.cancelarCita startTime={}, citaCon={}", startTime, citaCon);
+				
+    	try {
+    		   	
+			String subaplCoa = this.getSubaplCoa(authentication);
+			
+	        if (Utils.isEmpty(subaplCoa)) {
+	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SUBAPLICACIO_NO_TROBADA, null, locale));
+	        	return "redirect:/private/calendari";
+	        }
+	        
+	        String coa = authentication.getName();
+		    TecnicDto tecnic = citaPreviaPrivateClient.getTecnic(coa, locale);
+		    if (tecnic == null || Utils.isEmpty(tecnic.getCoa())) {
+	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_TECNICS, null, locale));
+	        	 return "redirect:/private/calendari";
+		    }
+		    
+	
+		    CitaDto cita = citaPreviaPublicClient.getCita(citaCon, locale);
+		    if (cita == null || Utils.isEmpty(cita.getCon()) || !subaplCoa.equals(cita.getAgenda().getHorari().getSubapl().getCoa())) {
+		        redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_CITES, null, locale));
+		        return "redirect:/private/calendari";
+		    }
+	
+		    ErrorDto error = citaPreviaPrivateClient.deleteCita(citaCon, locale);
+		    if (error == null) {
+		        return "redirect:/private/cita/confirmacio?con=" + citaCon + "&accion=cancelada";
+		    } else {
+		        redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_CITES, null, locale));
+		        return "redirect:/private/calendari";
+		    }
+	    }  catch (Exception e) {
+	        LOG.error("### Error PrivateController.cancelarCitaa {}", e);
+        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_API_CRUD_CITA, null, locale));
+        	return "redirect:/private/calendari";
+	    } finally {
+	    	long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final PrivateController.cancelarCita totalTime={}, citaDeleted={}", totalTime, citaCon);
+		}   	
 	}
 	
 	private Map<LocalDate, List<Map<String, Object>>> generarEvents(List<AgendaDto> agendes, CitaPreviaPublicClient client, Locale locale) {

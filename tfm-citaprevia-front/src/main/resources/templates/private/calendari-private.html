@@ -224,13 +224,13 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p th:text="#{seguro_cancelar_cita}"></p>
+                    <p th:text="#{segur_cancelar_cita}"></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{no}"></button>
                     <form th:action="@{'/private/cita/cancelar'}" method="post" class="d-inline">
                         <input type="hidden" name="citaCon" id="cancelCitaCon">
-                        <button type="submit" class="btn btn-danger" th:text="#{si_cancelar}"></button>
+                        <button type="submit" class="btn btn-danger" th:text="#{si}"></button>
                     </form>
                 </div>
             </div>
