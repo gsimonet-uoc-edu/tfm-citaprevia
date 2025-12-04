@@ -38,6 +38,7 @@ public final class Constants {
 
     // Operacions específiques d'eliminació (dependències)
     public static final String ERROR_API_DELETE_AGENDA                  = "error.agendas.delete";
+    public static final String ERROR_API_UPDATE_AGENDA_AMB_CITES        = "error.agendas.cites.update";
     public static final String ERROR_API_DELETE_HORARI                  = "error.horaris.delete";
     public static final String ERROR_API_DELETE_TECNIC_AGENDES          = "error.tecnic.agendes.delete";
     public static final String ERROR_API_DELETE_SETMANES_TIPUS          = "error.setmanestipus.delete";

@@ -16,4 +16,5 @@ public interface CitaRepository extends PagingAndSortingRepository<Cita, Long> {
 	List<Cita> findByAgendaCon(Long ageCon);
 	List<Cita> findByAgendaHorariCon(Long horCon);
 	List<Cita> findByAgendaTecnicCoa(String tecCoa);
+	
 }

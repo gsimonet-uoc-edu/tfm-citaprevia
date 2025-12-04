@@ -130,7 +130,14 @@ public class AgendaServiceImpl implements AgendaService{
 		AgendaDto dto = new AgendaDto();
 		try {
 			if (agenda != null && !Utils.isEmpty(agenda.getCon())) {
-				dto = Converter.toDto(agendaDao.updateAgenda(Converter.toDao(agenda)));
+				// Validacions per actualitzar agenda
+				List<Cita> teCites = citaDao.findCitesByAgenda(agenda.getCon());
+				// Comprovar que l'agenda no te cites
+				if (teCites != null && !teCites.isEmpty() && teCites.size() > 0) {
+					dto.addError(new ErrorDto(9999L,bundle.getMessage(Constants.ERROR_API_UPDATE_AGENDA_AMB_CITES, null, locale)));
+				} else {
+					dto = Converter.toDto(agendaDao.updateAgenda(Converter.toDao(agenda)));
+				}
 			} else {
 				dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL, bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale)));
 				LOG.error("### Error AgendaServiceImpl.updateAgenda={} " , dto.getErrors().get(0).toString());
@@ -159,7 +166,7 @@ public class AgendaServiceImpl implements AgendaService{
 			if (dao == null) {
 				return new ErrorDto(9999L,bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale));
 			} else {
-				// Validacions per esborrar cita
+				// Validacions per esborrar agenda
 				List<Cita> teCites = citaDao.findCitesByAgenda(con);
 				// Comprovar que l'agenda no te cites
 				if (teCites != null && !teCites.isEmpty() && teCites.size() > 0) {
