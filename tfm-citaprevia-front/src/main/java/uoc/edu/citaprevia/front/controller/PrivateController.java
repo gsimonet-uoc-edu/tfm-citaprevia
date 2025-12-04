@@ -1545,4 +1545,23 @@ public class PrivateController {
         return "redirect:/private/gestio/ubicacions";
     }
     
+    @GetMapping("/dashboard")
+    public String dashboard(Authentication authentication,
+			Model model,
+			RedirectAttributes redirectAttributes,
+			Locale locale) {
+    	
+	/*	String subaplCoa = this.getSubaplCoa(authentication);
+		
+        if (Utils.isEmpty(subaplCoa)) {
+        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SUBAPLICACIO_NO_TROBADA, null, locale));
+        	return "redirect:/private/calendari";
+        }
+    	
+		model.addAttribute("subaplCoa", subaplCoa); */
+
+    	
+        return "private/dashboard";
+    }
+    
 }
