@@ -37,6 +37,8 @@ public interface CitaPreviaPublicClient {
 	ErrorDto deleteCitaPersona(Long citCon, String numdoc, Locale locale);
 
 	SubaplicacioDto getSubaplicacio(String subaplCoa, Locale locale);
+
+	List<AgendaDto> getAgendesObertesBySubaplicacioAndTipusCita(String subaplCoa, Long tipCitCon, Locale locale);
 	
 
 }

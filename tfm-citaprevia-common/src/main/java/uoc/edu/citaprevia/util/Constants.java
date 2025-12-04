@@ -52,7 +52,7 @@ public final class Constants {
     // ERRORS FRONTEND (missatges mostrats a l'usuari final)
     // ==================================================================
     public static final String ERROR_FRONT_GESTIO_TECNICS      = "error.tecnics.gestio";
-    public static final String ERROR_FRONT_GESTIO_CITES      = "error.cita.gestio";
+    public static final String ERROR_FRONT_GESTIO_CITES      = "error.cites.gestio";
     public static final String ERROR_FRONT_GESTIO_AGENDES      = "error.agendes.gestio";
     public static final String ERROR_FRONT_GESTIO_HORARIS      = "error.horaris.gestio";
     public static final String ERROR_FRONT_GESTIO_SETMANES_TIPUS = "error.setmanestipus.gestio";
@@ -96,4 +96,9 @@ public final class Constants {
     public static final String SUCCESS_FRONT_SAVE_TECNICS        = "success.tecnics.save";
     public static final String SUCCESS_FRONT_UPDATE_TECNICS      = "success.tecnics.update";
     public static final String SUCCESS_FRONT_DELETE_TECNICS      = "success.tecnics.delete";
+    
+    // Cites
+    public static final String SUCCESS_FRONT_SAVE_CITES       = "success.cites.save";
+    public static final String SUCCESS_FRONT_DELETE_CITES      = "success.cites.delete";
+    
 }

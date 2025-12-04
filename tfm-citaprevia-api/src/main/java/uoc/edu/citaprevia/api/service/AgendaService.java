@@ -22,4 +22,6 @@ public interface AgendaService {
 
 	ErrorDto deleteAgenda(Long con, Locale locale);
 
+	List<AgendaDto> getAgendesObertesByTipusCitaAndSubaplicacio(Long tipCitCon, String subaplCoa, Locale locale);
+
 }

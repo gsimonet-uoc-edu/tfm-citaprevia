@@ -49,6 +49,19 @@ public class AgendaServiceImpl implements AgendaService{
 	}
 	
 	@Override
+	public List<AgendaDto> getAgendesObertesByTipusCitaAndSubaplicacio (Long tipCitCon, String subaplCoa, Locale locale) {
+		
+		List<AgendaDto> dtos = new ArrayList<AgendaDto>();
+		
+		if (!Utils.isEmpty(tipCitCon) && !Utils.isEmpty(subaplCoa)) {
+			List<Agenda> daos = agendaDao.findAgendesObertesByTipusCitaAndSubaplicacio(tipCitCon, subaplCoa);	
+			daos.forEach(item->dtos.add(Converter.toDto(item)));
+		}
+		
+		return dtos;
+	}
+	
+	@Override
 	public AgendaDto getAgenda(Long con, Locale locale) {
 		AgendaDto dto = new AgendaDto();
 		if (!Utils.isEmpty(con)) {

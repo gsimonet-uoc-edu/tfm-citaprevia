@@ -1,5 +1,6 @@
 package uoc.edu.citaprevia.api.dao;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,11 @@ public class AgendaDao {
 	public List<Agenda> findAgendesByTipusCitaAndSubaplicacio (Long tipCitCon, String subaplCoa) {
 		return agendaRepository.findByHorariTipusCitaConAndHorariSubaplCoa(tipCitCon, subaplCoa);
 	}
+	
+	public List<Agenda> findAgendesObertesByTipusCitaAndSubaplicacio (Long tipCitCon, String subaplCoa) {
+		return agendaRepository.findByHorariTipusCitaConAndHorariSubaplCoaAndDatfinGreaterThanEqual(tipCitCon, subaplCoa, LocalDate.now());
+	}
+	
 	
 	public Agenda findAgendaByCon (Long con) {
 		return agendaRepository.findByCon(con);

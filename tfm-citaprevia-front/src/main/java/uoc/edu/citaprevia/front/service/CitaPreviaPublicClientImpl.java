@@ -83,6 +83,17 @@ public class CitaPreviaPublicClientImpl  implements CitaPreviaPublicClient{
 	}
 	
 	@Override
+	public List<AgendaDto> getAgendesObertesBySubaplicacioAndTipusCita(String subaplCoa, Long tipCitCon, Locale locale) {
+		Map<String, Object> params = new HashMap<>();
+		params.put(PARAM_SUBAPL_COA, subaplCoa);
+		params.put(PARAM_TIPCIT_CON, tipCitCon);		
+		params.put(PARAM_LOCALE, locale);
+		String url = getBaseApiUrl() + "/agendes/obertes/tipus-cites/{tipCitCon}/subaplicacions/{subaplCoa}?lang={lang}";	
+		AgendaDto[] list = restTemplate.getForObject(url, AgendaDto[].class, params);
+		return list == null ? new ArrayList<>() : Arrays.asList(list);
+	}
+	
+	@Override
 	public List<SetmanaTipusDto> getSetmanesTipusByHorari(Long horCon, Locale locale) {
 		Map<String, Object> params = new HashMap<>();
 		params.put(PARAM_HOR_CON, horCon);	
@@ -163,7 +174,6 @@ public class CitaPreviaPublicClientImpl  implements CitaPreviaPublicClient{
 		params.put(PARAM_LOCALE, locale);
 		//params.put("lang", locale == null ? "es" : locale.toString());
 		String url = getBaseApiUrl() + "/cites/{citCon}/documents-identificatius/{numdoc}?lang={lang}";
-	    // Ejecutamos la petición DELETE usando exchange, que permite obtener la respuesta
 	    ResponseEntity<ErrorDto> response = restTemplate.exchange(url, 
 	        HttpMethod.DELETE, 
 	        null,               

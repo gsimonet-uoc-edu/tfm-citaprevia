@@ -173,6 +173,7 @@ public class PrivateController {
 	        RedirectAttributes redirectAttributes,
 	        Authentication authentication,
 	        Locale locale) throws Exception {
+		
 		long startTime=System.currentTimeMillis();
 		LOG.info("### Inici PrivateController.reservaCitaPrivada startTime={}, citaForm={}", startTime, form.toString());
 		
@@ -209,36 +210,38 @@ public class PrivateController {
 		    TipusCitaDto tipusCita = agenda.getHorari().getTipusCita();
 	
 		    // Crear cita
-		    CitaDto cita = new CitaDto();
-		    cita.setDathorini(form.getDataHoraInici().minusSeconds(1));
-		    cita.setDathorfin(form.getDataHoraFin().minusSeconds(1));
-		    cita.setNom(form.getNom());
-		    cita.setLlis(form.getLlis());
-		    cita.setNumdoc(form.getNumdoc());
-		    cita.setNomcar(form.getNomcar());
-		    cita.setTel(Long.valueOf(form.getTel()));
-		    cita.setEma(form.getEma());
-		    cita.setObs(form.getObs());
-		    cita.setLit1(form.getLit1());
-		    cita.setLit2(form.getLit2());
-		    cita.setLit3(form.getLit3());
-		    cita.setLit4(form.getLit4());
-		    cita.setLit5(form.getLit5());
-		    cita.setLit6(form.getLit6());
-		    cita.setLit7(form.getLit7());
-		    cita.setLit8(form.getLit8());
-		    cita.setLit9(form.getLit9());
-		    cita.setLit10(form.getLit10());
-		    cita.setAgenda(agenda);
-		    cita.setTipusCita(tipusCita);
+		    CitaDto citaToSave = new CitaDto();
+		    // Camps estàtics
+		    citaToSave.setDathorini(form.getDataHoraInici().minusSeconds(1));
+		    citaToSave.setDathorfin(form.getDataHoraFin().minusSeconds(1));
+		    citaToSave.setNom(form.getNom());
+		    citaToSave.setLlis(form.getLlis());
+		    citaToSave.setNumdoc(form.getNumdoc());
+		    citaToSave.setNomcar(form.getNomcar());
+		    citaToSave.setTel(Long.valueOf(form.getTel()));
+		    citaToSave.setEma(form.getEma());
+		    citaToSave.setObs(form.getObs());
+		    // Camps dinàmics
+		    citaToSave.setLit1(form.getLit1());
+		    citaToSave.setLit2(form.getLit2());
+		    citaToSave.setLit3(form.getLit3());
+		    citaToSave.setLit4(form.getLit4());
+		    citaToSave.setLit5(form.getLit5());
+		    citaToSave.setLit6(form.getLit6());
+		    citaToSave.setLit7(form.getLit7());
+		    citaToSave.setLit8(form.getLit8());
+		    citaToSave.setLit9(form.getLit9());
+		    citaToSave.setLit10(form.getLit10());
+		    citaToSave.setAgenda(agenda);
+		    citaToSave.setTipusCita(tipusCita);
 	
-		    citaSaved = citaPreviaPublicClient.saveCita(cita, locale);
+		    citaSaved = citaPreviaPublicClient.saveCita(citaToSave, locale);
 		    if (citaSaved.hasErrors()) {
 		    	redirectAttributes.addFlashAttribute("error", citaSaved.getErrors().get(0).getDem());
 		        return "redirect:/private/calendari";
 		    }
 	    }  catch (Exception e) {
-	        LOG.error("### Error PrivateController.reservaCitaPrivada {}", e);
+	        LOG.error("### Error PrivateController.reservaCitaPrivada: ", e);
         	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.MSG_ERR_GET_CALENDARI, null, locale));
         	return "redirect:/private/calendari";
 	    } finally {
@@ -540,7 +543,7 @@ public class PrivateController {
 		        }
 		    }
 	    }  catch (Exception e) {
-	        LOG.error("### Error PrivateController.generarEvents {}", e);
+	        LOG.error("### Error PrivateController.generarEvents: ", e);
 	    } finally {
 	    	long totalTime = (System.currentTimeMillis() - startTime);
 			LOG.info("### Final PrivateController.generarEvents totalTime={}, agendesSize={}", totalTime, agendes != null ? agendes.size() : 0);

@@ -4,162 +4,169 @@
     <meta charset="UTF-8">
     <title th:utext="#{solicitud} + ' - ' + ${subAplicacio?.dem ?: subAplicacio?.dec ?: ''}"></title>
 
-    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-    <!-- Estilos personalizados -->
     <link th:href="@{/css/style.css}" rel="stylesheet" type="text/css">
 </head>
 <body class="bg-light">
 
-    <!-- Header común -->
-	<th:block th:replace="~{common/header :: header(appName=${subAplicacio?.dem ?: subAplicacio?.dec ?: 'Cita Prèvia'})}"></th:block>
-    <!-- Contenido principal -->
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8 col-lg-6">
+<th:block th:replace="~{common/header :: header(appName=${subAplicacio?.dem ?: subAplicacio?.dec ?: 'Cita Prèvia'})}"></th:block>
 
-                <!-- Título -->
-                <h1 class="text-center mb-5 text-primary"
-                    th:utext="#{solicitud} + ' - ' + ${subAplicacio?.dem ?: subAplicacio?.dec ?: ''}">
-                </h1>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
 
-                <!-- Tarjeta principal -->
-                <div class="card shadow">
-                    <div class="card-body p-4">
+            <h1 class="text-center mb-5 text-primary"
+                th:utext="#{solicitud} + ' - ' + ${subAplicacio?.dem ?: subAplicacio?.dec ?: ''}">
+            </h1>
 
-                        <!-- Errores -->
-                        <th:block th:replace="~{common/errors :: errors(errors = ${errors})}" />
+            <div class="card shadow">
+                <div class="card-body p-4">
 
-                        <!-- Formulario: POST a /seleccio -->
-                        <form th:action="@{'/public/' + ${subaplCoa} + '/seleccio'}" method="get">
-                            <div th:if="${llistaTipusCites != null and #lists.size(llistaTipusCites.tipusCites) > 1}"
-                                 class="mb-4">
-                                <label class="form-label fw-bold" th:utext="#{selecciona_tipus_cita}"></label>
-                                <select name="tipcitCon" class="form-select" required>
-                                    <option value="" disabled selected th:utext="#{selecciona}"></option>
-                                    <option th:each="tip : ${llistaTipusCites.tipusCites}"
-                                            th:value="${tip.con}"
-                                            th:utext="${tip.dem}">
-                                    </option>
-                                </select>
-                            </div>
+                    <!-- Mensajes flash globales (success/error general) -->
+                    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <span th:text="${success}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-times-circle me-2"></i>
+                        <span th:text="${error}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <div th:if="${alert}" class="alert alert-warning text-center mb-4" role="alert">
+                         <i class="fas fa-exclamation-triangle me-2"></i>
+                         <span th:text=${alert}></span>
+                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>                               
+                   </div>
 
-                            <div th:if="${llistaTipusCites != null and #lists.size(llistaTipusCites.tipusCites) == 1}"
-                                 th:with="tip = ${llistaTipusCites.tipusCites[0]}">
-                                <input type="hidden" name="tipcitCon" th:value="${tip.con}">
-                            </div>
+                    <!-- Formulario principal (solo si HAY agendas) -->
+                    <form th:unless="${noAgendas}"
+                          th:action="@{'/public/' + ${subaplCoa} + '/seleccio'}"
+                          method="get">
 
-                            <!-- SIN TIPOS DE CITA -->
-                            <div th:if="${llistaTipusCites == null or #lists.isEmpty(llistaTipusCites.tipusCites)}"
-                                 class="alert alert-warning text-center mb-4">
-                                <i class="fas fa-exclamation-triangle me-2"></i>
-                                <span th:utext="#{no_tipus_disponibles}"></span>
-                            </div>
-
-                            <!-- SIN AGENDAS (NUEVO) -->
-                            <div th:if="${noAgendas}" class="text-center">
-                                <div class="alert alert-danger mb-4">
-                                    <i class="fas fa-calendar-times me-2"></i>
-                                    <span th:utext="#{no_existeixen_agendes}">No existeixen agendes disponibles per a aquest tipus de cita.</span>
-                                </div>
-                                <a th:href="@{'/public/' + ${subaplCoa}}"
-                                   class="btn btn-primary btn-lg">
-                                    <i class="fas fa-home me-2"></i>
-                                    <span th:utext="#{tornar_index}">Tornar a l'inici</span>
-                                </a>
-                            </div>
-
-                            <!-- Botón Continuar (solo si hay tipos) -->
-                            <div th:unless="${noAgendas}">
-                                <button type="submit"
-                                        class="btn btn-success btn-lg w-100 mt-3"
-                                        th:disabled="${llistaTipusCites == null or #lists.isEmpty(llistaTipusCites.tipusCites)}"
-                                        th:utext="#{continuar}">
-                                </button>
-                            </div>
-                        </form>
-
-                        <!-- BOTÓN ABRIR MODAL CANCELAR -->
-                        <div class="text-center mt-3" th:unless="${noAgendas}">
-                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelarCitaModal">
-                                <i class="fas fa-trash-alt me-2"></i>
-                                <span th:utext="#{cancelar_cita}">Cancel·lar cita</span>
-                            </button>
+                        <div th:if="${llistaTipusCites != null and #lists.size(llistaTipusCites.tipusCites) > 1}"
+                             class="mb-4">
+                            <label class="form-label fw-bold" th:text="#{selecciona_tipus_cita}"></label>
+                            <select name="tipcitCon" class="form-select" required>
+                                <option value="" disabled selected th:text="#{selecciona}"></option>
+                                <option th:each="tip : ${llistaTipusCites.tipusCites}"
+                                        th:value="${tip.con}"
+                                        th:text="${tip.dem}">
+                                </option>
+                            </select>
                         </div>
+
+                        <div th:if="${llistaTipusCites != null and #lists.size(llistaTipusCites.tipusCites) == 1}"
+                             th:with="tip = ${llistaTipusCites.tipusCites[0]}">
+                            <input type="hidden" name="tipcitCon" th:value="${tip.con}">
+                        </div>
+
+							<div th:unless="${noAgendas}">
+							    <button type="submit"
+							            class="btn btn-success btn-lg w-100 mt-3"
+							            th:utext="#{continuar}">
+							    </button>
+							</div>
+							
+                    </form>
+
+                    <!-- Botón "Tornar enrere" si no hay agendas -->
+                    <div th:if="${noAgendas}" class="text-center mt-4">
+                        <a th:href="@{'/public/' + ${subaplCoa}}"
+                           class="btn btn-secondary btn-lg px-5">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            <span th:text="#{tornar_enrere}">Tornar enrere</span>
+                        </a>
+                    </div>
+
+                    <!-- Botón abrir modal cancelar (solo si hay agendas) -->
+                    <div class="text-center mt-4" th:unless="${noAgendas}">
+                        <button type="button"
+                                class="btn btn-outline-danger"
+                                data-bs-toggle="modal"
+                                data-bs-target="#cancelarCitaModal">
+                            <i class="fas fa-trash-alt me-2"></i>
+                            <span th:text="#{cancelar_cita}">Cancel·lar cita</span>
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Footer común -->
-    <th:block th:replace="~{common/footer :: footer}"></th:block>
+<!-- MODAL DE CANCELACIÓN -->
+<div class="modal fade" id="cancelarCitaModal" tabindex="-1" aria-labelledby="cancelarCitaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form th:action="@{'/public/' + ${subaplCoa} + '/cancelar'}" method="post" id="formCancelarCita">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="cancelarCitaModalLabel">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <span th:text="#{cancelar_cita}">Cancel·lar cita</span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p th:text="#{introduir_dades_cancelacio}">
+                        Introduïu les dades per cancel·lar la cita:
+                    </p>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- MODAL DE CANCELACIÓN -->
-    <div class="modal fade" id="cancelarCitaModal" tabindex="-1" aria-labelledby="cancelarCitaModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form th:action="@{'/public/' + ${subaplCoa} + '/cancelar'}" method="post" id="formCancelarCita">
-                    <div class="modal-header bg-danger text-white">
-                        <h5 class="modal-title" id="cancelarCitaModalLabel">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            <span th:utext="#{cancelar_cita}">Cancel·lar cita</span>
-                        </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="mb-3">
+                        <label for="codiCita" class="form-label" th:text="#{codi_cita}">Codi de la cita</label>
+                        <input type="text" class="form-control" id="codiCita" name="con" required
+                               placeholder="Ex: 12345" pattern="[0-9]+" />
                     </div>
-                    <div class="modal-body">
-                        <p th:utext="#{introduir_dades_cancelacio}">Introduïu les dades per cancel·lar la cita:</p>
 
-                        <div class="mb-3">
-                            <label for="codiCita" class="form-label" th:utext="#{codi_cita}"></label>
-                            <input type="text" class="form-control" id="codiCita" name="con" required
-                                   placeholder="Ex: 12345" pattern="[0-9]+" />
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="numdoc" class="form-label" th:utext="#{numdoc}"></label>
-                            <input type="text" class="form-control" id="numdoc" name="numdoc" required
-                                   placeholder="Ex: 12345678A" />
-                        </div>
-
-                        <div th:if="${param.success}" class="alert alert-success mt-3">
-                            <i class="fas fa-check-circle me-2"></i>
-                            <span th:utext="#{cita_cancelada_correctament}">La cita ha estat cancel·lada correctament.</span>
-                        </div>
-                        <div th:if="${param.error}" class="alert alert-danger mt-3">
-                            <i class="fas fa-times-circle me-2"></i>
-                            <span th:utext="#{cita_inexistent}">No s'ha trobat cap cita amb aquest codi i document.</span>
-                        </div>
+                    <div class="mb-3">
+                        <label for="numdoc" class="form-label" th:text="#{numdoc}">Document</label>
+                        <input type="text" class="form-control" id="numdoc" name="numdoc" required
+                               placeholder="Ex: 12345678A" />
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:utext="#{tancar}">Tancar</button>
-                        <button type="submit" class="btn btn-danger" id="btnConfirmar">
-                            <i class="fas fa-trash-alt me-2"></i>
-                            <span th:utext="#{confirmar_cancelacio}">Confirmar cancel·lació</span>
-                        </button>
+
+                    <!-- Mensajes flash dentro del modal (usando atributos flash del controlador) -->
+                    <div th:if="${success_cancel}" class="alert alert-success mt-3">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <span th:text="${success_cancel}"></span>
                     </div>
-                </form>
-            </div>
+                    <div th:if="${error_cancel}" class="alert alert-danger mt-3">
+                        <i class="fas fa-times-circle me-2"></i>
+                        <span th:text="${error_cancel}"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            th:text="#{tancar}">Tancar
+                    
+                    </button>
+                    <div th:unless="${success_cancel}">
+	                    <button type="submit" class="btn btn-danger">
+	                        <i class="fas fa-trash-alt me-2"></i>
+	                        <span th:text="#{confirmar_cancelacio}">Confirmar cancel·lació</span>
+	                    </button>
+	                </div>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 
-    <!-- JS PARA ABRIR MODAL SI ?success o ?error -->
-    <script th:inline="javascript">
-        /*<![CDATA[*/
-        const success = /*[[ ${param.success} ]]*/ false;
-        const error   = /*[[ ${param.error} ]]*/ false;
+<th:block th:replace="~{common/footer :: footer}"></th:block>
 
-        if (success || error) {
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- ABRIR MODAL AUTOMÁTICAMENTE solo si hay mensaje flash -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', function() {
+        /*[# th:if="${success_cancel != null or error_cancel != null}"]*/
             const modal = new bootstrap.Modal(document.getElementById('cancelarCitaModal'));
             modal.show();
-        }
-        /*]]>*/
-    </script>
+        /*[/]*/
+    });
+    /*]]>*/
+</script>
 
 </body>
 </html>

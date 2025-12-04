@@ -34,6 +34,15 @@
                         </a>
                     </div>
                     <div class="card-body p-3">
+
+                        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                            <span th:text="${succes}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+						<div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+						    <span th:text="${error}"></span> 
+						    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+						</div>
                         <div id="calendar"></div>
                     </div>
                 </div>
@@ -50,6 +59,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
+                                    
                         <input type="hidden" name="tipcitCon" th:value="${tipusCita.con}">
                         <input type="hidden" name="dataHoraInici" id="modalDataHoraInici">
                         <input type="hidden" name="dataHoraFin" id="modalDataHoraFin">

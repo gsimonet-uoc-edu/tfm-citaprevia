@@ -44,6 +44,14 @@ public class AgendaController {
 		return agendaService.getAgendesByTipusCitaAndSubaplicacio(tipCitCon, subaplCoa, locale);
 	}
 	
+	@GetMapping(value="/obertes/tipus-cites/{tipCitCon}/subaplicacions/{subaplCoa}")
+	@Operation(summary="obtenir agendes obertes donada una subaplicació i un tipus de cita")
+	public List<AgendaDto> getAgendesObertesByTipusCitaAndSubaplicacio(@PathVariable Long tipCitCon,
+																	   @PathVariable String subaplCoa,
+																       Locale locale) {
+		return agendaService.getAgendesObertesByTipusCitaAndSubaplicacio(tipCitCon, subaplCoa, locale);
+	}
+	
 	@GetMapping(value="/subaplicacions/{subaplCoa}")
 	@Operation(summary="obtenir agendes donada una subaplicació")
 	public List<AgendaDto> getAgendesBySubaplicacio(@PathVariable String subaplCoa,

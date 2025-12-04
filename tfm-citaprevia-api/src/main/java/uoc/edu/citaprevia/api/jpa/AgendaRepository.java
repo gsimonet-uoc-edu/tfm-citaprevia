@@ -1,5 +1,6 @@
 package uoc.edu.citaprevia.api.jpa;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -13,4 +14,5 @@ public interface AgendaRepository extends PagingAndSortingRepository<Agenda, Lon
 	List<Agenda> findByHorariSubaplCoa(String subaplCoa);
 	List<Agenda> findByTecnicCoa(String tecCoa);
 	List<Agenda> findByCentreCon(Long ubiCon);
+	List<Agenda> findByHorariTipusCitaConAndHorariSubaplCoaAndDatfinGreaterThanEqual(Long tipCitCon, String subaplCoa, LocalDate datfin);
 }
