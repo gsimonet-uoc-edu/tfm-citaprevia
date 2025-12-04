@@ -26,6 +26,9 @@ import uoc.edu.citaprevia.dto.generic.ErrorDto;
 import uoc.edu.citaprevia.front.util.RestTemplateResponseErrorHandler;
 
 @Service("citprePrivateService")
+/**
+ * Client que interactua amb les operacions de la part privada del back-end (api) a partir de crides REST.
+ */
 public class CitaPreviaPrivateClientImpl implements CitaPreviaPrivateClient{
 
 	@Value("${citaprevia.service.api.host}")

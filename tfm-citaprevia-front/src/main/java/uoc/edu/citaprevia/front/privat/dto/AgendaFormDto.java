@@ -13,19 +13,19 @@ import lombok.ToString;
 @Getter @Setter @ToString
 public class AgendaFormDto {
 	
-private Long con; // Per edició
+	private Long con; 
     
-    @NotNull(message = "{validation.required}")
+    @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate datini;
     
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate datfin;
     
-    @NotNull(message = "{validation.required}")
-    private Long centreCon; // Con de UbicacioDto (Lookup)
+    @NotNull
+    private Long centreCon;
     
-    @NotNull(message = "{validation.required}")
-    private Long horariCon; // Con de HorariDto (Lookup)
+    @NotNull
+    private Long horariCon; 
     
 }

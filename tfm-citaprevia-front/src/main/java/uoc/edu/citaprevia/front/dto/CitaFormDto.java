@@ -24,15 +24,13 @@ public class CitaFormDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dataHoraFin;
     @NotNull private Long agendaCon;
-
     @NotBlank private String nom;
     @NotBlank private String llis;
     @NotBlank private String numdoc;
     @NotBlank private String nomcar;
-    @NotBlank @Pattern(regexp = "[0-9]{9}") private String tel; // String!
+    @NotBlank @Pattern(regexp = "[0-9]{9}") private String tel;
     @NotBlank @Email private String ema;
     private String obs;
-
     private String lit1;
     private String lit2;
     private String lit3;

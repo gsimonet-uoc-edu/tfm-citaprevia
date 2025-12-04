@@ -27,6 +27,9 @@ import uoc.edu.citaprevia.dto.generic.ErrorDto;
 import uoc.edu.citaprevia.front.util.RestTemplateResponseErrorHandler;
 
 @Service("citprePublicService")
+/**
+ * Client que interactua amb les operacions de la part pública del back-end (api) a partir de crides REST.
+ */
 public class CitaPreviaPublicClientImpl  implements CitaPreviaPublicClient{
 	
 	@Value("${citaprevia.service.api.host}")

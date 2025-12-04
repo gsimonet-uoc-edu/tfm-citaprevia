@@ -59,6 +59,9 @@ import uoc.edu.citaprevia.util.Utils;
 
 @Controller
 @RequestMapping("/private")
+/**
+ * Controlador que processa les operacions de la part privada de la cita prèvia
+ */
 public class PrivateController {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(PrivateController.class);

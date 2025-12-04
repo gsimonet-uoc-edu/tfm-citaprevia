@@ -13,12 +13,12 @@ public class TecnicFormDto {
 
     private String coa;    
     private String originalCoa;   
-    @NotNull (message = "{error.tecnic.pass.obligatori}")
+    @NotNull
     private String pass;   
-    @NotNull(message = "{error.tecnic.nom.obligatori}")
+    @NotNull
 	private String nom;   
 	private String ll1;   
 	private String ll2;   
-	@NotNull(message = "{error.tecnic.prf.obligatori}")
+	@NotNull
 	private String prf;
 }

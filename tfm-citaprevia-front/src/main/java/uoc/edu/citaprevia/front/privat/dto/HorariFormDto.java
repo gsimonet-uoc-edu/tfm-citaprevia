@@ -11,15 +11,15 @@ import lombok.ToString;
 @Getter @Setter @ToString
 public class HorariFormDto {
     
-    private Long con; // Identificador para edición
+    private Long con;
     
     @NotBlank
     @Size(max = 50)
-    private String dec; // Descripción Corta (dec)
+    private String dec;
     
     @Size(max = 255)
-    private String dem; // Descripción Extendida (dem)
+    private String dem;
     
     @NotNull
-    private Long tipusCitaCon; // Conexión con TipusCita (lookup)
+    private Long tipusCitaCon;
 }

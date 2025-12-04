@@ -44,6 +44,9 @@ import uoc.edu.citaprevia.util.Utils;
 
 @Controller
 @RequestMapping("/public")
+/**
+ * Controlador que processa les operacions de la part pública de la cita prèvia
+ */
 public class PublicController {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(PublicController.class);
@@ -375,46 +378,5 @@ public class PublicController {
     	return "redirect:/public/" + subaplCoa;
     	
 	}
-	
-	
-	/*
-	@PostMapping("/{subaplCoa}/cancelar")
-	public String cancelarCita(@PathVariable String subaplCoa,
-	                           @RequestParam Long con,
-	                           @RequestParam String numdoc,
-	                           RedirectAttributes redirectAttributes,
-	                           Locale locale) {
 
-		long startTime=System.currentTimeMillis();
-		LOG.info("### Inici PublicController.cancelarCita startTime={}, subaplCoa={}, citCon={}, numdoc={}", startTime, subaplCoa, con, numdoc);
-		
-		CitaDto cita  = new CitaDto();
-		
-    	try {
-    		
-	        cita = citaPreviaPublicClient.getCita(con, locale);
-	        // Comprovar que la cita pertany a la subaplicació i persona que vol cancelarla
-	        if (cita == null || Utils.isEmpty(cita.getCon()) || !StringUtils.upperCase(cita.getNumdoc()).equals(StringUtils.upperCase(numdoc)) || !subaplCoa.equals(cita.getAgenda().getHorari().getSubapl().getCoa())) {
-	            redirectAttributes.addFlashAttribute("error_cancel", true);
-	            return "redirect:/public/" + subaplCoa + (redirectAttributes.getFlashAttributes().containsKey("success_cancel") ? "?success_cancel" : "?error_cancel");
-	        }
-
-	        ErrorDto eliminada = citaPreviaPublicClient.deleteCitaPersona(con, numdoc, locale);
-	        
-	        if (eliminada == null) {
-	            redirectAttributes.addFlashAttribute("success_cancel", true);
-	        } else {
-	            redirectAttributes.addFlashAttribute("error_cancel", true);
-	        }
-   	
-	    }  catch (Exception e) {
-	        LOG.error("### Error PublicController.cancelarCita: ", e);
-	        redirectAttributes.addFlashAttribute("error_cancel", true);
-	    } finally {
-	    	long totalTime = (System.currentTimeMillis() - startTime);
-			LOG.info("### Final PublicController.ca totalTime={}, subaplCoa={}, citCon={}, numdoc={}", totalTime, subaplCoa, con, numdoc);
-		}
-
-	    return "redirect:/public/" + subaplCoa + (redirectAttributes.getFlashAttributes().containsKey("success_cancel") ? "?success_cancel" : "?error_cancel");
-	}*/
 }

@@ -14,13 +14,9 @@ public class SetmanaTipusDeleteFormDto {
 	
 
     private Long diasetCon;
-    
-    // Assegura't que el format coincideixi amb el del JS (HH:mm)
     @DateTimeFormat(pattern = "HH:mm")
-    //@JsonFormat(pattern = "HH:mm") 
     private LocalTime horini;
 
     @DateTimeFormat(pattern = "HH:mm")
-    //@JsonFormat(pattern = "HH:mm")
     private LocalTime horfin;
 }
