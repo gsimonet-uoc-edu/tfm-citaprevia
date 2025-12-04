@@ -27,7 +27,7 @@ import uoc.edu.citaprevia.util.Constants;
 import uoc.edu.citaprevia.util.Utils;
 
 @RestController
-@RequestMapping(value="/agendes")
+@RequestMapping(value="c")
 public class AgendaController {
 	
 	@Autowired
