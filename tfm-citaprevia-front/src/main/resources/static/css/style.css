@@ -1,6 +1,3 @@
-/* ============================================================= */
-/* === ESTILOS DE CONFIRMACIO.HTML === */
-/* ============================================================= */
 .confirmacio-card { 
     max-width: 650px; 
     margin: 0 auto; 
@@ -63,9 +60,6 @@
     padding-bottom: 0.5rem;
 }
 
-/* ============================================================= */
-/* === ESTILOS DE CALENDARIO.HTML (ANTIGUO - TARJETAS) === */
-/* ============================================================= */
 .franja-lliure {
     background-color: #d4edda;
     border: 1px solid #28a745;
@@ -115,18 +109,10 @@
     font-style: italic;
 }
 
-/* ============================================================= */
-/* === ESTILOS DE INDEX.HTML === */
-/* ============================================================= */
 .card { 
     border-radius: 12px; 
 }
 
-/* ============================================================= */
-/* === FULLCALENDAR - ESTILOS UNIFICADOS (PRIVADO Y PÚBLICO) === */
-/* ============================================================= */
-
-/* === ELIMINAR TÍTULOS DUPLICADOS DE FULLCALENDAR === */
 .fc-event .fc-event-title,
 .fc-event .event {
     display: none !important;
@@ -137,10 +123,9 @@
     padding: 2px 4px !important;
 }
 
-/* === FRANJA LLIURE → VERDE (AMBOS CALENDARIOS) === */
 .fc-event.hora-lliure,
 .fc-event.hora-lliure-public {
-    background-color: #28a745 !important;  /* VERDE */
+    background-color: #28a745 !important;
     border: 1px solid #218838 !important;
     color: white !important;
     border-radius: 6px !important;
@@ -158,10 +143,9 @@
     box-shadow: 0 4px 8px rgba(0,0,0,0.25) !important;
 }
 
-/* === FRANJA OCUPADA → ROJO (AMBOS CALENDARIOS) === */
 .fc-event.hora-ocupada,
 .fc-event.hora-ocupada-public {
-    background-color: #dc3545 !important;  /* ROJO */
+    background-color: #dc3545 !important;
     border: 1px solid #c82333 !important;
     color: white !important;
     border-radius: 6px !important;
@@ -178,7 +162,6 @@
     box-shadow: 0 3px 6px rgba(0,0,0,0.3) !important;
 }
 
-/* === TÍTULO Y SUBTÍTULO PERSONALIZADOS === */
 .event-title {
     font-weight: 600;
     font-size: 0.82rem;
@@ -200,9 +183,6 @@
     line-height: 1.1;
 }
 
-/* ============================================================= */
-/* === TOOLTIP PERSONALIZADO === */
-/* ============================================================= */
 .tooltip-inner {
     max-width: 300px;
     padding: 8px 12px;
@@ -235,9 +215,6 @@
     border-right-color: #343a40;
 }
 
-/* ============================================================= */
-/* === MODAL DE RESERVA (PÚBLICO) === */
-/* ============================================================= */
 #reservaModal .modal-header {
     background: linear-gradient(135deg, #007bff, #0056b3);
     color: white;
@@ -269,9 +246,6 @@
     font-size: 0.9rem;
 }
 
-/* ============================================================= */
-/* === LOADING SPINNER === */
-/* ============================================================= */
 #calendar.opacity-50 {
     pointer-events: none;
     position: relative;
@@ -303,15 +277,9 @@
     100% { transform: rotate(360deg); }
 }
 
-/* ============================================================= */
-/* === LEYENDA (SIDEBAR) - COLORES CORRECTOS === */
-/* ============================================================= */
 .text-success { color: #28a745 !important; }
 .text-danger { color: #dc3545 !important; }
 
-/* ============================================================= */
-/* === RESPONSIVE === */
-/* ============================================================= */
 @media (max-width: 768px) {
     .fc-event.hora-lliure,
     .fc-event.hora-lliure-public,

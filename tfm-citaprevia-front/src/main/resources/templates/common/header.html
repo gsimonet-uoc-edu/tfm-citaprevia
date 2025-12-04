@@ -1,63 +1,53 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Header Común</title>
+<meta charset="UTF-8">
+<title>Header Comú</title>
 </head>
 <body>
+	<header th:fragment="header"
+		class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm sticky-top">
+		<div class="container-fluid">
 
-<!-- ====================== HEADER ====================== -->
-<header th:fragment="header" class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm sticky-top">
-    <div class="container-fluid">
+			<a class="navbar-brand fw-bold d-flex align-items-center"> <i
+				class="fas fa-calendar-check me-2 fs-4"></i> <span
+				class="d-none d-sm-inline" th:text="${appName}">Cita Prèvia</span>
+			</a>
 
-        <a class="navbar-brand fw-bold d-flex align-items-center">
-            <i class="fas fa-calendar-check me-2 fs-4"></i>
-			<span class="d-none d-sm-inline" th:text="${appName}">Cita Prèvia</span>
-        </a>
+			<button class="navbar-toggler" type="button"
+				data-bs-toggle="collapse" data-bs-target="#navbarContent"
+				aria-controls="navbarContent" aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
-                aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+			<div class="collapse navbar-collapse" id="navbarContent">
 
-        <div class="collapse navbar-collapse" id="navbarContent">
+				<!-- Menú esquerra -->
+				<ul class="navbar-nav me-auto"></ul>
 
-            <!-- Menú esquerra (futurs enllaços privats) -->
-            <ul class="navbar-nav me-auto">
-                <!-- Exemple per àrea privada (es mostrarà només si estàs autenticat) -->
-                <!--
-                <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')}">
-                    <a class="nav-link" th:href="@{/private/calendari}">
-                        <i class="fas fa-cog me-1"></i> Àrea Privada
-                    </a>
-                </li>
-                -->
-            </ul>
+				<div class="d-flex align-items-center gap-2">
+					<form th:action="@{/changeLang}" method="post" class="m-0">
+						<input type="hidden" name="lang" value="ca">
+						<button type="submit" class="btn btn-sm rounded-pill px-3"
+							th:classappend="${#locale.language == 'ca'} ? 'btn-light fw-bold text-primary' : 'btn-outline-light'">
+							<span class="fi fi-ca me-1"></span> <span
+								class="d-none d-md-inline">Català</span>
+						</button>
+					</form>
 
-            <div class="d-flex align-items-center gap-2">
-                <form th:action="@{/changeLang}" method="post" class="m-0">
-                    <input type="hidden" name="lang" value="ca">
-                    <button type="submit"
-                            class="btn btn-sm rounded-pill px-3"
-                            th:classappend="${#locale.language == 'ca'} ? 'btn-light fw-bold text-primary' : 'btn-outline-light'">
-                        <span class="fi fi-ca me-1"></span>
-                        <span class="d-none d-md-inline">Català</span>
-                    </button>
-                </form>
-
-                <form th:action="@{/changeLang}" method="post" class="m-0">
-                    <input type="hidden" name="lang" value="es">
-                    <button type="submit"
-                            class="btn btn-sm rounded-pill px-3"
-                            th:classappend="${#locale.language == 'es'} ? 'btn-light fw-bold text-primary' : 'btn-outline-light'">
-                        <span class="fi fi-es me-1"></span>
-                        <span class="d-none d-md-inline">Español</span>
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-</header>
+					<form th:action="@{/changeLang}" method="post" class="m-0">
+						<input type="hidden" name="lang" value="es">
+						<button type="submit" class="btn btn-sm rounded-pill px-3"
+							th:classappend="${#locale.language == 'es'} ? 'btn-light fw-bold text-primary' : 'btn-outline-light'">
+							<span class="fi fi-es me-1"></span> <span
+								class="d-none d-md-inline">Español</span>
+						</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</header>
 
 </body>
 </html>
