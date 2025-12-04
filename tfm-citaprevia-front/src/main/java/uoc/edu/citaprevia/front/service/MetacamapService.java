@@ -9,9 +9,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import uoc.edu.citaprevia.front.controller.PrivateController;
 import uoc.edu.citaprevia.front.dto.CampConfigDto;
 
 @Service
@@ -19,6 +22,8 @@ import uoc.edu.citaprevia.front.dto.CampConfigDto;
 public class MetacamapService {
 
     private final Map<String, CampConfigDto> configMap = new HashMap<>();
+	private static final Logger LOG = LoggerFactory.getLogger(MetacamapService.class);
+
 
     public List<CampConfigDto> getCampos(String subaplCoa, Locale locale) {
         configMap.clear();
@@ -27,7 +32,6 @@ public class MetacamapService {
 
         InputStream is = getResourceAsStream(filename);
 
-        // Fallback a español
         if (is == null) {
             is = getResourceAsStream("metacamps_es.properties");
         }
@@ -38,8 +42,8 @@ public class MetacamapService {
 
         try  {
             loadProperties(is, subaplCoa.toUpperCase());
-        } catch (IOException e) {
-            // log
+        } catch (Exception e) {
+        	LOG.error("### MetacamapService.getCampos: ", e);
         }
 
         return configMap.values().stream()

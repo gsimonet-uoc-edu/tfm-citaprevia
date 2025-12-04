@@ -2,14 +2,14 @@ package uoc.edu.citaprevia.front.util;
 
 import uoc.edu.citaprevia.dto.generic.ErrorDto;
 
-public class ImiRestException extends RuntimeException {
+public class RestException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 	
 	private ErrorDto error;
 	private int httpStatus;
 	
-	public ImiRestException() { }
-	public ImiRestException(ErrorDto error, int status) {
+	public RestException() { }
+	public RestException(ErrorDto error, int status) {
 		this.error = error;
 		this.httpStatus = status;
 	}
@@ -25,7 +25,7 @@ public class ImiRestException extends RuntimeException {
 
 	@Override
 	public String toString() {
-		return new StringBuilder("ImiRestException [ ")
+		return new StringBuilder("RestException [ ")
 			.append("httpStatus=").append(httpStatus)
 			.append(", error=").append(error)
 			.append(" ]").toString();

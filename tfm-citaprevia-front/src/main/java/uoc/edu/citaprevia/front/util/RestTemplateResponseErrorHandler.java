@@ -16,7 +16,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import uoc.edu.citaprevia.dto.generic.ErrorDto;
 import uoc.edu.citaprevia.util.Utils;
 
-
+/**
+ * Gestionar i processar les respostes d'error que es reben en fer crides a serveis REST utilitzant la classe RestTemplate de Spring.
+ */
 public class RestTemplateResponseErrorHandler extends DefaultResponseErrorHandler  {
 		private ObjectMapper jacksonObjectMapper = new ObjectMapper();
 		
@@ -26,7 +28,7 @@ public class RestTemplateResponseErrorHandler extends DefaultResponseErrorHandle
 	    public void handleError(ClientHttpResponse response) throws IOException {
 	        HttpStatus statusCode = HttpStatus.resolve(response.getRawStatusCode());
 			if (statusCode == null) {
-				throw new ImiRestException(new ErrorDto((long)response.getRawStatusCode(), "E", body(response)),
+				throw new RestException(new ErrorDto((long)response.getRawStatusCode(), "E", body(response)),
 					response.getRawStatusCode());
 			}
 			handleError(response, statusCode);
@@ -36,15 +38,15 @@ public class RestTemplateResponseErrorHandler extends DefaultResponseErrorHandle
 	    	ErrorDto error = null;
 	    	Series serie = response.getStatusCode().series();
 	    	if (serie == HttpStatus.Series.SERVER_ERROR || serie == HttpStatus.Series.CLIENT_ERROR) {
-	    		error = bodyToImiErrorDto(body(response), statusCode.value());
+	    		error = bodyToErrorDto(body(response), statusCode.value());
 	        }
 	    	if(LOG.isInfoEnabled()) {
-	    		LOG.info("### handleError: serie = (name={}, value={}), error={}, statusCode={}",
+	    		LOG.info("### RestTemplateResponseErrorHandler.handleError: serie = (name={}, value={}), error={}, statusCode={}",
 	    			serie.name(), serie.value(),
 	    			(error!=null ? error.toString() : null),
 	    			(statusCode!=null ? ("(reasonPhrase= " + statusCode.getReasonPhrase() + ", name= " + statusCode.name() + ", value= " + statusCode.value() + ")") : null));
 	    	}
-	    	throw new ImiRestException(error, statusCode!=null ? statusCode.value() : null); // statusCode no pot ser null
+	    	throw new RestException(error, statusCode!=null ? statusCode.value() : null); // statusCode no pot ser null
 		}
 
 	    private String body(ClientHttpResponse response) {
@@ -53,17 +55,17 @@ public class RestTemplateResponseErrorHandler extends DefaultResponseErrorHandle
 	    	return new String(body, StandardCharsets.UTF_8);
 	    }
 
-		private ErrorDto bodyToImiErrorDto(String httpBody, int status) throws IOException { 
+		private ErrorDto bodyToErrorDto(String httpBody, int status) throws IOException { 
 			String body = Utils.getStr(httpBody);
 			ErrorDto error = null;
-			if(body.indexOf("\"con\" :") >= 0) { // ImiErrorDto
+			if(body.indexOf("\"con\" :") >= 0) { // ErrorDto
 				try {
 					error = jacksonObjectMapper.readValue(body, ErrorDto.class);
 				} catch(JsonProcessingException e) {
-					error = new ErrorDto((long)status, body); // Tractament igual que a Altra (no ImiErrorDto).
+					error = new ErrorDto((long)status, body); // Tractament igual que a Altra (no ErrorDto).
 				}
 			} else { // Altra
-				error = new ErrorDto((long)status, body); // Convertir el body a un objecte i mostrar-ho de forma distinta de JSON?
+				error = new ErrorDto((long)status, body);
 			}
 			return error;
 		}

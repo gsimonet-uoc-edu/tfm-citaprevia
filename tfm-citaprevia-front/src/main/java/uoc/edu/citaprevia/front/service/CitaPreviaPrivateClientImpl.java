@@ -47,6 +47,7 @@ public class CitaPreviaPrivateClientImpl implements CitaPreviaPrivateClient{
 	
 	
 	private RestTemplate restTemplate = new RestTemplate();
+	
 	public CitaPreviaPrivateClientImpl (RestTemplateBuilder restTemplateBuilder) {
 	    this.restTemplate = restTemplateBuilder
 		    .errorHandler(new RestTemplateResponseErrorHandler())
