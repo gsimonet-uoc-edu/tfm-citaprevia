@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
 <head>
     <meta charset="UTF-8">
-    <title th:text="#{gestio_franges_horaries}">Gestió de Franges Horàries</title>
+    <title th:text="#{gestio_franges_horaries}"></title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
@@ -14,20 +14,20 @@
     <div class="container py-4">
         
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2 class="mb-0" th:text="#{gestio_franges_horaries}">Gestió de Franges Horàries</h2>
+            <h2 class="mb-0" th:text="#{gestio_franges_horaries}"></h2>
             
             <a th:href="@{/private/gestio/horaris}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left me-2"></i> <span th:text="#{tornar_gestio_horaris}">Tornar a Horaris</span>
+                <i class="fas fa-arrow-left me-2"></i> <span th:text="#{tornar_gestio_horaris}"></span>
             </a>
         </div>
         
         <div class="alert alert-info shadow-sm mb-4" th:if="${horariDto != null}">
             <p class="mb-1">
-                <strong th:text="#{horari}">Horari:</strong> 
-                <span th:text="${horariDto.dec}">Horari Estàndard</span> 
+                <strong th:text="#{horari}"></strong> 
+                <span th:text="${horariDto.dec}"></span> 
                 (<span th:text="${horariDto.con}">1</span>)
             </p>
-            <p class="mb-0 text-muted" th:text="${horariDto.dem}">Descripció extensa de l'horari.</p>
+            <p class="mb-0 text-muted" th:text="${horariDto.dem}"></p>
         </div>
 
         <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
@@ -41,28 +41,28 @@
 
         <div class="d-flex justify-content-end mb-3">
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#franjaModal" onclick="clearFranjaModal()">
-                <i class="fas fa-plus me-1"></i> <span th:text="#{afegir_franja}">Afegir Nova Franja</span>
+                <i class="fas fa-plus me-1"></i> <span th:text="#{afegir_franja}"></span>
             </button>
         </div>
         
         <div class="card shadow-sm">
-            <div class="card-header" th:text="#{franges_setmanals}">Franges Setmanals</div>
+            <div class="card-header" th:text="#{franges_setmanals}"></div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-striped table-hover mb-0">
                         <thead>
                             <tr>
-                                <th th:text="#{dia_setmana}">Dia</th>
-                                <th th:text="#{hora_inici}">Hora Inici</th>
-                                <th th:text="#{hora_fi}">Hora Fi</th>
-                                <th class="text-end" th:text="#{accions}">Accions</th>
+                                <th th:text="#{dia_setmana}"></th>
+                                <th th:text="#{hora_inici}"></th>
+                                <th th:text="#{hora_fi}"></th>
+                                <th class="text-end" th:text="#{accions}"></th>
                             </tr>
                         </thead>
                         <tbody id="setmanaTipusList">
                             <tr th:each="franja : ${setmanesTipus}">
-                                <td th:text="${diesSetmana.get(franja.diasetCon)}">Dia</td>
-                                <td th:text="${franja.horini}">08:00</td>
-                                <td th:text="${franja.horfin}">14:00</td>
+                                <td th:text="${diesSetmana.get(franja.diasetCon)}"></td>
+                                <td th:text="${franja.horini}"></td>
+                                <td th:text="${franja.horfin}"></td>
                                 <td class="text-end">
                                     <button type="button" class="btn btn-sm btn-outline-danger" 
                                             th:attr="onclick=|prepararEsborrarFranja('${franja.diasetCon}', '${franja.horini}', '${franja.horfin}', '${diesSetmana.get(franja.diasetCon)}')|"
@@ -74,7 +74,7 @@
                                 </td>
                             </tr>
                             <tr th:if="${#lists.isEmpty(setmanesTipus)}">
-                                <td colspan="4" class="text-center text-muted" th:text="#{no_hi_ha_franges}">No hi ha franges definides.</td>
+                                <td colspan="4" class="text-center text-muted" th:text="#{no_hi_ha_franges}"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -89,7 +89,7 @@
             <div class="modal-content">
                 <form th:action="@{/private/horaris/{horCon}/setmanes-tipus/add(horCon=${horariCon})}" method="post" id="formFranja"> 
                     <div class="modal-header">
-                        <h5 class="modal-title" id="franjaModalLabel" th:text="#{afegir_franja}">Afegir Franja</h5>
+                        <h5 class="modal-title" id="franjaModalLabel" th:text="#{afegir_franja}"></h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -97,28 +97,28 @@
                         <input type="hidden" name="horariCon" th:value="${horariCon}" id="formHorariCon"/>
                         
                         <div class="mb-3">
-                            <label for="diasetCon" class="form-label" th:text="#{dia_setmana}">Dia de la Setmana</label>
+                            <label for="diasetCon" class="form-label" th:text="#{dia_setmana}"></label>
                             <select class="form-select" th:field="${setmanaTipusForm.diasetCon}" id="diasetCon" required>
                                 <option value="">[[#{selecciona}]]</option>
                                 <option th:each="dia : ${diesSetmana}" 
                                         th:value="${dia.key}" 
-                                        th:text="${dia.value}">Dia</option>
+                                        th:text="${dia.value}"></option>
                             </select>
                         </div>
                         
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="horini" class="form-label" th:text="#{hora_inici}">Hora Inici</label>
+                                <label for="horini" class="form-label" th:text="#{hora_inici}"></label>
                                 <input type="time" class="form-control" th:field="${setmanaTipusForm.horini}" id="horini" required step="60"/> </div>
                             <div class="col-md-6 mb-3">
-                                <label for="horfin" class="form-label" th:text="#{hora_fi}">Hora Fi</label>
+                                <label for="horfin" class="form-label" th:text="#{hora_fi}"></label>
                                 <input type="time" class="form-control" th:field="${setmanaTipusForm.horfin}" id="horfin" required step="60"/>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{tancar}">Tancar</button>
-                        <button type="submit" class="btn btn-primary" th:text="#{guardar}">Guardar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{tancar}"></button>
+                        <button type="submit" class="btn btn-primary" th:text="#{guardar}"></button>
                     </div>
                 </form>
             </div>
@@ -131,13 +131,13 @@
             <div class="modal-content">
                 <form th:action="@{/private/horaris/{horCon}/setmanes-tipus/delete(horCon=${horariCon})}" method="post" id="formDeleteFranja">
                     <div class="modal-header bg-danger text-white">
-                        <h5 class="modal-title" id="deleteFranjaModalLabel" th:text="#{confirmar_esborrat}">Confirmar Esborrat</h5>
+                        <h5 class="modal-title" id="deleteFranjaModalLabel" th:text="#{confirmar_esborrat}"></h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <p th:text="#{missatge_confirmacio_esborrat_franja}">Està segur que vol esborrar aquesta franja horària? Aquesta acció és irreversible.</p>
+                        <p th:text="#{missatge_confirmacio_esborrat_franja}"></p>
                         <p class="text-danger">
-                            <strong th:text="#{franja_a_esborrar}">Franja a Esborrar:</strong> 
+                            <strong th:text="#{franja_a_esborrar}"></strong> 
                             <span id="deleteFranjaInfo" class="fw-bold"></span>
                         </p>
                         
@@ -146,8 +146,8 @@
                         <input type="hidden" id="delete_horfin" name="horfin" />
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{cancelar}">Cancel·lar</button>
-                        <button type="submit" class="btn btn-danger" th:text="#{esborrar}">Esborrar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{cancelar}"></button>
+                        <button type="submit" class="btn btn-danger" th:text="#{esborrar}"></button>
                     </div>
                 </form>
             </div>
@@ -162,34 +162,17 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
 
-        // ===================================
-        // GESTIÓ DELS MODALS (Sense AJAX per afegir/esborrar)
-        // ===================================
-        
-        /**
-         * Neteja el formulari i el títol del modal d'afegir.
-         */
         function clearFranjaModal() {
             document.getElementById('formFranja').reset();
             document.getElementById('franjaModalLabel').textContent = /*[[#{afegir_franja}]]*/ 'Afegir Franja';
         }
         
-        /**
-         * Funció per carregar la clau de la franja al formulari ocult del modal d'eliminació.
-         * Prepara el formulari per a la submissió MVC (POST).
-         */
         function prepararEsborrarFranja(diasetCon, horini, horfin, diaNom) {
             document.getElementById('delete_diasetCon').value = diasetCon;
             document.getElementById('delete_horini').value = horini;
             document.getElementById('delete_horfin').value = horfin;
             document.getElementById('deleteFranjaInfo').textContent = `${diaNom}: de ${horini} a ${horfin}`;
         }
-        
-        // S'han ELIMINAT totes les funcions JavaScript relacionades amb AJAX:
-        // - loadSetmanaTipusList()
-        // - handleFormSubmit()
-        // - deleteFranja()
-        // - showAlert() (ja que els missatges són gestionats per Thymeleaf)
 
         /*]]>*/
     </script>

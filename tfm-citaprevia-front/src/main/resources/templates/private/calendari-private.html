@@ -16,7 +16,7 @@
         <div class="container-fluid">
             <a class="navbar-brand" th:href="@{/private/calendari}">
                 <i class="fas fa-calendar-alt me-2"></i>
-                <span th:text="#{calendari_privat}">Calendari</span>
+                <span th:text="#{calendari_privat}"></span>
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,25 +28,25 @@
                     
                     <li class="nav-item dropdown" th:if="${!isAdministrador}">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownTecnic" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-tools me-1"></i> <span th:text="#{gestio_tecnic}">Gestió Pròpia</span>
+                            <i class="fas fa-tools me-1"></i> <span th:text="#{gestio_tecnic}"></span>
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdownTecnic">
-                            <li><a class="dropdown-item" th:href="@{/private/gestio/agendes}"><i class="fas fa-id-card me-1"></i> <span th:text="#{gestio_agendes}">Gestió d'Agendes</span></a></li>
-                            <li><a class="dropdown-item" th:href="@{/private/gestio/horaris}"><i class="fas fa-clock me-1"></i> <span th:text="#{gestio_horaris}">Gestió d'Horaris</span></a></li>
+                            <li><a class="dropdown-item" th:href="@{/private/gestio/agendes}"><i class="fas fa-id-card me-1"></i> <span th:text="#{gestio_agendes}"></span></a></li>
+                            <li><a class="dropdown-item" th:href="@{/private/gestio/horaris}"><i class="fas fa-clock me-1"></i> <span th:text="#{gestio_horaris}"></span></a></li>
                         </ul>
                     </li>
 
                     <li class="nav-item dropdown" th:if="${isAdministrador}">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user-shield me-1"></i> <span th:text="#{gestio_admin}">Gestió Administrador</span>
+                            <i class="fas fa-user-shield me-1"></i> <span th:text="#{gestio_admin}"></span>
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdownAdmin">
-                            <li><a class="dropdown-item" th:href="@{/private/gestio/agendes}"><i class="fas fa-id-card me-1"></i> <span th:text="#{gestio_agendes}">Gestió d'Agendes</span></a></li>
-                            <li><a class="dropdown-item" th:href="@{/private/gestio/horaris}"><i class="fas fa-clock me-1"></i> <span th:text="#{gestio_horaris}">Gestió d'Horaris</span></a></li>
+                            <li><a class="dropdown-item" th:href="@{/private/gestio/agendes}"><i class="fas fa-id-card me-1"></i> <span th:text="#{gestio_agendes}"></span></a></li>
+                            <li><a class="dropdown-item" th:href="@{/private/gestio/horaris}"><i class="fas fa-clock me-1"></i> <span th:text="#{gestio_horaris}"></span></a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" th:href="@{/private/gestio/tecnics}"><i class="fas fa-user-tie me-1"></i> <span th:text="#{gestio_tecnics}">Gestió de Tècnics</span></a></li>
-                            <li><a class="dropdown-item" th:href="@{/private/gestio/tipus-cites}"><i class="fas fa-tag me-1"></i> <span th:text="#{gestio_tipus_cites}">Gestió de Tipus de Cites</span></a></li>
-                            <li><a class="dropdown-item" th:href="@{/private/gestio/ubicacions}"><i class="fas fa-building me-1"></i> <span th:text="#{gestio_centres}">Gestió de Centres</span></a></li>
+                            <li><a class="dropdown-item" th:href="@{/private/gestio/tecnics}"><i class="fas fa-user-tie me-1"></i> <span th:text="#{gestio_tecnics}"></span></a></li>
+                            <li><a class="dropdown-item" th:href="@{/private/gestio/tipus-cites}"><i class="fas fa-tag me-1"></i> <span th:text="#{gestio_tipus_cites}"></span></a></li>
+                            <li><a class="dropdown-item" th:href="@{/private/gestio/ubicacions}"><i class="fas fa-building me-1"></i> <span th:text="#{gestio_centres}"></span></a></li>
                         </ul>
                     </li>
 
@@ -60,7 +60,7 @@
                     </li>
                     <li class="nav-item">
                         <a th:href="@{/private/login}" class="btn btn-sm btn-outline-light">
-                            <i class="fas fa-sign-out-alt me-1"></i> <span th:text="#{sortir}">Sortir</span>
+                            <i class="fas fa-sign-out-alt me-1"></i> <span th:text="#{sortir}"></span>
                         </a>
                     </li>
                 </ul>
@@ -85,7 +85,7 @@
             <div class="col-lg-10">
                 <div class="card shadow">
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0" th:text="#{calendari_privat}">Calendari</h5>
+                        <h5 class="mb-0" th:text="#{calendari_privat}"></h5>
                     </div>
                     
                     <div class="card-body p-3">
@@ -243,7 +243,6 @@
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
  <script th:inline="javascript">
     
-    // 💡 NOVA FUNCIÓ: Formata una data JavaScript a format LocalDateTime (yyyy-MM-ddTHH:mm:ss) sense aplicar offset de zona horària.
     function formatLocalDateTime(date) {
         if (!date) return '';
         const pad = (num) => String(num).padStart(2, '0');
@@ -264,8 +263,7 @@
         const modalReserva = new bootstrap.Modal(document.getElementById('reservaModalPrivate'));
         const modalEdicio = new bootstrap.Modal(document.getElementById('edicioModalPrivate'));
 
-        // DEBUG: Ver eventos
-        console.log('Events recibidos:', events);
+        console.log('Events rebuts:', events);
 
         const calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'timeGridWeek',
@@ -283,7 +281,6 @@
             nowIndicator: true,
             height: 'auto',
 
-            // MAPPING DE EVENTOS
             events: Object.keys(events).flatMap(date => {
                 return events[date].map(event => {
                     const isLliure = event.lliure === true;
@@ -293,7 +290,7 @@
 
                     return {
                         start: event.start,
-                        end: event.end || null, // OBLIGATORIO
+                        end: event.end || null,
                         classNames: isLliure ? 'hora-lliure' : 'hora-ocupada',
                         title: isLliure ? event.title : nomComplet,
                         extendedProps: {
@@ -323,14 +320,12 @@
                 });
             }),
 
-            // EVENTCLICK CORREGIDO
             eventClick: function(info) {
-                console.log('CLIC DETECTADO:', info.event); // DEBE APARECER
+                console.log('CLIC DETECTADO:', info.event);
                 const props = info.event.extendedProps || {};
                 const isLliure = props.lliure === true;
 
                 if (isLliure) {
-                    // RESERVA (Mantenim la conversió a ISOString amb offset de la teva implementació original)
                     const offset = info.event.start.getTimezoneOffset() * 60000;
                     const startLocal = new Date(info.event.start.getTime() - offset).toISOString().slice(0, 19);
                     let endLocal = startLocal;
@@ -346,17 +341,14 @@
                     document.getElementById('formCitaPrivate').reset();
                     modalReserva.show();
                 } else {
-                    // EDICIÓN
                     if (!props.citaCon) {
                         alert('Error: cita no identificada');
                         return;
                     }
 
-                    // Rellenar modal edición
                     document.getElementById('edicioCitaCon').value = props.citaCon;
                     document.getElementById('edicioAgendaCon').value = props.agendaCon || '';
                     
-                    // 💡 CORRECCIÓ ZONA HORÀRIA: Utilitzem la nova funció per obtenir l'hora local sense offset.
                     const startLocal = info.event.start;
                     const endLocal = info.event.end;
 
@@ -373,7 +365,7 @@
                     document.getElementById('edicioEma').value = props.ema || '';
                     document.getElementById('edicioObs').value = props.obs || '';
 
-                    // Campos dinámicos
+                    // Camps dinàmics
                     for (let i = 1; i <= 10; i++) {
                         const field = document.getElementById('edicioLit' + i);
                         if (field) field.value = props['lit' + i] || '';
