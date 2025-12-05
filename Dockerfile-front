@@ -1,6 +1,6 @@
 FROM eclipse-temurin:21-jdk-alpine AS build
 WORKDIR /app
-# 1. Copiem pom pare i wrapper primer (cache)
+
 COPY pom.xml .
 COPY .mvn .mvn
 COPY mvnw mvnw.cmd ./

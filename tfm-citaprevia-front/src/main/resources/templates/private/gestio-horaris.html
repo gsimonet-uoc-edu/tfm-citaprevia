@@ -170,10 +170,6 @@
             document.getElementById('horariModalLabel').textContent = /*[[#{nou_horari}]]*/ 'Nou Horari';
         }
 
-        /**
-         * Carrega les dades de l'Horari seleccionat al modal d'edició.
-         * SENSE el paràmetre 'notval'.
-         */
         function editHorari(con, dec, dem, tipusCitaCon) {
             document.getElementById('horariModalLabel').textContent = /*[[#{editar_horari}]]*/ 'Editar Horari';
             
@@ -186,10 +182,7 @@
             var myModal = new bootstrap.Modal(document.getElementById('horariModal'));
             myModal.show();
         }
-        
-        /**
-         * Funció per carregar el CON de l'horari al formulari ocult del modal d'eliminació.
-         */
+
         function prepararEsborrarHorari(con) {
             document.getElementById('esborrarHorariCon').value = con;
         }

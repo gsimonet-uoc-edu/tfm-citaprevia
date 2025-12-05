@@ -45,17 +45,11 @@
 			    <groupId>org.springframework.boot</groupId>
 			    <artifactId>spring-boot-starter-jdbc</artifactId>
 			</dependency>
-			<!-- openapi swagguer-ui -->		
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-ui</artifactId>
 			<version>${springdoc.version}</version>
 		</dependency>
-		<!--<dependency>
-			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-security</artifactId>
-			<version>${springdoc.version}</version>
-		</dependency>	-->
 		<dependency>
 			<groupId>com.querydsl</groupId>
 			<artifactId>querydsl-jpa</artifactId>
@@ -113,7 +107,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
-				<!-- Add the following exclusions here. -->
 				<configuration>
 					<nonFilteredFileExtensions>
 						<nonFilteredFileExtension>properties</nonFilteredFileExtension>
@@ -158,11 +151,6 @@
                     </container>
                 </configuration>
             </plugin>
-            <!-- generate git information inside project
-			<plugin>
-				<groupId>pl.project13.maven</groupId>
-				<artifactId>git-commit-id-plugin</artifactId>
-			</plugin>   -->
 		</plugins>
 	</build>
 </project>

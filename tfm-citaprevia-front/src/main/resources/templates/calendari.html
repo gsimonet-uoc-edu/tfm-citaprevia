@@ -16,11 +16,11 @@
             <div class="col-lg-2 d-none d-lg-block">
                 <div class="card shadow-sm">
                     <div class="card-header bg-primary text-white">
-                        <h6 class="mb-0" th:text="#{filtres}">Filtres</h6>
+                        <h6 class="mb-0" th:text="#{filtres}"></h6>
                     </div>
                     <div class="card-body">
-                        <p class="text-success"><i class="fas fa-square me-2"></i><span th:text="#{franja_lliure}">Cita lliure</span></p>
-                        <p class="text-danger"><i class="fas fa-square me-2"></i><span th:text="#{franja_ocupada}">Cita ocupada</span></p>
+                        <p class="text-success"><i class="fas fa-square me-2"></i><span th:text="#{franja_lliure}"></span></p>
+                        <p class="text-danger"><i class="fas fa-square me-2"></i><span th:text="#{franja_ocupada}"></span></p>
                     </div>
                 </div>
             </div>
@@ -28,9 +28,9 @@
             <div class="col-lg-10">
                 <div class="card shadow">
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0" th:text="#{selecciona_data_hora} + ' - ' + ${tipusCita.dem}">Selecciona Data/Hora</h5>
+                        <h5 class="mb-0" th:text="#{selecciona_data_hora} + ' - ' + ${tipusCita.dem}"></h5>
                         <a th:href="@{'/public/' + ${subaplCoa}}" class="btn btn-sm btn-outline-light">
-                            <i class="fas fa-home me-1"></i> <span th:text="#{tornar_index}">Tornar a l'inici</span>
+                            <i class="fas fa-home me-1"></i> <span th:text="#{tornar_index}"></span>
                         </a>
                     </div>
                     <div class="card-body p-3">
@@ -55,7 +55,7 @@
             <div class="modal-content">
                 <form th:action="@{'/public/' + ${subaplCoa} + '/reserva'}" method="post" id="formCita">
                     <div class="modal-header bg-primary text-white">
-                        <h5 class="modal-title" id="reservaModalLabel" th:text="#{reserva_cita} + ' - ' + ${tipusCita.dem}">Reservar cita</h5>
+                        <h5 class="modal-title" id="reservaModalLabel" th:text="#{reserva_cita} + ' - ' + ${tipusCita.dem}"></h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -65,16 +65,16 @@
                         <input type="hidden" name="dataHoraFin" id="modalDataHoraFin">
                         <input type="hidden" name="agendaCon" id="modalAgendaCon">
                         <div class="row g-3">
-                            <div class="col-md-6"><label class="form-label" th:text="#{nom} + ' *'">Nom</label><input type="text" name="nom" class="form-control" required></div>
-                            <div class="col-md-6"><label class="form-label" th:text="#{llis} + ' *'">Cognoms</label><input type="text" name="llis" class="form-control" required></div>
-                            <div class="col-md-6"><label class="form-label" th:text="#{numdoc} + ' *'">DNI</label><input type="text" name="numdoc" class="form-control" required></div>
-                            <div class="col-md-6"><label class="form-label" th:text="#{nomcar} + ' *'">Carrera</label><input type="text" name="nomcar" class="form-control" required></div>
-                            <div class="col-md-6"><label class="form-label" th:text="#{tel} + ' *'">Telèfon</label><input type="text" name="tel" class="form-control" pattern="[0-9]{9}" required></div>
-                            <div class="col-md-6"><label class="form-label" th:text="#{ema} + ' *'">Email</label><input type="email" name="ema" class="form-control" required></div>
-                            <div class="col-12"><label class="form-label" th:text="#{obs}">Observacions</label><textarea name="obs" class="form-control" rows="3"></textarea></div>
+                            <div class="col-md-6"><label class="form-label" th:text="#{nom} + ' *'"></label><input type="text" name="nom" class="form-control" required></div>
+                            <div class="col-md-6"><label class="form-label" th:text="#{llis} + ' *'"></label><input type="text" name="llis" class="form-control" required></div>
+                            <div class="col-md-6"><label class="form-label" th:text="#{numdoc} + ' *'"></label><input type="text" name="numdoc" class="form-control" required></div>
+                            <div class="col-md-6"><label class="form-label" th:text="#{nomcar} + ' *'"></label><input type="text" name="nomcar" class="form-control" required></div>
+                            <div class="col-md-6"><label class="form-label" th:text="#{tel} + ' *'"></label><input type="text" name="tel" class="form-control" pattern="[0-9]{9}" required></div>
+                            <div class="col-md-6"><label class="form-label" th:text="#{ema} + ' *'"></label><input type="email" name="ema" class="form-control" required></div>
+                            <div class="col-12"><label class="form-label" th:text="#{obs}"></label><textarea name="obs" class="form-control" rows="3"></textarea></div>
                         </div>
                         <div class="row g-3 mt-4" th:if="${camposCita != null and !#lists.isEmpty(camposCita)}">
-                            <h6 th:text="#{dades_adicionals}">Dades addicionals</h6>
+                            <h6 th:text="#{dades_adicionals}"></h6>
                             <div th:each="campo : ${camposCita}" class="col-md-6">
                                 <label class="form-label" th:text="${campo.label}"></label>
                                 <div th:switch="${campo.type}">
@@ -91,8 +91,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{cancelar}">Cancel·lar</button>
-                        <button type="submit" class="btn btn-success" th:text="#{reservar}">Reservar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{cancelar}"></button>
+                        <button type="submit" class="btn btn-success" th:text="#{reservar}"></button>
                     </div>
                 </form>
             </div>
@@ -103,14 +103,14 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-warning text-dark">
-                    <h5 class="modal-title" id="passadaModalLabel"><i class="fas fa-exclamation-triangle me-2"></i> <span th:text="#{franja_passada}">Franja Passada</span></h5>
+                    <h5 class="modal-title" id="passadaModalLabel"><i class="fas fa-exclamation-triangle me-2"></i> <span th:text="#{franja_passada}"></span></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p th:text="#{missatge_franja_passada}">Ho sentim, aquesta franja horària ja ha passat i no es pot seleccionar per a una nova reserva.</p>
+                    <p th:text="#{missatge_franja_passada}"></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-warning" data-bs-dismiss="modal" th:text="#{tancar}">Tancar</button>
+                    <button type="button" class="btn btn-warning" data-bs-dismiss="modal" th:text="#{tancar}"></button>
                 </div>
             </div>
         </div>
@@ -126,11 +126,9 @@
             const calendarEl = document.getElementById('calendar');
             const events = /*[[${frangesHorariesGrouped}]]*/ [];
             const reservaModal = new bootstrap.Modal(document.getElementById('reservaModal'));
-            const passadaModal = new bootstrap.Modal(document.getElementById('passadaModal')); // Inicialització del nou modal
+            const passadaModal = new bootstrap.Modal(document.getElementById('passadaModal'));
 
-            // OBTENIR DATA I HORA ACTUALS PER RESTRICCIÓ
-            const now = new Date(); // Data i hora actuals completes
-            // Format ISO 8601 (YYYY-MM-DD) necessari per a validRange
+            const now = new Date();
             const todayISO = now.toISOString().slice(0, 10); 
             
             const calendar = new FullCalendar.Calendar(calendarEl, {
@@ -140,18 +138,10 @@
                 slotMinTime: '08:00:00', slotMaxTime: '20:00:00', slotDuration: '00:30:00', slotLabelInterval: '00:30',
                 allDaySlot: false, nowIndicator: true, height: 'auto',
 
-                // **********************************************
-                // RESTRICCIONS PER EVITAR DATES PASSADES
-                // **********************************************
-                
-                // 1. Limita la data d'inici (no es pot navegar a res anterior a avui)
+                // Limita la data d'inici (no es pot navegar a cite passades des d'avui)
                 validRange: { 
-                    start: todayISO // Només permet des d'avui en endavant
+                    start: todayISO 
                 },
-                
-                // **********************************************
-                // FI RESTRICCIONS
-                // **********************************************
 
                 events: Object.keys(events).flatMap(date => {
                     return events[date].map(event => {
@@ -191,14 +181,12 @@
                 eventClick: function(info) {
                     if (!info.event.extendedProps.lliure) return;
 
-                    // OBTENIR DATA/HORA EN FORMAT LOCAL (NO UTC)
                     const offset = info.event.start.getTimezoneOffset() * 60000;
                     const startLocal = new Date(info.event.start.getTime() - offset).toISOString().slice(0, 19);
                     const endLocal = info.event.end ? new Date(info.event.end.getTime() - offset).toISOString().slice(0, 19) : '';
 
-                    // 2. Comprovació addicional en el click per si la franja ja ha passat (Utilitza 'now' amb hora i minut)
                     if (new Date(info.event.start) < now) { 
-                        passadaModal.show(); // MOSTRAR EL NOU MODAL EN LLOC DE L'ALERT
+                        passadaModal.show();
                         return;
                     }
                     
