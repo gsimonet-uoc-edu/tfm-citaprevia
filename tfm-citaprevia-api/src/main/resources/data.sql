@@ -1,36 +1,51 @@
 -- SUBAPLICACIO
 INSERT INTO SUBAPLICACIO (coa, dec, dem) VALUES 
-('AJB', 'Ajuntament de Barcelona', 'Ajuntament de Barcelona'),
-('AP2', 'Aplicació Secundària', 'Seguiments');
+('AJB', 'Ajuntament de Barcelona', 'Ajuntament de Barcelona (Catalunya)'),
+('FIS', 'Fisioterapia FisioCat', 'Centre de Fisioterapia FisioCat');
 
 -- TECNIC
 INSERT INTO TECNIC (coa, pass, nom, ll1, ll2, prf) VALUES 
+-- Tencis Ajuntament de Palma
 ('JGOMEZ', '1234', 'Joan', 'Gómez', 'Marqués','TECNIC_AJB'), -- fa feina de matins
-('AGINARD', '1234', 'Antonio', 'Ginard', 'Torres','ADMINISTRADOR_AJB'), -- fa feina de tardes
-('GSIMONET', '1234', 'Guillermo', 'Simonet', 'Ramon','TECNIC_AJB'), -- fa feina de matins
-('JCARRERAS', '1234', 'Jacinto', 'Carreras', 'Armengol','ADMINISTRADOR_AP2');
+('GSIMONET', '1234', 'Guillermo', 'Simonet', 'Ramon','ADMINISTRADOR_AJB'), -- fa feina de tardes
+('AGINARD', '1234', 'Antonio', 'Ginard', 'Reinés','TECNIC_AJB'), -- fa feina de matins
+-- Tecnics fisios
+('FISIO1', '1234', 'Jaume', 'Carrió', 'Sureda','TECNIC_FIS'),
+('FISIO2', '1234', 'Margalida', 'Ramon', 'Gibert','ADMINISTRADOR_FIS');
 
 -- UBICACIO
 INSERT INTO UBICACIO (con, nom, nomcar, obs, SUBAPL_COA) VALUES 
 (1, 'OAC Avingudes', 'C/ Avinguda Barcelona 2', 'Davant la sortida del Metro L11', 'AJB'),
-(2, 'OAC Pl Catalunya', 'Plaça Catalunya 32 baixos', 'Entrada pel Centre Comercial El Corte Inglés', 'AJB');
+(2, 'OAC Pl Catalunya', 'Plaça Catalunya 32 baixos', 'Entrada pel Centre Comercial El Corte Inglés', 'AJB'),
+-- Ubicacions fisios
+(3, 'FisioCat Barcelona', 'Carrer Enric Granados 2', 'Centre ubicat al centre de Barcelona', 'FIS'),
+(4, 'FisioCat Tarragona', 'Avinguda Tarraco 3 pis 2A', 'Centre ubicat a les afores de Tarragona', 'FIS');
 
 -- TIPUS_CITA
 INSERT INTO TIPUS_CITA (con, dec, dem, tipcitmod, SUBAPL_COA) VALUES 
 (1, 'Certificat PH', 'Certificat Padró d''Habitants', 'P', 'AJB'),
 (2, 'Certificat de Resi.', 'Certificat de Residència', 'P', 'AJB'),
-(3, 'Seguiment', 'Control', 'T', 'AP2');
+-- Fisios
+(3, 'Primer', 'Primera consulta', 'P', 'FIS'),
+(4, 'Segon', 'Consulta successiva', 'P', 'FIS');
 
 -- HORARI
 INSERT INTO HORARI (con, dec, dem, SUBAPL_COA, TIPCIT_CON) VALUES
 (1, 'OAC-Matí', 'Horari de matí dl-dm-dv 9-14h', 'AJB', 1),
-(2, 'OAC-Tarda', 'Horari de tarda dm-dj 15-19h', 'AJB', 1);
+(2, 'OAC-Tarda', 'Horari de tarda dm-dj 15-19h', 'AJB', 1),
+-- Fisios
+(3, 'Torn de matí', 'Horari de matí de dl-ds 9 a 14h', 'FIS', 3),
+(4, 'Torn de tarda', 'Horari de tarda dl-dv 15-19h', 'FIS', 4)
+;
 
 -- AGENDA
 INSERT INTO AGENDA (con, datini, datfin, UBI_CON, TEC_COA, HORCIT_CON) VALUES 
 (1, '2025-11-24', '2025-12-23', 1, 'JGOMEZ', 1),
 (2, '2025-11-24', '2026-04-01', 2, 'AGINARD', 2),
-(3, '2025-12-24', '2026-04-01', 1, 'GSIMONET', 1);
+(3, '2025-12-24', '2026-04-01', 1, 'GSIMONET', 1),
+-- Fisios
+(4, '2025-12-01', '2026-04-01', 3, 'FISIO1', 3),
+(5, '2025-12-01', '2026-04-01', 4, 'FISIO2', 4);
 
 -- SetmanaTipus: Lunes y Miércoles, 9-10 y 10-11
 INSERT INTO SETMANA_TIPUS (HORCIT_CON, DIASET_CON, horini, horfin) VALUES
@@ -138,6 +153,7 @@ INSERT INTO CITA (con, dathorini, dathorfin, obs, nom, llis, numdoc, tipcit_con,
 
 
 -- SINCRONITZAR SEQUENCIES
+
 ALTER SEQUENCE IF EXISTS ubicacio_seq RESTART WITH (SELECT COALESCE(MAX(con), 0) + 1 FROM UBICACIO);
 ALTER SEQUENCE IF EXISTS tipus_cita_seq RESTART WITH (SELECT COALESCE(MAX(con), 0) + 1 FROM TIPUS_CITA);
 ALTER SEQUENCE IF EXISTS horari_seq RESTART WITH (SELECT COALESCE(MAX(con), 0) + 1 FROM HORARI);
