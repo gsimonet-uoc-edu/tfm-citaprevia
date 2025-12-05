@@ -49,34 +49,97 @@ INSERT INTO AGENDA (con, datini, datfin, UBI_CON, TEC_COA, HORCIT_CON) VALUES
 
 -- SetmanaTipus: Lunes y Miércoles, 9-10 y 10-11
 INSERT INTO SETMANA_TIPUS (HORCIT_CON, DIASET_CON, horini, horfin) VALUES
--- dilluns
+-- dilluns AJB
 (1, 1, '09:00:00', '10:00:00'),  -- OAC-Matí horari 1 matins dl-dm-dv cada hora
 (1, 1, '10:00:00', '11:00:00'),  -- OAC-Matí horari 1 matins dl-dm-dv cada hora
 (1, 1, '11:00:00', '12:00:00'),  -- OAC-Matí horari 1 matins dl-dm-dv cada hora
 (1, 1, '12:00:00', '13:00:00'),  -- OAC-Matí horari 1 matins dl-dm-dv cada hora
 (1, 1, '13:00:00', '14:00:00'),  -- OAC-Matí horari 1 matins dl-dm-dv cada hora
+-- dilluns FIS
+(3, 1, '09:00:00', '10:00:00'),  -- mati
+(3, 1, '10:00:00', '11:00:00'), 
+(3, 1, '11:00:00', '12:00:00'),
+(3, 1, '12:00:00', '13:00:00'), 
+(3, 1, '13:00:00', '14:00:00'),
+(4, 1, '15:00:00', '16:00:00'),  -- tarda
+(4, 1, '16:00:00', '17:00:00'), 
+(4, 1, '17:00:00', '18:00:00'),
+(4, 1, '18:00:00', '19:00:00'), 
+
 -- dimarts
 (2, 2, '15:00:00', '16:00:00'),  -- OAC-tarda horari 2 tardes dm-dj cada hora
 (2, 2, '16:00:00', '17:00:00'),  -- OAC-tarda horari 2 tardes dm-dj cada hora
 (2, 2, '17:00:00', '18:00:00'),  -- OAC-tarda horari 2 tardes dm-dj cada hora
 (2, 2, '18:00:00', '19:00:00'),  -- OAC-tarda horari 2 tardes dm-dj cada hora
+--  FIS
+(3, 2, '09:00:00', '10:00:00'),  -- mati
+(3, 2, '10:00:00', '11:00:00'), 
+(3, 2, '11:00:00', '12:00:00'),
+(3, 2, '12:00:00', '13:00:00'), 
+(3, 2, '13:00:00', '14:00:00'),
+(4, 2, '15:00:00', '16:00:00'),  -- tarda
+(4, 2, '16:00:00', '17:00:00'), 
+(4, 2, '17:00:00', '18:00:00'),
+(4, 2, '18:00:00', '19:00:00'), 
+
 -- dimecres
 (1, 3, '09:00:00', '10:00:00'),  -- OAC-Matí horari 1 matins dl-dm-dv cada hora
 (1, 3, '10:00:00', '11:00:00'),  -- OAC-Matí horari 1 matins dl-dm-dv cada hora
 (1, 3, '11:00:00', '12:00:00'),  -- OAC-Matí horari 1 matins dl-dm-dv cada hora
 (1, 3, '12:00:00', '13:00:00'),  -- OAC-Matí horari 1 matins dl-dm-dv cada hora
 (1, 3, '13:00:00', '14:00:00'),  -- OAC-Matí horari 1 matins dl-dm-dv cada hora
+-- FIS
+(3, 3, '09:00:00', '10:00:00'),  -- mati
+(3, 3, '10:00:00', '11:00:00'), 
+(3, 3, '11:00:00', '12:00:00'),
+(3, 3, '12:00:00', '13:00:00'), 
+(3, 3, '13:00:00', '14:00:00'),
+(4, 3, '15:00:00', '16:00:00'),  -- tarda
+(4, 3, '16:00:00', '17:00:00'), 
+(4, 3, '17:00:00', '18:00:00'),
+(4, 3, '18:00:00', '19:00:00'), 
 -- dijous
 (2, 4, '15:00:00', '16:00:00'),  -- OAC-tarda horari 2 tardes dm-dj cada hora
 (2, 4, '16:00:00', '17:00:00'),  -- OAC-tarda horari 2 tardes dm-dj cada hora
 (2, 4, '17:00:00', '18:00:00'),  -- OAC-tarda horari 2 tardes dm-dj cada hora
 (2, 4, '18:00:00', '19:00:00'),  -- OAC-tarda horari 2 tardes dm-dj cada hora
+-- FIS
+(3, 4, '09:00:00', '10:00:00'),  -- mati
+(3, 4, '10:00:00', '11:00:00'), 
+(3, 4, '11:00:00', '12:00:00'),
+(3, 4, '12:00:00', '13:00:00'), 
+(3, 4, '13:00:00', '14:00:00'),
+(4, 4, '15:00:00', '16:00:00'),  -- tarda
+(4, 4, '16:00:00', '17:00:00'), 
+(4, 4, '17:00:00', '18:00:00'),
+(4, 4, '18:00:00', '19:00:00'), 
+
 -- divendres
 (1, 5, '09:00:00', '10:00:00'),  -- OAC-Matí horari 1 matins dl-dm-dv cada hora
 (1, 5, '10:00:00', '11:00:00'),  -- OAC-Matí horari 1 matins dl-dm-dv cada hora
 (1, 5, '11:00:00', '12:00:00'),  -- OAC-Matí horari 1 matins dl-dm-dv cada hora
 (1, 5, '12:00:00', '13:00:00'),  -- OAC-Matí horari 1 matins dl-dm-dv cada hora
-(1, 5, '13:00:00', '14:00:00');  -- OAC-Matí horari 1 matins dl-dm-dv cada hora
+(1, 5, '13:00:00', '14:00:00'),  -- OAC-Matí horari 1 matins dl-dm-dv cada hora
+
+-- FIS
+(3, 5, '09:00:00', '10:00:00'),  -- mati
+(3, 5, '10:00:00', '11:00:00'), 
+(3, 5, '11:00:00', '12:00:00'),
+(3, 5, '12:00:00', '13:00:00'), 
+(3, 5, '13:00:00', '14:00:00'),
+(4, 5, '15:00:00', '16:00:00'),  -- tarda
+(4, 5, '16:00:00', '17:00:00'), 
+(4, 5, '17:00:00', '18:00:00'),
+(4, 5, '18:00:00', '19:00:00'), 
+
+-- dissabte
+-- FIS
+(3, 6, '09:00:00', '10:00:00'),  -- mati
+(3, 6, '10:00:00', '11:00:00'), 
+(3, 6, '11:00:00', '12:00:00'),
+(3, 6, '12:00:00', '13:00:00'), 
+(3, 6, '13:00:00', '14:00:00');
+
 
 
 INSERT INTO CITA (con, dathorini, dathorfin, obs, nom, llis, numdoc, tipcit_con, age_con,
