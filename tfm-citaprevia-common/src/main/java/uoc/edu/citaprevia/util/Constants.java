@@ -27,6 +27,7 @@ public final class Constants {
     public static final String MSG_ERR_GET_CALENDARI 			   = "error.get.calendari";   
     public static final String ERROR_API_ADD_CITES_SETMANES_TIPUS       = "error.setmanestipus.cites.add";
     public static final String ERROR_API_UPDATE_CITES_SETMANES_TIPUS    = "error.setmanestipus.cites.update";
+    public static final String ERROR_API_CITA_CONCURRENT                = "error.cites.concurrencies";
 
     // Errors d'operacions específiques d'eliminació de l'api
     public static final String ERROR_API_DELETE_AGENDA                  = "error.agendas.delete";

@@ -60,7 +60,14 @@ public class CitaServiceImpl implements CitaService{
 		CitaDto dto = new CitaDto();
 		try {
 			
-			dto = Converter.toDto(citaDao.saveCita(Converter.toDao(cita)));
+			Cita citaConcurrent = citaDao.existeixCitaAgenda(cita.getAgenda().getCon(), cita.getDathorini(), cita.getDathorfin(), cita.getAgenda().getHorari().getTipusCita().getCon());
+			// Comprovar concurrència, que al mateix temps dos usuaris distints estan emplenant les dades de la mateixa cita.
+			if (citaConcurrent != null && !Utils.isEmpty(citaConcurrent.getCon())) {
+				dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL, bundle.getMessage(Constants.ERROR_API_CITA_CONCURRENT, null, locale)));
+			} else {
+				dto = Converter.toDto(citaDao.saveCita(Converter.toDao(cita)));
+			}
+			
 		
 		} catch (Exception e) {
 			dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL, bundle.getMessage(Constants.ERROR_API_CRUD_CITA, null, locale)));
