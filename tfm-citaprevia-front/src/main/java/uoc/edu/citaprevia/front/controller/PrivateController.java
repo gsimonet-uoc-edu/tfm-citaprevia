@@ -112,6 +112,12 @@ public class PrivateController {
 	            return "redirect:/private/login";
 	        }
 	        
+	        // Obtenir subaplicació per mostrar al header
+	        if (!Utils.isEmpty(subaplCoa)) {
+	        	SubaplicacioDto subAplicacio = citaPreviaPublicClient.getSubaplicacio(subaplCoa, locale);
+	        	model.addAttribute("subAplicacio", subAplicacio); 
+	        }
+	        
 			String coa = authentication.getName();
 			TecnicDto tecnic = citaPreviaPrivateClient.getTecnic(coa, locale);
 	
@@ -129,11 +135,7 @@ public class PrivateController {
 	            agendes = citaPreviaPrivateClient.getAgendasByTecnic(tecnic.getCoa(), locale);    
 	        }
 	        
-	        // Obtenir subaplicació per mostrar al header
-	        if (!Utils.isEmpty(subaplCoa)) {
-	        	SubaplicacioDto subAplicacio = citaPreviaPublicClient.getSubaplicacio(subaplCoa, locale);
-	        	model.addAttribute("subAplicacio", subAplicacio); 
-	        }
+
 	        
 	        model.addAttribute("isAdministrador", isAdministrador);
 			model.addAttribute("subaplCoa", subaplCoa); 
@@ -615,6 +617,10 @@ public class PrivateController {
 	        	return "redirect:/private/calendari";
 	        }
 	        
+	        // Obtenir subaplicació per mostrar al header
+	        	SubaplicacioDto subAplicacio = citaPreviaPublicClient.getSubaplicacio(subaplCoa, locale);
+	        	model.addAttribute("subAplicacio", subAplicacio); 
+	        
 	        String tecCoa = authentication.getName();
 		    TecnicDto tecnic = citaPreviaPrivateClient.getTecnic(tecCoa, locale);
 		    if (tecnic == null || Utils.isEmpty(tecnic.getCoa())) {
@@ -777,6 +783,15 @@ public class PrivateController {
 	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SUBAPLICACIO_NO_TROBADA, null, locale));
 	        	return "redirect:/private/calendari";
 	        }
+	        
+	        if (Utils.isEmpty(subaplCoa)) {
+	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SUBAPLICACIO_NO_TROBADA, null, locale));
+	            return "redirect:/private/login";
+	        }
+	        
+	        // Obtenir subaplicació per mostrar al header
+        	SubaplicacioDto subAplicacio = citaPreviaPublicClient.getSubaplicacio(subaplCoa, locale);
+        	model.addAttribute("subAplicacio", subAplicacio); 
 	        
 	        // Obtenir llisat d'horaris
 	        List<HorariDto> horaris = citaPreviaPrivateClient.getHorarisBySubaplicacio(subaplCoa, locale);
@@ -951,13 +966,23 @@ public class PrivateController {
                 redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_SETMANES_TIPUS, null, locale));
                 return "redirect:/private/gestio/horaris";
             }
+                   	
+	        if (horariDto.getSubapl()== null || Utils.isEmpty(horariDto.getSubapl().getCoa())) {
+	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SUBAPLICACIO_NO_TROBADA, null, locale));
+	            return "redirect:/private/login";
+	        }
+	        
+	        // Obtenir subaplicació per mostrar al header
+        	SubaplicacioDto subAplicacio = citaPreviaPublicClient.getSubaplicacio(horariDto.getSubapl().getCoa(), locale);
+        	model.addAttribute("subAplicacio", subAplicacio);
+        	
             List<SetmanaTipusDto> setmanesTipus = citaPreviaPublicClient.getSetmanesTipusByHorari(horCon, locale);
             model.addAttribute("horariDto", horariDto);
             model.addAttribute("horariCon", horCon); 
             model.addAttribute("diesSetmana", getDiesSetmana(locale)); // Dies de la setmana
             model.addAttribute("setmanesTipus", setmanesTipus);
             
-            // Formuaro      
+    
 	        if (!model.containsAttribute("setmanaTipusForm")) {
 	        	SetmanaTipusFormDto form = new SetmanaTipusFormDto();
 	            model.addAttribute("setmanaTipusForm", form);
@@ -1094,6 +1119,10 @@ public class PrivateController {
 	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SUBAPLICACIO_NO_TROBADA, null, locale));
 	        	return "redirect:/private/calendari";
 	        }
+	        
+	        // Obtenir subaplicació per mostrar al header
+	        	SubaplicacioDto subAplicacio = citaPreviaPublicClient.getSubaplicacio(subaplCoa, locale);
+	        	model.addAttribute("subAplicacio", subAplicacio); 
 
             // Llistat de Tècnics
             List<TecnicDto> tecnicsList = citaPreviaPrivateClient.getTecnicsBySubaplicacio(subaplCoa, locale);
@@ -1255,6 +1284,10 @@ public class PrivateController {
 	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SUBAPLICACIO_NO_TROBADA, null, locale));
 	        	return "redirect:/private/calendari";
 	        }
+	        
+	        // Obtenir subaplicació per mostrar al header
+	        SubaplicacioDto subAplicacio = citaPreviaPublicClient.getSubaplicacio(subaplCoa, locale);
+	        model.addAttribute("subAplicacio", subAplicacio); 
         	
 	        // Afegir al model el llistat de tipus de cites
             List<TipusCitaDto> tipusCites = citaPreviaPrivateClient.getTipusCitesBySubaplicacio(subaplCoa, locale);
@@ -1413,6 +1446,11 @@ public class PrivateController {
 	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SUBAPLICACIO_NO_TROBADA, null, locale));
 	        	return "redirect:/private/calendari";
 	        }
+	        
+	        // Obtenir subaplicació per mostrar al header
+	        SubaplicacioDto subAplicacio = citaPreviaPublicClient.getSubaplicacio(subaplCoa, locale);
+	        model.addAttribute("subAplicacio", subAplicacio); 
+	        
 	        // Llistat d'ubicacions de la subaplicació
             List<UbicacioDto> ubicacions = citaPreviaPrivateClient.getUbicacionsBySubaplicacio(subaplCoa, locale);
             model.addAttribute("ubicacions", ubicacions != null ? ubicacions : Collections.emptyList());
@@ -1551,16 +1589,29 @@ public class PrivateController {
 			RedirectAttributes redirectAttributes,
 			Locale locale) {
     	
-	/*	String subaplCoa = this.getSubaplCoa(authentication);
+        long startTime = System.currentTimeMillis();
+        LOG.info("### Inici PrivateController.dashboard startTime, con={}", startTime);
+        try {
+    	
+        	String subaplCoa = this.getSubaplCoa(authentication);
 		
-        if (Utils.isEmpty(subaplCoa)) {
-        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SUBAPLICACIO_NO_TROBADA, null, locale));
-        	return "redirect:/private/calendari";
-        }
-    	
-		model.addAttribute("subaplCoa", subaplCoa); */
-
-    	
+	        if (Utils.isEmpty(subaplCoa)) {
+	        	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_SUBAPLICACIO_NO_TROBADA, null, locale));
+	        	return "redirect:/private/calendari";
+	        }
+	    	
+			model.addAttribute("subaplCoa", subaplCoa);
+			
+	        SubaplicacioDto subAplicacio = citaPreviaPublicClient.getSubaplicacio(subaplCoa, locale);
+	        model.addAttribute("subAplicacio", subAplicacio);
+	        
+	    } catch (Exception e) {
+	        LOG.error("### Error PrivateController.dashboard: ", e);
+	        redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_UBICACIONS, null, locale));
+	    } finally {
+	        long totalTime = (System.currentTimeMillis() - startTime);
+	        LOG.info("### Final PrivateController.dashboard totalTime={}", totalTime);
+	    }
         return "private/dashboard";
     }
     
