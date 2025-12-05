@@ -125,8 +125,21 @@
                             <div class="col-md-6"><label class="form-label" th:text="#{llis} + ' *'"></label><input type="text" name="llis" class="form-control" required></div>
                             <div class="col-md-6"><label class="form-label" th:text="#{numdoc} + ' *'"></label><input type="text" name="numdoc" class="form-control" required></div>
                             <div class="col-md-6"><label class="form-label" th:text="#{nomcar} + ' *'"></label><input type="text" name="nomcar" class="form-control" required></div>
-                            <div class="col-md-6"><label class="form-label" th:text="#{tel} + ' *'"></label><input type="text" name="tel" class="form-control" pattern="[0-9]{9}" required></div>
-                            <div class="col-md-6"><label class="form-label" th:text="#{ema} + ' *'"></label><input type="email" name="ema" class="form-control" required></div>
+					        <div class="col-md-6">
+					            <label class="form-label" th:text="#{tel} + ' *'"><i class="fas fa-phone me-2"></i></label>
+					            <div class="input-group">
+					                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+					                <input type="text" name="tel" class="form-control" pattern="[0-9]{9}" 
+					                       title="Ha de contenir exactament 9 dígits." required>
+					            </div>
+					        </div>       
+							<div class="col-md-6">
+							            <label class="form-label" th:text="#{ema} + ' *'"><i class="fas fa-envelope me-2"></i></label>
+							            <div class="input-group">
+							                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+							                <input type="email" name="ema" class="form-control" required>
+							            </div>
+							 </div>
                             <div class="col-12"><label class="form-label" th:text="#{obs}"></label><textarea name="obs" class="form-control" rows="3"></textarea></div>
                         </div>
 
@@ -179,8 +192,21 @@
                             <div class="col-md-6"><label th:text="#{llis} + ' *'"></label><input type="text" id="edicioLlis" name="llis" class="form-control" required></div>
                             <div class="col-md-6"><label th:text="#{numdoc} + ' *'"></label><input type="text" id="edicioNumdoc" name="numdoc" class="form-control" required></div>
                             <div class="col-md-6"><label th:text="#{nomcar} + ' *'"></label><input type="text" id="edicioNomcar" name="nomcar" class="form-control" required></div>
-                            <div class="col-md-6"><label th:text="#{tel} + ' *'"></label><input type="text" id="edicioTel" name="tel" class="form-control" pattern="[0-9]{9}" required></div>
-                            <div class="col-md-6"><label th:text="#{ema} + ' *'"></label><input type="email" id="edicioEma" name="ema" class="form-control" required></div>
+					        <div class="col-md-6">
+					            <label class="form-label" th:text="#{tel} + ' *'"><i class="fas fa-phone me-2"></i></label>
+					            <div class="input-group">
+					                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+					                <input type="text" id="edicioTel" name="tel" class="form-control" pattern="[0-9]{9}" 
+					                       title="Ha de contenir exactament 9 dígits." required>
+					            </div>
+					        </div>       
+							<div class="col-md-6">
+							            <label class="form-label" th:text="#{ema} + ' *'"><i class="fas fa-envelope me-2"></i></label>
+							            <div class="input-group">
+							                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+							                <input type="email" id="edicioEma" name="ema" class="form-control" required>
+							            </div>
+							 </div>                                   
                             <div class="col-12"><label th:text="#{obs}"></label><textarea id="edicioObs" name="obs" class="form-control" rows="3"></textarea></div>
                         </div>
 
@@ -257,8 +283,18 @@
                     <div class="col-md-6"><label th:text="#{llis} + ' *'"></label><input type="text" id="consultaLlis" name="llis" class="form-control" disabled></div>
                     <div class="col-md-6"><label th:text="#{numdoc} + ' *'"></label><input type="text" id="consultaNumdoc" name="numdoc" class="form-control" disabled></div>
                     <div class="col-md-6"><label th:text="#{nomcar} + ' *'"></label><input type="text" id="consultaNomcar" name="nomcar" class="form-control" disabled></div>
-                    <div class="col-md-6"><label th:text="#{tel} + ' *'"></label><input type="text" id="consultaTel" name="tel" class="form-control" disabled></div>
-                    <div class="col-md-6"><label th:text="#{ema} + ' *'"></label><input type="email" id="consultaEma" name="ema" class="form-control" disabled></div>
+					        <div class="col-md-6">
+					            <label class="form-label" th:text="#{tel} + ' *'"><i class="fas fa-phone me-2"></i></label>
+					            <div class="input-group">
+					                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+					                <input type="text" id="consultaTel" name="tel" class="form-control" disabled></div>
+					        </div>       
+							<div class="col-md-6">
+							            <label class="form-label" th:text="#{ema} + ' *'"><i class="fas fa-envelope me-2"></i></label>
+							            <div class="input-group">
+							                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+							                <input type="email" id="consultaEma" name="ema" class="form-control" disabled></div>
+							 </div>                                        
                     <div class="col-12"><label th:text="#{obs}"></label><textarea id="consultaObs" name="obs" class="form-control" rows="3" disabled></textarea></div>
                 </div>
 

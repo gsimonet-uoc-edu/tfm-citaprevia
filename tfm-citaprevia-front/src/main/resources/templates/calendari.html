@@ -68,9 +68,22 @@
                             <div class="col-md-6"><label class="form-label" th:text="#{nom} + ' *'"></label><input type="text" name="nom" class="form-control" required></div>
                             <div class="col-md-6"><label class="form-label" th:text="#{llis} + ' *'"></label><input type="text" name="llis" class="form-control" required></div>
                             <div class="col-md-6"><label class="form-label" th:text="#{numdoc} + ' *'"></label><input type="text" name="numdoc" class="form-control" required></div>
-                            <div class="col-md-6"><label class="form-label" th:text="#{nomcar} + ' *'"></label><input type="text" name="nomcar" class="form-control" required></div>
-                            <div class="col-md-6"><label class="form-label" th:text="#{tel} + ' *'"></label><input type="text" name="tel" class="form-control" pattern="[0-9]{9}" required></div>
-                            <div class="col-md-6"><label class="form-label" th:text="#{ema} + ' *'"></label><input type="email" name="ema" class="form-control" required></div>
+                            <div class="col-md-6"><label class="form-label" th:text="#{nomcar} + ' *'"></label><input type="text" name="nomcar" class="form-control" required></div>                          
+					        <div class="col-md-6">
+					            <label class="form-label" th:text="#{tel} + ' *'"><i class="fas fa-phone me-2"></i></label>
+					            <div class="input-group">
+					                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+					                <input type="text" name="tel" class="form-control" pattern="[0-9]{9}" 
+					                       title="Ha de contenir exactament 9 dígits." required>
+					            </div>
+					        </div>       
+							<div class="col-md-6">
+							            <label class="form-label" th:text="#{ema} + ' *'"><i class="fas fa-envelope me-2"></i></label>
+							            <div class="input-group">
+							                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+							                <input type="email" name="ema" class="form-control" required>
+							            </div>
+							 </div>                                                       
                             <div class="col-12"><label class="form-label" th:text="#{obs}"></label><textarea name="obs" class="form-control" rows="3"></textarea></div>
                         </div>
                         <div class="row g-3 mt-4" th:if="${camposCita != null and !#lists.isEmpty(camposCita)}">
