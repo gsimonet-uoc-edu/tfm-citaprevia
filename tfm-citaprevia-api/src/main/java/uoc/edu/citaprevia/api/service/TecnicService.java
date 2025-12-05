@@ -8,8 +8,6 @@ import uoc.edu.citaprevia.dto.generic.ErrorDto;
 
 public interface TecnicService {
 
-	TecnicDto getTecnicByCoa(String coa);
-
 	List<TecnicDto> getTecnicsSubaplicacio(String subaplCoa, Locale locale);
 
 	TecnicDto saveTecnic(TecnicDto tecnic, Locale locale);
@@ -17,5 +15,7 @@ public interface TecnicService {
 	TecnicDto updateTecnic(TecnicDto tecnic, Locale locale);
 
 	ErrorDto deleteTecnic(String coa, Locale locale);
+
+	TecnicDto getTecnicByCoa(String coa, Locale locale);
 
 }

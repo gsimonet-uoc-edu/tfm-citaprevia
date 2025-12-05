@@ -48,7 +48,7 @@ public class TecnicController {
 	@Operation(summary="obtenir un tècnic pel seu identificador")
 	public TecnicDto getTecnic(@PathVariable String coa, 
 											Locale locale) {
-		return tecnicService.getTecnicByCoa(coa);
+		return tecnicService.getTecnicByCoa(coa, locale);
 	}
 	
 	@GetMapping(value="/{coa}/agendes")

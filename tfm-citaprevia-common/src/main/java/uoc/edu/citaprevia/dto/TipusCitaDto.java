@@ -7,7 +7,7 @@ import lombok.ToString;
 import uoc.edu.citaprevia.dto.generic.ErrorsDto;
 import uoc.edu.citaprevia.model.ModalitatTipusCita;
 
-@Getter @Setter @NoArgsConstructor @ToString
+@Getter @Setter @NoArgsConstructor @ToString(callSuper = true)
 public class TipusCitaDto extends ErrorsDto{
 
 	public TipusCitaDto(String dec, String dem) {

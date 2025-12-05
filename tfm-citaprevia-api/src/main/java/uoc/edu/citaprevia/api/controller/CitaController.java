@@ -45,7 +45,7 @@ public class CitaController {
 	@Operation(summary="obtenir una cita pel seu identificador")
 	public CitaDto getCita(@PathVariable Long con
 						  ,Locale locale) {
-		return citaService.getCita(con);
+		return citaService.getCita(con, locale);
 	}
 	
 	@DeleteMapping("/{con}/documents-identificatius/{numdoc}")

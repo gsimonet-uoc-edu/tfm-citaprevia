@@ -7,7 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 import uoc.edu.citaprevia.dto.generic.ErrorsDto;
 
-@Getter @Setter @NoArgsConstructor @ToString @EqualsAndHashCode
+@Getter @Setter @NoArgsConstructor @ToString(callSuper = true) @EqualsAndHashCode
 public class HorariDto extends ErrorsDto{
 	
 	private Long con;

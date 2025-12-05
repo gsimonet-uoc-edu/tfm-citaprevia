@@ -38,35 +38,70 @@ public class AgendaServiceImpl implements AgendaService{
 	@Override
 	public List<AgendaDto> getAgendesByTipusCitaAndSubaplicacio (Long tipCitCon, String subaplCoa, Locale locale) {
 		
+		long startTime=System.currentTimeMillis();
+		LOG.info("### Inici AgendaServiceImpl.getAgendesByTipusCitaAndSubaplicacio startTime={}, tipCitCon={}, subaplCoa={}", startTime, tipCitCon, subaplCoa);
+		
 		List<AgendaDto> dtos = new ArrayList<AgendaDto>();
+		try {
 		
-		if (!Utils.isEmpty(tipCitCon) && !Utils.isEmpty(subaplCoa)) {
-			List<Agenda> daos = agendaDao.findAgendesByTipusCitaAndSubaplicacio(tipCitCon, subaplCoa);	
-			daos.forEach(item->dtos.add(Converter.toDto(item)));
-		}
-		
+			if (!Utils.isEmpty(tipCitCon) && !Utils.isEmpty(subaplCoa)) {
+				List<Agenda> daos = agendaDao.findAgendesByTipusCitaAndSubaplicacio(tipCitCon, subaplCoa);	
+				daos.forEach(item->dtos.add(Converter.toDto(item)));
+			}
+		} catch (Exception e) {
+			LOG.error("### Error AgendaServiceImpl.getAgendesByTipusCitaAndSubaplicacio:", e);
+			LOG.error("### Error AgendaServiceImpl.getAgendesByTipusCitaAndSubaplicacio={} " , bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale));
+						
+		} finally {
+			long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final AgendaServiceImpl.getAgendesByTipusCitaAndSubaplicacio totalTime={}, tipCitCon={}, subaplCoa={}, agendes.size={}", totalTime, tipCitCon, subaplCoa, dtos.size());
+		}			
 		return dtos;
 	}
 	
 	@Override
 	public List<AgendaDto> getAgendesObertesByTipusCitaAndSubaplicacio (Long tipCitCon, String subaplCoa, Locale locale) {
 		
+		long startTime=System.currentTimeMillis();
+		LOG.info("### Inici AgendaServiceImpl.getAgendesObertesByTipusCitaAndSubaplicacio startTime={}, tipCitCon={}, subaplCoa={}", startTime, tipCitCon, subaplCoa);
+		
 		List<AgendaDto> dtos = new ArrayList<AgendaDto>();
+		try {
 		
-		if (!Utils.isEmpty(tipCitCon) && !Utils.isEmpty(subaplCoa)) {
-			List<Agenda> daos = agendaDao.findAgendesObertesByTipusCitaAndSubaplicacio(tipCitCon, subaplCoa);	
-			daos.forEach(item->dtos.add(Converter.toDto(item)));
-		}
-		
+			if (!Utils.isEmpty(tipCitCon) && !Utils.isEmpty(subaplCoa)) {
+				List<Agenda> daos = agendaDao.findAgendesObertesByTipusCitaAndSubaplicacio(tipCitCon, subaplCoa);	
+				daos.forEach(item->dtos.add(Converter.toDto(item)));
+			}
+		} catch (Exception e) {
+			LOG.error("### Error AgendaServiceImpl.getAgendesObertesByTipusCitaAndSubaplicacio:", e);
+			LOG.error("### Error AgendaServiceImpl.getAgendesObertesByTipusCitaAndSubaplicacio={} " , bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale));
+						
+		} finally {
+			long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final AgendaServiceImpl.getAgendesObertesByTipusCitaAndSubaplicacio totalTime={}, tipCitCon={}, subaplCoa={}, agendes.size={}", totalTime, tipCitCon, subaplCoa, dtos.size());
+		}		
 		return dtos;
 	}
 	
 	@Override
 	public AgendaDto getAgenda(Long con, Locale locale) {
+		long startTime=System.currentTimeMillis();
+		LOG.info("### Inici AgendaServiceImpl.getAgenda startTime={}, con={}", startTime, con);
+		
 		AgendaDto dto = new AgendaDto();
-		if (!Utils.isEmpty(con)) {
-			Agenda dao = agendaDao.findAgendaByCon(con);
-			dto = Converter.toDto(dao);
+		try {
+			if (!Utils.isEmpty(con)) {
+				Agenda dao = agendaDao.findAgendaByCon(con);
+				dto = Converter.toDto(dao);
+			}
+		} catch (Exception e) {
+			dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL, bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale)));
+			LOG.error("### Error AgendaServiceImpl.getAgenda:", e);
+			LOG.error("### Error AgendaServiceImpl.getAgendesBySubaplicacio={} " , bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale));
+						
+		} finally {
+			long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final AgendaServiceImpl.getAgendesBySubaplicacio totalTime={}, subaplCoa={}, agenda={}", totalTime, con, dto.toString());
 		}
 		return dto;
 	}
@@ -74,11 +109,22 @@ public class AgendaServiceImpl implements AgendaService{
 	@Override
 	public List<AgendaDto> getAgendesBySubaplicacio (String subaplCoa, Locale locale) {
 		
-		List<AgendaDto> dtos = new ArrayList<AgendaDto>();
+		long startTime=System.currentTimeMillis();
+		LOG.info("### Inici AgendaServiceImpl.getAgendesBySubaplicacio startTime={}, subaplCoa={}", startTime, subaplCoa);
 		
-		if (!Utils.isEmpty(subaplCoa)) {
-			List<Agenda> daos = agendaDao.findAgendesBySubaplicacio(subaplCoa);
-			daos.forEach(item->dtos.add(Converter.toDto(item)));
+		List<AgendaDto> dtos = new ArrayList<AgendaDto>();
+		try {
+			if (!Utils.isEmpty(subaplCoa)) {
+				List<Agenda> daos = agendaDao.findAgendesBySubaplicacio(subaplCoa);
+				daos.forEach(item->dtos.add(Converter.toDto(item)));
+			}
+		} catch (Exception e) {
+			LOG.error("### Error AgendaServiceImpl.getAgendesBySubaplicacio:", e);
+			LOG.error("### Error AgendaServiceImpl.getAgendesBySubaplicacio={} " , bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale));
+						
+		} finally {
+			long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final AgendaServiceImpl.getAgendesBySubaplicacio totalTime={}, subaplCoa={}, agendes.size={}", totalTime, subaplCoa, dtos.size());
 		}
 		
 		return dtos;
@@ -87,13 +133,23 @@ public class AgendaServiceImpl implements AgendaService{
 	@Override
 	public List<AgendaDto> getAgendesByTecnic (String tecCoa, Locale locale) {
 		
+		long startTime=System.currentTimeMillis();
+		LOG.info("### Inici AgendaServiceImpl.getAgendesByTecnic startTime={}, tecCoa={}", startTime, tecCoa);
+		
 		List<AgendaDto> dtos = new ArrayList<AgendaDto>();
-		
-		if (!Utils.isEmpty(tecCoa)) {
-			List<Agenda> daos = agendaDao.findAgendesByTecnicCoa(tecCoa);
-			daos.forEach(item->dtos.add(Converter.toDto(item)));
+		try {
+			if (!Utils.isEmpty(tecCoa)) {
+				List<Agenda> daos = agendaDao.findAgendesByTecnicCoa(tecCoa);
+				daos.forEach(item->dtos.add(Converter.toDto(item)));
+			}
+		} catch (Exception e) {
+			LOG.error("### Error AgendaServiceImpl.getAgendesByTecnic:", e);
+			LOG.error("### Error AgendaServiceImpl.getAgendesByTecnic={} " , bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale));
+						
+		} finally {
+			long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final AgendaServiceImpl.getAgendesByTecnic totalTime={}, tecCoa={}, agendes.size={}", totalTime, tecCoa, dtos.size());
 		}
-		
 		return dtos;
 	}
 	
@@ -134,7 +190,7 @@ public class AgendaServiceImpl implements AgendaService{
 				List<Cita> teCites = citaDao.findCitesByAgenda(agenda.getCon());
 				// Comprovar que l'agenda no te cites
 				if (teCites != null && !teCites.isEmpty() && teCites.size() > 0) {
-					dto.addError(new ErrorDto(9999L,bundle.getMessage(Constants.ERROR_API_UPDATE_AGENDA_AMB_CITES, null, locale)));
+					dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL,bundle.getMessage(Constants.ERROR_API_UPDATE_AGENDA_AMB_CITES, null, locale)));
 				} else {
 					dto = Converter.toDto(agendaDao.updateAgenda(Converter.toDao(agenda)));
 				}
@@ -164,13 +220,13 @@ public class AgendaServiceImpl implements AgendaService{
 			Agenda dao = agendaDao.findAgendaByCon(con);
 			
 			if (dao == null) {
-				return new ErrorDto(9999L,bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale));
+				return new ErrorDto(Constants.CODI_ERROR_FATAL,bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale));
 			} else {
 				// Validacions per esborrar agenda
 				List<Cita> teCites = citaDao.findCitesByAgenda(con);
 				// Comprovar que l'agenda no te cites
 				if (teCites != null && !teCites.isEmpty() && teCites.size() > 0) {
-					return new ErrorDto(9999L,bundle.getMessage(Constants.ERROR_API_DELETE_AGENDA, null, locale));
+					return new ErrorDto(Constants.CODI_ERROR_FATAL,bundle.getMessage(Constants.ERROR_API_DELETE_AGENDA, null, locale));
 				} else {
 					agendaDao.deleteAgenda(dao);
 				}			
@@ -179,7 +235,7 @@ public class AgendaServiceImpl implements AgendaService{
 		} catch (Exception e) {
 			LOG.error("### Error AgendaServiceImpl.deleteAgenda:" , e);
 			LOG.error("### Error AgendaServiceImpl.deleteAgenda={} ", bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale));		
-			return new ErrorDto(9999L,bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale));
+			return new ErrorDto(Constants.CODI_ERROR_FATAL,bundle.getMessage(Constants.ERROR_API_CRUD_AGENDA, null, locale));
 
 		} finally {
 			long totalTime = (System.currentTimeMillis() - startTime);

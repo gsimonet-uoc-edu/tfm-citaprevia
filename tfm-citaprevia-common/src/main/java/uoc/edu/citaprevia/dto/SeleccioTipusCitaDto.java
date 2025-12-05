@@ -9,7 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 import uoc.edu.citaprevia.dto.generic.ErrorsDto;
 
-@Getter @Setter @NoArgsConstructor @ToString
+@Getter @Setter @NoArgsConstructor @ToString(callSuper = true)
 public class SeleccioTipusCitaDto extends ErrorsDto {
 	
 	private List<TipusCitaDto> tipusCites = new ArrayList<>();

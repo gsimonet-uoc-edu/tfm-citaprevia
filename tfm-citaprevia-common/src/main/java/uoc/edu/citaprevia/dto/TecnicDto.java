@@ -6,7 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 import uoc.edu.citaprevia.dto.generic.ErrorsDto;
 
-@Getter @Setter @NoArgsConstructor @ToString @EqualsAndHashCode
+@Getter @Setter @NoArgsConstructor @ToString(callSuper = true) @EqualsAndHashCode
 public class TecnicDto extends ErrorsDto{
 	
     private String coa;

@@ -37,12 +37,22 @@ public class SetmanaTipusServiceImpl implements SetmanaTipusService{
 	
 	@Override
 	public List<SetmanaTipusDto> getSetmanaTipusByHorari(Long horCon, Locale locale) {
+		long startTime=System.currentTimeMillis();
+		LOG.info("### Inici SetmanaTipusServiceImpl.getSetmanaTipusByHorari startTime={}, horCon={}", startTime, horCon);
 		List<SetmanaTipusDto> dtos = new ArrayList<>();
-		
-		if (!Utils.isEmpty(horCon)) {
-			List<SetmanaTipus> llista = setmanaTipusDao.findSetmanaTipusByHorari(horCon);
-			llista.forEach(item->dtos.add(Converter.toDto(item)));
-		}	
+		try {
+			if (!Utils.isEmpty(horCon)) {
+				List<SetmanaTipus> llista = setmanaTipusDao.findSetmanaTipusByHorari(horCon);
+				llista.forEach(item->dtos.add(Converter.toDto(item)));
+			}
+		} catch (Exception e) {
+			LOG.error("### Error SetmanaTipusServiceImpl.getSetmanaTipusByHorari:", e);
+			LOG.error("### Error SetmanaTipusServiceImpl.getSetmanaTipusByHorari={} " , bundle.getMessage(Constants.ERROR_API_CRUD_SETMANES_TIPUS, null, locale));
+						
+		} finally {
+			long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final SetmanaTipusServiceImpl.getSetmanaTipusByHorari totalTime={}, horCon={}, list.size={}", totalTime, horCon, dtos.size());
+		}
 		return dtos;
 	}
 	

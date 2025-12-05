@@ -36,10 +36,20 @@ public class TecnicServiceImpl implements TecnicService{
 	
 	
 	@Override
-	public TecnicDto getTecnicByCoa (String coa) {
+	public TecnicDto getTecnicByCoa (String coa, Locale locale) {
 		TecnicDto dto = new TecnicDto();
-		if (!Utils.isEmpty(coa)) {
-			dto = Converter.toDto(tecnicDao.findTecnicByCoa(coa));
+		long startTime=System.currentTimeMillis();
+		LOG.info("### Inici TecnicServiceImpl.getTecnicByCoa startTime={}, tecCoa={}", startTime, coa);
+		try {
+			if (!Utils.isEmpty(coa)) {
+				dto = Converter.toDto(tecnicDao.findTecnicByCoa(coa));
+			}
+		} catch (Exception e) {
+			LOG.error("### Error TecnicServiceImpl.getTecnicByCoa" , e);
+			LOG.error("### Error TecnicServiceImpl.getTecnicByCoa={} " , bundle.getMessage(Constants.ERROR_API_CRUD_TECNIC, null, locale));		
+		} finally {
+			long totalTime = (System.currentTimeMillis() - startTime);
+			LOG.info("### Final TecnicServiceImpl.getTecnicByCoa totalTime={}, tecCoa={}", totalTime, coa);
 		}
 		return dto;
 	}

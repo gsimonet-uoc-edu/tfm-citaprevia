@@ -35,6 +35,7 @@ public final class Constants {
     public static final String ERROR_API_CRUD_HORARI               = "error.horaris.crud";
     public static final String ERROR_API_CRUD_UBICACIONS           = "error.ubicacions.crud";
     public static final String ERROR_API_CRUD_SETMANES_TIPUS       = "error.setmanestipus.crud";
+    public static final String ERROR_API_CRUD_SUBAPLICACIONS_TIPUS = "error.subaplicacions.crud";
 
     // Operacions específiques d'eliminació (dependències)
     public static final String ERROR_API_DELETE_AGENDA                  = "error.agendas.delete";

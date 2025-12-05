@@ -9,7 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 import uoc.edu.citaprevia.dto.generic.ErrorsDto;
 
-@Getter @Setter @NoArgsConstructor @ToString @EqualsAndHashCode
+@Getter @Setter @NoArgsConstructor @ToString(callSuper = true) @EqualsAndHashCode
 public class CalendariDto extends ErrorsDto{
     private int any;
     private int mes; // 1-12

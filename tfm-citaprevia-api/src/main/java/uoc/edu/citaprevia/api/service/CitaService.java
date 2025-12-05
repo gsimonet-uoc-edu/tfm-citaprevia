@@ -8,8 +8,6 @@ import uoc.edu.citaprevia.dto.generic.ErrorDto;
 
 public interface CitaService {
 
-	CitaDto getCita(Long con);
-
 	CitaDto saveCita(CitaDto cita, Locale locale);
 
 	CitaDto existeixCitaAgenda(Long ageCon, LocalDateTime inici, LocalDateTime fi, Long tipcitCon, Locale locale);
@@ -19,5 +17,7 @@ public interface CitaService {
 	ErrorDto deleteCita(Long con, Locale locale);
 
 	CitaDto updateCita(CitaDto cita, Locale locale);
+
+	CitaDto getCita(Long con, Locale locale);
 
 }

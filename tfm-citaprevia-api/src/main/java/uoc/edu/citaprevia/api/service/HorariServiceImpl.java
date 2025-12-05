@@ -98,6 +98,7 @@ public class HorariServiceImpl implements HorariService{
 				LOG.error("### Error HorariServiceImpl.saveHorari: " , dto.getErrors().get(0).toString());
 			}
 		} catch (Exception e) {
+			dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL, bundle.getMessage(Constants.ERROR_API_CRUD_HORARI, null, locale)));
 			LOG.error("### Error HorariServiceImpl.saveHorari:", e);
 			LOG.error("### Error HorariServiceImpl.saveHorari: " , bundle.getMessage(Constants.ERROR_API_CRUD_HORARI, null, locale));
 						
@@ -122,6 +123,7 @@ public class HorariServiceImpl implements HorariService{
 				LOG.error("### Error HorariServiceImpl.updateHorari: " , dto.getErrors().get(0).toString());
 			}
 		} catch (Exception e) {
+			dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL, bundle.getMessage(Constants.ERROR_API_CRUD_HORARI, null, locale)));
 			LOG.error("### Error HorariServiceImpl.updateHorari:" , e);
 			LOG.error("### Error HorariServiceImpl.updateHorari: " , bundle.getMessage(Constants.ERROR_API_CRUD_HORARI, null, locale));
 						

@@ -6,7 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 import uoc.edu.citaprevia.dto.generic.ErrorsDto;
 
-@Getter @Setter @NoArgsConstructor @ToString
+@Getter @Setter @NoArgsConstructor @ToString(callSuper = true)
 public class UbicacioDto extends ErrorsDto {
 	
 	private Long con;	

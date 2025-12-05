@@ -8,9 +8,9 @@ import lombok.Setter;
 import lombok.ToString;
 import uoc.edu.citaprevia.dto.generic.ErrorsDto;
 
-@Getter @Setter @NoArgsConstructor  @ToString
+@Getter @Setter @NoArgsConstructor  @ToString(callSuper = true)
 public class DiaCalendariDto extends ErrorsDto{
     private int dia; // 1-31
     private boolean disponible;
-    private List<FranjaDto> franges; // solo si disponible
+    private List<FranjaDto> franges;
 }

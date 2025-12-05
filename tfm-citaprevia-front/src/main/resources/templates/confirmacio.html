@@ -23,8 +23,14 @@
                 <div class="card confirmacio-card shadow">
                     <div class="card-body p-4 text-center">
 
-                        <!-- ERRORES (NUEVO) -->
-                        <th:block th:replace="~{common/errors :: errors(errors = ${errors})}" />
+                        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                            <span th:text="${succes}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+						<div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+						    <span th:text="${error}"></span> 
+						    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+						</div>
 
                         <!-- Icono de éxito -->
                         <i class="fas fa-check-circle success-icon"></i>

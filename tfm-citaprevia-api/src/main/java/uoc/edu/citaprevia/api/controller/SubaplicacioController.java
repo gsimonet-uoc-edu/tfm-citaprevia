@@ -26,7 +26,7 @@ public class SubaplicacioController {
 	@Operation(summary="obtenir una subaplicació pel seu identificador")
 	public SubaplicacioDto getSubaplicacio(@PathVariable String coa, 
 											Locale locale) {
-		return subaplicacioService.getSubaplicacioByCoa(coa);
+		return subaplicacioService.getSubaplicacioByCoa(coa, locale);
 	}
 
 }
