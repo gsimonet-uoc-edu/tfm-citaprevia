@@ -79,6 +79,7 @@
                     <div class="card-body">
                         <p class="text-success"><i class="fas fa-square me-2"></i><span th:text="#{franja_lliure}"></span></p>
                         <p class="text-danger"><i class="fas fa-square me-2"></i><span th:text="#{franja_ocupada}"></span></p>
+                        <p class="text-muted-custom"><i class="fas fa-square me-2"></i><span th:text="#{franja_ocupada_passada}"></span></p>
                     </div>
                 </div>
             </div>
@@ -237,6 +238,54 @@
             </div>
         </div>
     </div>
+    
+<div class="modal fade" id="consultaModalPrivate" tabindex="-1" aria-labelledby="consultaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-secondary text-white">
+                <h5 class="modal-title" id="consultaModalLabel" th:text="#{consultar_cita}">Consulta Cita Passada</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="consultaCitaCon">
+                <input type="hidden" id="consultaAgendaCon">
+                <input type="hidden" id="consultaDataHoraInici">
+                <input type="hidden" id="consultaDataHoraFin">
+
+                <div class="row g-3">
+                    <div class="col-md-6"><label th:text="#{nom} + ' *'"></label><input type="text" id="consultaNom" name="nom" class="form-control" disabled></div>
+                    <div class="col-md-6"><label th:text="#{llis} + ' *'"></label><input type="text" id="consultaLlis" name="llis" class="form-control" disabled></div>
+                    <div class="col-md-6"><label th:text="#{numdoc} + ' *'"></label><input type="text" id="consultaNumdoc" name="numdoc" class="form-control" disabled></div>
+                    <div class="col-md-6"><label th:text="#{nomcar} + ' *'"></label><input type="text" id="consultaNomcar" name="nomcar" class="form-control" disabled></div>
+                    <div class="col-md-6"><label th:text="#{tel} + ' *'"></label><input type="text" id="consultaTel" name="tel" class="form-control" disabled></div>
+                    <div class="col-md-6"><label th:text="#{ema} + ' *'"></label><input type="email" id="consultaEma" name="ema" class="form-control" disabled></div>
+                    <div class="col-12"><label th:text="#{obs}"></label><textarea id="consultaObs" name="obs" class="form-control" rows="3" disabled></textarea></div>
+                </div>
+
+                <div class="row g-3 mt-4" th:if="${camposCita != null and !#lists.isEmpty(camposCita)}">
+                    <h6 th:text="#{dades_adicionals}"></h6>
+                    <div th:each="campo : ${camposCita}" class="col-md-6">
+                        <label class="form-label" th:text="${campo.label}"></label>
+                        <div th:switch="${campo.type}">
+                            <input th:case="*" th:type="${campo.type}" th:id="'consultaLit' + ${campoStat.count}" th:name="'lit' + ${campoStat.count}" class="form-control" disabled>
+                            <textarea th:case="textarea" th:id="'consultaLit' + ${campoStat.count}" th:name="'lit' + ${campoStat.count}" class="form-control" rows="3" disabled></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 p-3 bg-light rounded">
+                    <small class="text-muted">
+                        <i class="fas fa-clock me-1"></i>
+                        <span th:text="#{hora_seleccionada}"></span>: <strong id="consultaHora"></strong>
+                    </small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{tancar}">Tancar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
     <th:block th:replace="~{common/footer :: footer}"></th:block>
 
@@ -258,11 +307,15 @@
         return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
     }
 
+const modalConsulta = new bootstrap.Modal(document.getElementById('consultaModalPrivate')); 
+    
     document.addEventListener('DOMContentLoaded', function() {
         const calendarEl = document.getElementById('calendar');
         const events = /*[[${frangesHorariesGrouped}]]*/ [];
         const modalReserva = new bootstrap.Modal(document.getElementById('reservaModalPrivate'));
         const modalEdicio = new bootstrap.Modal(document.getElementById('edicioModalPrivate'));
+        
+        const now = new Date();
 
         console.log('Events rebuts:', events);
 
@@ -285,17 +338,31 @@
             events: Object.keys(events).flatMap(date => {
                 return events[date].map(event => {
                     const isLliure = event.lliure === true;
+                    
+                    const eventStart = new Date(event.start);
+                    const isPassada = eventStart < now;
+                    
                     const nom = (event.nom || '').trim();
                     const llis = (event.llis || '').trim();
                     const nomComplet = (nom && llis) ? `${nom} ${llis}` : (nom || llis || 'Ocupada');
 
+                    let classNames = '';
+                    if (isLliure) {
+                        classNames = 'hora-lliure';
+                    } else if (isPassada) {
+                        classNames = 'hora-passada';
+                    } else {
+                        classNames = 'hora-ocupada';
+                    }
+
                     return {
                         start: event.start,
                         end: event.end || null,
-                        classNames: isLliure ? 'hora-lliure' : 'hora-ocupada',
+                        classNames: classNames,
                         title: isLliure ? event.title : nomComplet,
                         extendedProps: {
                             lliure: isLliure,
+                            isPassada: isPassada,
                             agendaCon: event.agendaCon || null,
                             citaCon: event.citaCon || null,
                             nom: nom,
@@ -322,10 +389,10 @@
             }),
 
             eventClick: function(info) {
-                console.log('CLIC DETECTADO:', info.event);
                 const props = info.event.extendedProps || {};
                 const isLliure = props.lliure === true;
-
+                const isPassada = props.isPassada === true; 
+                
                 if (isLliure) {
                     const offset = info.event.start.getTimezoneOffset() * 60000;
                     const startLocal = new Date(info.event.start.getTime() - offset).toISOString().slice(0, 19);
@@ -347,35 +414,41 @@
                         return;
                     }
 
-                    document.getElementById('edicioCitaCon').value = props.citaCon;
-                    document.getElementById('edicioAgendaCon').value = props.agendaCon || '';
-                    
                     const startLocal = info.event.start;
                     const endLocal = info.event.end;
 
-                    document.getElementById('edicioDataHoraInici').value = formatLocalDateTime(startLocal);
+                    const prefix = isPassada ? 'consulta' : 'edicio';
+                    
+                    document.getElementById(prefix + 'CitaCon').value = props.citaCon;
+                    document.getElementById(prefix + 'AgendaCon').value = props.agendaCon || '';
+
+                    document.getElementById(prefix + 'DataHoraInici').value = formatLocalDateTime(startLocal);
                     if (endLocal) {
-                        document.getElementById('edicioDataHoraFin').value = formatLocalDateTime(endLocal);
+                        document.getElementById(prefix + 'DataHoraFin').value = formatLocalDateTime(endLocal);
                     }
                     
-                    document.getElementById('edicioNom').value = props.nom || '';
-                    document.getElementById('edicioLlis').value = props.llis || '';
-                    document.getElementById('edicioNumdoc').value = props.numdoc || '';
-                    document.getElementById('edicioNomcar').value = props.nomcar || '';
-                    document.getElementById('edicioTel').value = props.tel || '';
-                    document.getElementById('edicioEma').value = props.ema || '';
-                    document.getElementById('edicioObs').value = props.obs || '';
+                    document.getElementById(prefix + 'Nom').value = props.nom || '';
+                    document.getElementById(prefix + 'Llis').value = props.llis || '';
+                    document.getElementById(prefix + 'Numdoc').value = props.numdoc || '';
+                    document.getElementById(prefix + 'Nomcar').value = props.nomcar || '';
+                    document.getElementById(prefix + 'Tel').value = props.tel || '';
+                    document.getElementById(prefix + 'Ema').value = props.ema || '';
+                    document.getElementById(prefix + 'Obs').value = props.obs || '';
 
                     // Camps dinàmics
                     for (let i = 1; i <= 10; i++) {
-                        const field = document.getElementById('edicioLit' + i);
+                        const field = document.getElementById(prefix + 'Lit' + i);
                         if (field) field.value = props['lit' + i] || '';
                     }
 
-                    document.getElementById('edicioHora').textContent = info.event.title || '';
+                    document.getElementById(prefix + 'Hora').textContent = info.event.title || '';
                     document.getElementById('cancelCitaCon').value = props.citaCon;
-
-                    modalEdicio.show();
+                   
+                    if (isPassada) {
+                         modalConsulta.show();
+                    } else {
+                        modalEdicio.show();
+                    }
                 }
             },
 

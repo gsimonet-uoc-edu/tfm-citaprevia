@@ -96,6 +96,18 @@
     margin-top: 2rem;
     margin-bottom: 1rem;
 }
+
+.hora-passada {
+    background-color: #ced4da !important;
+    border-color: #adb5bd !important;
+    color: #495057 !important;
+    opacity: 0.8;
+}
+
+.hora-passada:hover {
+    cursor: default;
+}
+
 .tecnic {
     font-size: 0.85em;
     color: #6c757d;
