@@ -30,6 +30,9 @@ import uoc.edu.citaprevia.util.Utils;
 
 @RestController
 @RequestMapping(value="/tecnics")
+/**
+ * Conjunt d'endpoints per gestionar els tècnics
+ */
 public class TecnicController {
 
 	@Autowired

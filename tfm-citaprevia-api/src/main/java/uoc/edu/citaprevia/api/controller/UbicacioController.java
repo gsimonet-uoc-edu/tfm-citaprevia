@@ -28,6 +28,9 @@ import uoc.edu.citaprevia.util.Utils;
 
 @RestController
 @RequestMapping(value="/ubicacions")
+/**
+ * Conjunt d'endpoints per gestionar les ubicacions
+ */
 public class UbicacioController {
 	
 	@Autowired

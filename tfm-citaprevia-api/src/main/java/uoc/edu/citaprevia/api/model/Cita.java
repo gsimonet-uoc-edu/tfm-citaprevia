@@ -23,15 +23,16 @@ import lombok.ToString;
 @Entity
 @Table(name = "CITA")
 @Getter @Setter @NoArgsConstructor @ToString
+/**
+ * Una cita és la unitat bàsica amb un rang d'hores que conté les dades del interessat
+ */
 public class Cita {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cita_seq")
 	@SequenceGenerator(name = "cita_seq", sequenceName = "CITA_SEQ", allocationSize = 1)
 	private Long con;
-	//@NotNull
 	private LocalDateTime dathorini;
-	//@NotNull
 	private LocalDateTime dathorfin;
 	@Size(max=2000)
 	private String obs;

@@ -28,6 +28,9 @@ import uoc.edu.citaprevia.util.Utils;
 
 @RestController
 @RequestMapping(value="/horaris")
+/**
+ * Conjunt d'endpoints per gestionar els horaris
+ */
 public class HorariController {
 	
 	@Autowired

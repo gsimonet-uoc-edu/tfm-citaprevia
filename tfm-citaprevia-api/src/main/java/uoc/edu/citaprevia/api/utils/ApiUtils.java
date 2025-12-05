@@ -15,33 +15,33 @@ import uoc.edu.citaprevia.model.TipusError;
 public class ApiUtils {
 	
 	
+	/**
+	 * Mètode genèric i típic per obtenir els errors del bindings
+	 * @param result
+	 * @param messageSource
+	 * @param locale
+	 * @return
+	 */
 	public static List<ErrorDto> getBindingResultErrors (BindingResult result, MessageSource messageSource, Locale locale) {
 		List<ErrorDto> errors = new ArrayList<ErrorDto>();
 		if (result.hasErrors()) {	        
-	        // 1. ITERAR SOBRE ELS ERRORS DEL BINDING
-	        for (ObjectError error : result.getAllErrors()) {
+
+			for (ObjectError error : result.getAllErrors()) {
 	            
-	            // Obté el nom del camp (només per a FieldErrors)
+	            // Obtenir el nom del camp 
 	            String fieldName = (error instanceof FieldError) ? ((FieldError) error).getField() : "global";
 	            
-	            // 2. OBTENIR EL MISSATGE D'ERROR LOCALITZAT
-	            // El MessageSource pot resoldre els missatges definits a les anotacions de validació.
+	            // Obtenir missatge
 	            String errorMessage = messageSource.getMessage(error, locale);
 
-	            // 3. CREAR UN OBJECTE ERROR DETALLAT
-	            // S'utilitza el nom del camp com a codi i el missatge resolt com a descripció.
-	            // S'assumeix que TipusError i Constants estan correctament definits.
-	            ErrorDto errorDto = new ErrorDto(
-	                9999L, // CODI_ERROR_FATAL no és adequat, utilitzem el nom del camp o "global"
-	                TipusError.ERROR.getValor(), // Tipus d'error
-	                fieldName + ": " + errorMessage // Descripció de l'error
+	            // Crear error
+	            ErrorDto errorDto = new ErrorDto(9999L, TipusError.ERROR.getValor(), fieldName + ": " + errorMessage
 	            );
 	            
 	            errors.add(errorDto);
 	        }
 
 	    }      
-        // Retorna el DTO amb la llista d'errors omplerta
         return errors;
 	}
 

@@ -12,6 +12,9 @@ import lombok.ToString;
 @Entity
 @Table(name = "TECNIC")
 @Getter @Setter @NoArgsConstructor @ToString
+/**
+ * Un tècnic és la persona que atén a l'interessa durant el transcurs la cita
+ */
 public class Tecnic {
 	
 	@Id

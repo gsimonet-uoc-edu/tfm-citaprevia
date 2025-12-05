@@ -22,6 +22,9 @@ import lombok.ToString;
 @Entity
 @Table(name = "AGENDA")
 @Getter @Setter @NoArgsConstructor @ToString @EqualsAndHashCode
+/**
+ * Una agenda es un rang de dates on es poden planificar cites
+ */
 public class Agenda {
 	
 	@Id

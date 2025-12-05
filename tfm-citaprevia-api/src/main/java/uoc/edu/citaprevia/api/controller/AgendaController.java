@@ -28,6 +28,9 @@ import uoc.edu.citaprevia.util.Utils;
 
 @RestController
 @RequestMapping(value="/agendes")
+/**
+ * Conjunt d'endpoints per gestionar les agendes
+ */
 public class AgendaController {
 	
 	@Autowired

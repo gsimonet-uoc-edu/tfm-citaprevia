@@ -30,6 +30,9 @@ import uoc.edu.citaprevia.util.Utils;
 
 @RestController
 @RequestMapping(value="/cites")
+/**
+ * Conjunt d'enpoint per gestionar les cites
+ */
 public class CitaController {
 	
 	@Autowired

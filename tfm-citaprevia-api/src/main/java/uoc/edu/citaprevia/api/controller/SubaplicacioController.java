@@ -14,6 +14,9 @@ import uoc.edu.citaprevia.dto.SubaplicacioDto;
 
 @RestController
 @RequestMapping(value="/subaplicacions")
+/**
+ * Conjunt d'endpoint per gestionar les subaplicacions
+ */
 public class SubaplicacioController {
 	
 	@Autowired

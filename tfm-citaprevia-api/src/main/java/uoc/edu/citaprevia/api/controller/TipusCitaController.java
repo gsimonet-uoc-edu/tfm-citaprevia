@@ -29,6 +29,9 @@ import uoc.edu.citaprevia.util.Utils;
 
 @RestController
 @RequestMapping(value="/tipus-cites")
+/**
+ * Conjunts d'endpoints per gestiones els tipus de cites
+ */
 public class TipusCitaController {
 	
 	@Autowired

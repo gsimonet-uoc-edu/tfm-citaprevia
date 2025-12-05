@@ -53,6 +53,5 @@ public class AgendaDao {
 	public void deleteAgenda (Agenda entity) {
 		agendaRepository.delete(entity);
 	}
-
     
 }

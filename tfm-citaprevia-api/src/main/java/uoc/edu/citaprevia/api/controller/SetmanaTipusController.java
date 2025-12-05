@@ -28,6 +28,9 @@ import uoc.edu.citaprevia.util.Utils;
 
 @RestController
 @RequestMapping(value="/setmanes-tipus")
+/**
+ * Conjunt d'endpoints per gestionar les setmanes-tipus (franges horàries)
+ */
 public class SetmanaTipusController {
 	
 	@Autowired

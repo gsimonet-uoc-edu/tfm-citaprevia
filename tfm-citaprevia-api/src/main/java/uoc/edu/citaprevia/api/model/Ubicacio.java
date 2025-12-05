@@ -18,6 +18,9 @@ import lombok.ToString;
 @Entity
 @Table(name = "UBICACIO")
 @Getter @Setter @NoArgsConstructor @ToString
+/**
+ * Una ubicació és el lloc físic on s'atendrà la cita
+ */
 public class Ubicacio {
 	
 	@Id

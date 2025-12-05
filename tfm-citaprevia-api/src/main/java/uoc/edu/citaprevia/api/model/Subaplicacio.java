@@ -14,6 +14,9 @@ import lombok.ToString;
 @Entity
 @Table(name = "SUBAPLICACIO")
 @Getter @Setter @NoArgsConstructor @ToString
+/**
+ * Una subaplicació indica l'organisme o empresa que té implantat el sistema de Cita Prèvia online.
+ */
 public class Subaplicacio {
 	
 	@Id

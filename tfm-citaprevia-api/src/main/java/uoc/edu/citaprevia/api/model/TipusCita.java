@@ -20,6 +20,9 @@ import uoc.edu.citaprevia.model.ModalitatTipusCita;
 @Entity
 @Table(name = "TIPUS_CITA")
 @Getter @Setter @NoArgsConstructor @ToString
+/**
+ * Un tipus de cita és la tipologia d'una cita
+ */
 public class TipusCita {
 
 	@Id

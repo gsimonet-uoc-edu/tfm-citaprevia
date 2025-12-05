@@ -18,6 +18,9 @@ import lombok.ToString;
 @Entity
 @Table(name = "HORARI")
 @Getter @Setter @NoArgsConstructor @ToString
+/**
+ * Un horari és la unitat que contindrà un conjunt de franges horàries i que s'assignarà a una agenda
+ */
 public class Horari {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "horari_seq")

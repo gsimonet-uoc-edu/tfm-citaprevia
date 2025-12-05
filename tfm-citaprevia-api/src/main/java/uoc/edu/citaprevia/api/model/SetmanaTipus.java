@@ -16,6 +16,9 @@ import lombok.ToString;
 @Entity
 @Table(name = "SETMANA_TIPUS")
 @Getter @Setter @NoArgsConstructor @ToString
+/**
+ * Una Setmana Tipus és una franja horària que indica el dia de la setmana i la hora inici i final de la cita
+ */
 public class SetmanaTipus {
 	
 	@Id
