@@ -1,21 +1,14 @@
-// =================================================================
-// 1. Configuració de les Rutes
-// IMPORT: Has de canviar 'localhost:8080' i 'localhost:8081' pels ports o dominis reals!
-// =================================================================
+// Configuració dels hosts
 const API_URL = "http://localhost:8080/citapreviaapi/actuator"; 
 const FRONT_URL = "http://localhost:8081/citapreviafront/actuator"; 
-const REFRESH_INTERVAL = 5000; // 5 segons
-
-// =================================================================
-// 2. Funcions Auxiliars de Fetching i Parsing
-// =================================================================
+const REFRESH_INTERVAL = 5000; // Refrescar cada 5 segons
 
 /**
  * Funció per obtenir i mostrar l'estat de salut (UP/DOWN).
- * @param {string} url - URL base de l'Actuator del servei.
- * @param {string} elementId - ID del <span> on mostrar l'estat.
+ * @param {string} url - URL Servei Actuator.
+ * @param {string} elementId - identificador <span> on mostrar l'estat de salut.
  */
-async function fetchHealth(url, elementId) {
+async function getHealth(url, elementId) {
     const element = document.getElementById(elementId);
     try {
         const response = await fetch(`${url}/health`);
@@ -26,17 +19,17 @@ async function fetchHealth(url, elementId) {
         element.className = (status === 'UP') ? 'status-up' : 'status-down';
 
     } catch (error) {
-        console.error(`Error en fetchHealth des de ${url}:`, error);
+        console.error(`Error en getHealth des de ${url}:`, error);
         element.textContent = "CONN. ERROR";
         element.className = 'status-down';
     }
 }
 
 /**
- * Funció genèrica per obtenir una mètrica específica i formatar-la.
- * @param {string} url - URL base de l'Actuator del servei.
- * @param {string} metricName - Nom de la mètrica (ex: 'jvm.memory.used').
- * @returns {Promise<number|null>} El valor de la mètrica o null en cas d'error.
+ * Funció genèrica obtenir una mètrica específica
+ * @param {string} url - URL Servei Actuator.
+ * @param {string} metricName - Nom de la mètrica
+ * @returns {Promise<number|null>} El valor de la mètrica, null en cas d'error.
  */
 async function getMetricValue(url, metricName) {
     try {
@@ -47,7 +40,7 @@ async function getMetricValue(url, metricName) {
         }
         return null;
     } catch (error) {
-        // console.error(`Error al obtenir la mètrica ${metricName} des de ${url}:`, error);
+        console.error(`Error al obtenir la mètrica ${metricName} des de ${url}:`, error);
         return null;
     }
 }
@@ -55,12 +48,12 @@ async function getMetricValue(url, metricName) {
 
 /**
  * Funció per obtenir i mostrar les mètriques de rendiment.
- * @param {string} url - URL base de l'Actuator del servei.
+ * @param {string} url - URL Servei Actuator.
  * @param {string} memId - ID del <span> de la memòria.
- * @param {string} [uptimeId] - ID opcional del <span> de l'Uptime.
- * @param {string} [threadsId] - ID opcional del <span> dels Threads.
+ * @param {string} [uptimeId] - identificador <span> on mostrar Uptime
+ * @param {string} [threadsId] - identificador <span> on mostrar Threads
  */
-async function fetchPerformanceMetrics(url, memId, uptimeId, threadsId) {
+async function getMetriquesRendiment(url, memId, uptimeId, threadsId) {
     
     // Memòria Heap
     const memUsedBytes = await getMetricValue(url, 'jvm.memory.used');
@@ -75,8 +68,8 @@ async function fetchPerformanceMetrics(url, memId, uptimeId, threadsId) {
     if (uptimeId) {
         const uptimeSeconds = await getMetricValue(url, 'process.uptime');
         if (uptimeSeconds !== null) {
-            const hours = (uptimeSeconds / 3600).toFixed(1);
-            document.getElementById(uptimeId).textContent = `${hours} hores`;
+            const hours = (uptimeSeconds / 60).toFixed(1);
+            document.getElementById(uptimeId).textContent = `${hours} minuts`;
         } else {
             document.getElementById(uptimeId).textContent = "N/A";
         }
@@ -90,43 +83,41 @@ async function fetchPerformanceMetrics(url, memId, uptimeId, threadsId) {
 }
 
 /**
- * Funció per obtenir i mostrar la versió (des de /info).
- * @param {string} url - URL base de l'Actuator del servei.
- * @param {string} elementId - ID del <span> de la versió.
+ * Funció per obtenir i mostrar la versió
+ * @param {string} url - URL Servei Actuator.
+ * @param {string} elementId - identificador <span> on mostrar Version
  */
-async function fetchInfo(url, elementId) {
+async function getInfo(url, elementId) {
     try {
         const response = await fetch(`${url}/info`);
         const data = await response.json();
-        // Assumeix que la versió està a data.app.version o similar
-        const version = data.app ? data.app.version : "N/A"; 
+        const version = data.build ? data.build.version : "N/A";      
         document.getElementById(elementId).textContent = version || "Desconeguda";
     } catch (error) {
+        console.error("Error en recuperar la versió:", error);
         document.getElementById(elementId).textContent = "N/A";
     }
 }
 
 
-// =================================================================
-// 3. Funció Principal i Execució
-// =================================================================
+// Funcio que executa el dashboard
+function getDashboard() {
+	
+    // API (back-end)
+    getHealth(API_URL, 'api-health');
+    getInfo(API_URL, 'api-version');
+    getMetriquesRendiment(API_URL, 'api-mem', 'api-uptime', 'api-threads');
 
-function updateDashboard() {
-    // 1. Actualitza el servidor API
-    fetchHealth(API_URL, 'api-health');
-    fetchInfo(API_URL, 'api-version');
-    fetchPerformanceMetrics(API_URL, 'api-mem', 'api-uptime', 'api-threads');
-
-    // 2. Actualitza l'aplicació Web Front
-    fetchHealth(FRONT_URL, 'front-health');
-    fetchPerformanceMetrics(FRONT_URL, 'front-mem', null, null);
+    // FRONT (front-end)
+    getHealth(FRONT_URL, 'front-health');
+    getMetriquesRendiment(FRONT_URL, 'front-mem', null, null);
     
-    // 3. Actualitza el timestamp
+    // Timestamp
     const now = new Date();
-    document.getElementById('timestamp').textContent = `Última actualització: ${now.toLocaleTimeString('ca-ES')}`;
+    document.getElementById('timestamp').textContent = `Darrera actualització: ${now.toLocaleTimeString('ca-ES')}`;
 }
 
-// Inicia l'actualització del Dashboard
-updateDashboard();
-// Programa l'actualització periòdica
-setInterval(updateDashboard, REFRESH_INTERVAL);
+// Inicia Dashboard
+getDashboard();
+// Refrescar actualització
+setInterval(getDashboard, REFRESH_INTERVAL);
