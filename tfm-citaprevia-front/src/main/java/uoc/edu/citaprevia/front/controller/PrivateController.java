@@ -51,7 +51,7 @@ import uoc.edu.citaprevia.front.privat.dto.TipusCitaFormDto;
 import uoc.edu.citaprevia.front.privat.dto.UbicacioFormDto;
 import uoc.edu.citaprevia.front.service.CitaPreviaPrivateClient;
 import uoc.edu.citaprevia.front.service.CitaPreviaPublicClient;
-import uoc.edu.citaprevia.front.service.MetacamapService;
+import uoc.edu.citaprevia.front.service.MetacampService;
 import uoc.edu.citaprevia.model.ModalitatTipusCita;
 import uoc.edu.citaprevia.model.Perfil;
 import uoc.edu.citaprevia.util.Constants;
@@ -77,7 +77,7 @@ public class PrivateController {
     private CitaPreviaPrivateClient citaPreviaPrivateClient;
     
     @Autowired
-    private MetacamapService metacamapService;
+    private MetacampService metacampService;
     
 	@Autowired
 	private MessageSource bundle;
@@ -147,7 +147,7 @@ public class PrivateController {
 			model.addAttribute("tecnic", tecnic);
 	
 			// Camps dinàmics
-		    List<CampConfigDto> campos = metacamapService.getCampos(subaplCoa, locale);
+		    List<CampConfigDto> campos = metacampService.getCamps(subaplCoa, locale);
 		    model.addAttribute("camposCita", campos);
 	    }  catch (Exception e) {
 	        LOG.error("### Error PrivateController.calendari {}", e);

@@ -37,7 +37,7 @@ import uoc.edu.citaprevia.dto.generic.ErrorDto;
 import uoc.edu.citaprevia.front.dto.CampConfigDto;
 import uoc.edu.citaprevia.front.dto.CitaFormDto;
 import uoc.edu.citaprevia.front.service.CitaPreviaPublicClient;
-import uoc.edu.citaprevia.front.service.MetacamapService;
+import uoc.edu.citaprevia.front.service.MetacampService;
 import uoc.edu.citaprevia.util.Constants;
 import uoc.edu.citaprevia.util.Utils;
 
@@ -58,7 +58,7 @@ public class PublicController {
 	private CitaPreviaPublicClient citaPreviaPublicClient;
 	
 	@Autowired
-	private MetacamapService metacamapService;
+	private MetacampService metacamapService;
 	
 	@Autowired
 	private MessageSource bundle;
@@ -150,7 +150,7 @@ public class PublicController {
 	        model.addAttribute("frangesHorariesGrouped", grouped);	
 		    model.addAttribute("frangesHoraries", events);
 		    
-		    List<CampConfigDto> campos = metacamapService.getCampos(subaplCoa, locale);
+		    List<CampConfigDto> campos = metacamapService.getCamps(subaplCoa, locale);
 		    model.addAttribute("camposCita", campos);
 		    
 	    }  catch (Exception e) {

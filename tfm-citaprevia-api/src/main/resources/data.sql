@@ -1,6 +1,6 @@
 -- SUBAPLICACIO
 INSERT INTO SUBAPLICACIO (coa, dec, dem) VALUES 
-('AJB', 'Ajuntament de Barcelona', 'Gestió de cites Ajuntament de Barcelona'),
+('AJB', 'Ajuntament de Barcelona', 'Ajuntament de Barcelona'),
 ('AP2', 'Aplicació Secundària', 'Seguiments');
 
 -- TECNIC

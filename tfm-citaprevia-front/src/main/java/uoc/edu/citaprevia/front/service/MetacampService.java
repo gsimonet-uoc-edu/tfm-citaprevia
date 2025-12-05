@@ -14,18 +14,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import uoc.edu.citaprevia.front.controller.PrivateController;
 import uoc.edu.citaprevia.front.dto.CampConfigDto;
 
 @Service
 @RequiredArgsConstructor
-public class MetacamapService {
+/**
+ * Servei que gestiona els metacamps específics de cada subaplicació per mostrar-los en pantalla
+ */
+public class MetacampService {
 
     private final Map<String, CampConfigDto> configMap = new HashMap<>();
-	private static final Logger LOG = LoggerFactory.getLogger(MetacamapService.class);
+    
+	private static final Logger LOG = LoggerFactory.getLogger(MetacampService.class);
 
 
-    public List<CampConfigDto> getCampos(String subaplCoa, Locale locale) {
+    public List<CampConfigDto> getCamps(String subaplCoa, Locale locale) {
         configMap.clear();
         String lang = locale.getLanguage();
         String filename = "metacamps_" + lang + ".properties";
@@ -43,7 +46,7 @@ public class MetacamapService {
         try  {
             loadProperties(is, subaplCoa.toUpperCase());
         } catch (Exception e) {
-        	LOG.error("### MetacamapService.getCampos: ", e);
+        	LOG.error("### MetacampService.getCamps: ", e);
         }
 
         return configMap.values().stream()
