@@ -447,6 +447,12 @@ public class PrivateController {
 		        return "redirect:/private/calendari";
 		    }
 	
+		    // Controlar que no es puguin cancelar cites ja passades
+		    if (cita.getDathorini().isBefore(LocalDateTime.now())) {
+		        redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_DELETE_CITA_PASSADA, null, locale));
+		        return "redirect:/private/calendari";
+		    }
+		    
 		    ErrorDto error = citaPreviaPrivateClient.deleteCita(citaCon, locale);
 		    if (error == null) {
 		        return "redirect:/private/cita/confirmacio?con=" + citaCon + "&accion=cancelada";

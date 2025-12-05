@@ -359,6 +359,12 @@ public class PublicController {
 	            return "redirect:/public/" + subaplCoa;
 	        }
 
+		    // Controlar que no es puguin cancelar cites ja passades
+		    if (cita.getDathorini().isBefore(LocalDateTime.now())) {
+	            redirectAttributes.addFlashAttribute("error_cancel", bundle.getMessage(Constants.ERROR_FRONT_DELETE_CITA_PASSADA, null, locale));
+	            return "redirect:/public/" + subaplCoa;
+		    }
+		    
 	        ErrorDto eliminada = citaPreviaPublicClient.deleteCitaPersona(con, numdoc, locale);
 	        
 	        if (eliminada == null) {

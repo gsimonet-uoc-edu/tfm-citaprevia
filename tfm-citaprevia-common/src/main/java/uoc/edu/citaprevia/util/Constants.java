@@ -54,6 +54,7 @@ public final class Constants {
     // ==================================================================
     public static final String ERROR_FRONT_GESTIO_TECNICS      = "error.tecnics.gestio";
     public static final String ERROR_FRONT_GESTIO_CITES      = "error.cites.gestio";
+    public static final String ERROR_FRONT_DELETE_CITA_PASSADA  = "error.cita.delete.passada";
     public static final String ERROR_FRONT_GESTIO_AGENDES      = "error.agendes.gestio";
     public static final String ERROR_FRONT_GESTIO_HORARIS      = "error.horaris.gestio";
     public static final String ERROR_FRONT_GESTIO_SETMANES_TIPUS = "error.setmanestipus.gestio";
