@@ -1,10 +1,15 @@
 package uoc.edu.citaprevia.front.config;
+import java.util.Locale;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -12,6 +17,8 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import lombok.RequiredArgsConstructor;
 import uoc.edu.citaprevia.dto.TecnicDto;
 import uoc.edu.citaprevia.front.service.CitaPreviaPrivateClient;
+import uoc.edu.citaprevia.util.Constants;
+import uoc.edu.citaprevia.util.Utils;
 
 
 /**
@@ -24,6 +31,9 @@ public class SecurityConfig {
 
 	@Autowired
 	private CitaPreviaPrivateClient citaPreviaPrivateClient;
+	
+	@Autowired
+	private MessageSource bundle;
 	
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -55,7 +65,16 @@ public class SecurityConfig {
 	@Bean
 	public UserDetailsService userDetailsService() {
 	    return username -> {
-	        TecnicDto tecnic = citaPreviaPrivateClient.getTecnic(username, null);
+	    	
+	    	if (username == null || username.trim().isEmpty()) {
+                throw new UsernameNotFoundException(bundle.getMessage("login.error.usuari.null", null, null)); 
+            }
+	    	
+	        TecnicDto tecnic = citaPreviaPrivateClient.getTecnic(StringUtils.upperCase(username).trim(), null);
+	        
+	        if (tecnic == null || Utils.isEmpty(tecnic.getCoa())) {
+                throw new UsernameNotFoundException(bundle.getMessage("login.error.tecnic", null, null)); 
+            }
 
 	        return User.withUsername(tecnic.getCoa())
 	            .password(tecnic.getPass())
