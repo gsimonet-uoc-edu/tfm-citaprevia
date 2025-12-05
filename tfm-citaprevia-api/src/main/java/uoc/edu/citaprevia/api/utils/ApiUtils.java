@@ -13,8 +13,7 @@ import uoc.edu.citaprevia.dto.generic.ErrorDto;
 import uoc.edu.citaprevia.model.TipusError;
 
 public class ApiUtils {
-	
-	
+		
 	/**
 	 * Mètode genèric i típic per obtenir els errors del bindings
 	 * @param result

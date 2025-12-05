@@ -1,5 +1,8 @@
 package uoc.edu.citaprevia.model;
 
+/**
+ * Enum que representa els perfils que pot tenir un usuari al loguear-se desde la part privada
+ */
 public enum Perfil {
 	TECNIC("TECNIC","Tècnic que atèn les cites"),
 	ADMINISTRADOR("ADMINISTRADOR","Administrador");

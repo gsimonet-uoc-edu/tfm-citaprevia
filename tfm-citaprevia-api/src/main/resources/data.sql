@@ -63,24 +63,12 @@ INSERT INTO SETMANA_TIPUS (HORCIT_CON, DIASET_CON, horini, horfin) VALUES
 (1, 5, '12:00:00', '13:00:00'),  -- OAC-Matí horari 1 matins dl-dm-dv cada hora
 (1, 5, '13:00:00', '14:00:00');  -- OAC-Matí horari 1 matins dl-dm-dv cada hora
 
--- Cites Ajuntament Barcelona
--- ================================================================
--- 90 CITAS REALISTAS - con 1 → 90
--- Diciembre 2025 → Abril 2026 (15 por mes, distribución natural)
--- ================================================================
-
--- ================================================================
--- 90 CITAS - HORARIO REAL ESTRICTO (con 1 → 90)
--- Lunes, Miércoles, Viernes → 09:00-14:00
--- Martes, Jueves → 15:00-19:00
--- Diciembre 2025 → Abril 2026
--- ================================================================
 
 INSERT INTO CITA (con, dathorini, dathorfin, obs, nom, llis, numdoc, tipcit_con, age_con,
                   lit1er, lit2on, lit3er, lit4rt, lit05e, lit06e, lit07e, lit08e, lit09e, lit10e,
                   nomcar, tel, ema) VALUES
 
--- DICIEMBRE 2025
+-- DESEMBRE 2025
 (1,  '2025-12-01 09:00:00', '2025-12-01 10:00:00', 'Primera empadronament', 'Laura', 'Martínez García', '39871234A', 1, 1, 'Empadronament inicial', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Sants 45', 612345601, 'laura.mg@gmail.com'),
 (2,  '2025-12-01 11:00:00', '2025-12-01 12:00:00', 'Canvi dins Eixample', 'Marc', 'Puig Torres', '45127890B', 1, 1, 'Canvi de domicili dins del municipi', '2', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'Av. Paral·lel 123', 623456712, 'marc.pt@gmail.com'),
 (3,  '2025-12-02 15:00:00', '2025-12-02 16:00:00', 'Vinc de Terrassa', 'Ahmed', 'Rahmani', 'Y9988776F', 1, 2, 'Canvi de domicili des d''un altre municipi', '3', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Marina 78', 667890156, 'ahmed.r@yahoo.com'),
@@ -97,7 +85,7 @@ INSERT INTO CITA (con, dathorini, dathorfin, obs, nom, llis, numdoc, tipcit_con,
 (14, '2025-12-18 17:00:00', '2025-12-18 18:00:00', 'Baixa per trasllat', 'Sergi', 'Bosch Torrent', '49234567N', 1, 2, 'Baixa per trasllat a un altre municipi', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Diputació 210', 666778834, 'sergi.bt@outlook.com'),
 (15, '2025-12-19 13:00:00', '2025-12-19 14:00:00', 'Última setmana', 'Lucía', 'Domínguez Ruiz', 'X8877665O', 1, 1, 'Modificació de dades', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Rocafort 123', 677889945, 'lucia.dr@gmail.com'),
 
--- ENERO 2026
+-- GENER 2026
 (16, '2026-01-07 10:00:00', '2026-01-07 11:00:00', 'Després de Reis', 'Júlia', 'Ferrer Mas', '38765432P', 1, 3, 'Empadronament inicial', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Rosselló 89', 688990056, 'julia.fm@gmail.com'),
 (17, '2026-01-08 16:00:00', '2026-01-08 17:00:00', 'Canvi de pis', 'Arnau', 'Vila Pons', '40987654Q', 1, 2, 'Canvi de domicili dins del municipi', '2', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Viladomat 56', 699001167, 'arnau.vp@gmail.com'),
 (18, '2026-01-09 09:00:00', '2026-01-09 10:00:00', 'Vinc de Mataró', 'Nadia', 'El Amrani', 'Y9988776R', 1, 3, 'Canvi de domicili des d''un altre municipi', '4', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Tarragona 123', 611223378, 'nadia.ea@yahoo.com'),
@@ -114,7 +102,7 @@ INSERT INTO CITA (con, dathorini, dathorfin, obs, nom, llis, numdoc, tipcit_con,
 (29, '2026-01-29 15:00:00', '2026-01-29 16:00:00', 'Canvi dins ciutat', 'Núria', 'Bosch Torrent', '51234567C1', 1, 2, 'Canvi de domicili dins del municipi', '3', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Diputació 321', 633445589, 'nuria.bt@gmail.com'),
 (30, '2026-01-30 10:00:00', '2026-01-30 11:00:00', 'Alta per naixement', 'Albert', 'Roca Pons', '38765432D1', 1, 3, 'Alta per naixement', '2', 'Sí, menor de 14 anys', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Comte d’Urgell 56', 644556690, 'albert.rp@gmail.com'),
 
--- FEBRERO 2026
+-- FEBRER 2026
 (31, '2026-02-02 09:00:00', '2026-02-02 10:00:00', 'Canvi de pis', 'Marta', 'Puig Camps', '39876543E1', 1, 3, 'Canvi de domicili dins del municipi', '2', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Enric Granados 45', 655667801, 'marta.pc@outlook.com'),
 (32, '2026-02-03 15:00:00', '2026-02-03 16:00:00', 'Empadronament inicial', 'Ivan', 'Kuznetsov', 'Z6789012F', 1, 2, 'Empadronament inicial', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Valencia 555', 666778912, 'ivan.k@gmail.com'),
 (33, '2026-02-04 10:00:00', '2026-02-04 11:00:00', 'Vinc de Sabadell', 'Aisha', 'Benali', 'Y2233445G', 1, 3, 'Canvi de domicili des d''un altre municipi', '3', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Tarragona 210', 677890023, 'aisha.ba@yahoo.es'),
@@ -131,7 +119,7 @@ INSERT INTO CITA (con, dathorini, dathorfin, obs, nom, llis, numdoc, tipcit_con,
 (44, '2026-02-23 12:00:00', '2026-02-23 13:00:00', 'Canvi dins ciutat', 'David', 'Sánchez Pérez', '51234567R1', 1, 3, 'Canvi de domicili dins del municipi', '2', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Muntaner 89', 699012234, 'david.sp@gmail.com'),
 (45, '2026-02-24 17:00:00', '2026-02-24 18:00:00', 'Alta per naixement', 'Amina', 'Rahmani', 'Y1122334S1', 1, 2, 'Alta per naixement', '2', 'Sí, menor de 14 anys', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Entença 210', 611223345, 'amina.rahmani@yahoo.com'),
 
--- MARZO 2026
+-- MARÇ 2026
 (46, '2026-03-02 11:00:00', '2026-03-02 12:00:00', 'Canvi de pis', 'Joan', 'Riera Pons', '38765432T1', 1, 3, 'Canvi de domicili dins del municipi', '3', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Rosselló 123', 622334456, 'joan.riera@gmail.com'),
 (47, '2026-03-03 15:00:00', '2026-03-03 16:00:00', 'Empadronament inicial', 'Lucía', 'Domínguez Vega', 'X9988776U1', 1, 2, 'Empadronament inicial', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Rocafort 55', 633445567, 'lucia.dv@gmail.com'),
 (48, '2026-03-05 16:00:00', '2026-03-05 17:00:00', 'Canvi des de Badalona', 'Sergi', 'Collado Mas', '40987654V1', 1, 2, 'Canvi de domicili des d''un altre municipi', '2', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Viladomat 99', 644556678, 'sergi.cm@hotmail.com'),
@@ -148,9 +136,8 @@ INSERT INTO CITA (con, dathorini, dathorfin, obs, nom, llis, numdoc, tipcit_con,
 (59, '2026-03-24 18:00:00', '2026-03-24 19:00:00', 'Canvi dins ciutat', 'Arnau', 'Vila Pons', '40987654G2', 1, 2, 'Canvi de domicili dins del municipi', '3', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Viladomat 56', 666778889, 'arnau.vp@gmail.com'),
 (60, '2026-03-26 16:00:00', '2026-03-26 17:00:00', 'Alta per omissió', 'Nadia', 'El Amrani', 'Y9988776H2', 1, 2, 'Alta per omissió', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Tarragona 123', 677890000, 'nadia.ea@yahoo.com');
 
--- ========================================
--- SINCRONIZAR SECUENCIAS PARA H2
--- ========================================
+
+-- SINCRONITZAR SEQUENCIES
 ALTER SEQUENCE IF EXISTS ubicacio_seq RESTART WITH (SELECT COALESCE(MAX(con), 0) + 1 FROM UBICACIO);
 ALTER SEQUENCE IF EXISTS tipus_cita_seq RESTART WITH (SELECT COALESCE(MAX(con), 0) + 1 FROM TIPUS_CITA);
 ALTER SEQUENCE IF EXISTS horari_seq RESTART WITH (SELECT COALESCE(MAX(con), 0) + 1 FROM HORARI);

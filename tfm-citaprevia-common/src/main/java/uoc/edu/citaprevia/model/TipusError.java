@@ -1,5 +1,8 @@
 package uoc.edu.citaprevia.model;
 
+/**
+ * Enum que representa els tipus d'error que pot haver-hi a l'aplicació
+ */
 public enum TipusError {
 	
 	ERROR("E","Error"),

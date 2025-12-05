@@ -1,5 +1,8 @@
 package uoc.edu.citaprevia.model;
 
+/**
+ * Enum per centralitzar i gestionar les modalitats que pot tenir una cita
+ */
 public enum ModalitatTipusCita {
 	P("P","Presencial"),
 	T("T","Telèfon"),

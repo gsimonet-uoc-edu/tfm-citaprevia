@@ -1,5 +1,8 @@
 package uoc.edu.citaprevia.model;
 
+/**
+ * Enum que representa el combobox per gestionar les franjes horàries
+ */
 public enum DiaSetmana {
 	
 	DL(1L, "Dilluns"),

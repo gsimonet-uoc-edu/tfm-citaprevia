@@ -2,32 +2,20 @@ package uoc.edu.citaprevia.util;
 
 /**
  * Constants globals del projecte CitaPrèvia.
- * Totes les claus fan referència a entrades de messages_ca.properties / messages_es.properties
+ * La majòria són labels dels fitxers de messages
  */
 public final class Constants {
 
     private Constants() {
     }
 
-    // ==================================================================
-    // ERRORS GENÈRICS I FATAL
-    // ==================================================================
     public static final Long CODI_ERROR_FATAL = 500L;
     public static final String MSG_ERR_FATAL = "error.500";
-    public static final String MSG_ERR_GET_CALENDARI = "error.get.calendari";
-    public static final String MSG_ERR_DELETE_CITA = "error.delete.cita";
-
-    // ==================================================================
-    // FORMATOS
-    // ==================================================================
     public static final String PATTERN_FORMAT_LOCAL_DATE_TIME = "yyyy-MM-dd'T'HH:mm:ss";
 
-    // ==================================================================
-    // ERRORS API (backend → frontend)
-    // ==================================================================
+    // Errors genèrics de l'API (back-end)
     public static final String ERROR_API_FIND_UBICACIONS          = "error.find.ubicacions";
     public static final String ERROR_API_FIND_HORARIS             = "error.find.horaris";
-
     public static final String ERROR_API_CRUD_CITA                 = "error.cites.crud";
     public static final String ERROR_API_CRUD_AGENDA               = "error.agendas.crud";
     public static final String ERROR_API_CRUD_TIPUS_CITA           = "error.tipuscita.crud";
@@ -36,8 +24,11 @@ public final class Constants {
     public static final String ERROR_API_CRUD_UBICACIONS           = "error.ubicacions.crud";
     public static final String ERROR_API_CRUD_SETMANES_TIPUS       = "error.setmanestipus.crud";
     public static final String ERROR_API_CRUD_SUBAPLICACIONS_TIPUS = "error.subaplicacions.crud";
+    public static final String MSG_ERR_GET_CALENDARI 			   = "error.get.calendari";   
+    public static final String ERROR_API_ADD_CITES_SETMANES_TIPUS       = "error.setmanestipus.cites.add";
+    public static final String ERROR_API_UPDATE_CITES_SETMANES_TIPUS    = "error.setmanestipus.cites.update";
 
-    // Operacions específiques d'eliminació (dependències)
+    // Errors d'operacions específiques d'eliminació de l'api
     public static final String ERROR_API_DELETE_AGENDA                  = "error.agendas.delete";
     public static final String ERROR_API_UPDATE_AGENDA_AMB_CITES        = "error.agendas.cites.update";
     public static final String ERROR_API_DELETE_HORARI                  = "error.horaris.delete";
@@ -45,14 +36,10 @@ public final class Constants {
     public static final String ERROR_API_DELETE_SETMANES_TIPUS          = "error.setmanestipus.delete";
     public static final String ERROR_API_DELETE_TIPUS_CITES_HORARIS     = "error.tipuscites.horaris.delete";
     public static final String ERROR_API_DELETE_AGENDES_UBICACIONS      = "error.ubicacions.agendes.delete";
+    public static final String MSG_ERR_DELETE_CITA 	  			   = "error.delete.cita";
 
-    // Operacions amb cites dins franges
-    public static final String ERROR_API_ADD_CITES_SETMANES_TIPUS       = "error.setmanestipus.cites.add";
-    public static final String ERROR_API_UPDATE_CITES_SETMANES_TIPUS    = "error.setmanestipus.cites.update";
 
-    // ==================================================================
-    // ERRORS FRONTEND (missatges mostrats a l'usuari final)
-    // ==================================================================
+    // Errors genèrics del front (front-end)
     public static final String ERROR_FRONT_GESTIO_TECNICS      = "error.tecnics.gestio";
     public static final String ERROR_FRONT_GESTIO_CITES      = "error.cites.gestio";
     public static final String ERROR_FRONT_DELETE_CITA_PASSADA  = "error.cita.delete.passada";
@@ -64,14 +51,11 @@ public final class Constants {
     public static final String ERROR_FRONT_SUBAPLICACIO_NO_TROBADA  = "error.subapl.no.trobada";
     public static final String ERROR_FRONT_SAVE_AGENDES       = "error.agendes.save";
     public static final String ERROR_FRONT_SAVE_HORARIS       = "error.horaris.save";
-    public static final String ERROR_FRONT_DASHBOARD  = "error.dashboard";
-    public static final String ERROR_BINDINGS_FORM = "error.result.bindings";
+    public static final String ERROR_FRONT_DASHBOARD 		  = "error.dashboard";
+    public static final String ERROR_BINDINGS_FORM			  = "error.result.bindings";
+    public static final String ERROR_FRONT_PRF_TECNICS        = "error.tecnics.prf"; 
 
-    public static final String ERROR_FRONT_PRF_TECNICS        = "error.tecnics.prf";   // Perfil no permès a la subaplicació
-
-    // ==================================================================
-    // SUCCESS FRONTEND (missatges d'èxit mostrats a l'usuari)
-    // ==================================================================
+    // Missatges quan una operació és satisfactòria
     // Agendes
     public static final String SUCCESS_FRONT_SAVE_AGENDES      = "success.agendes.save";
     public static final String SUCCESS_FRONT_UPDATE_AGENDES    = "success.agendes.update";
