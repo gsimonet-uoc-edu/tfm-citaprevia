@@ -269,7 +269,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-secondary text-white">
-                <h5 class="modal-title" id="consultaModalLabel" th:text="#{consultar_cita}">Consulta Cita Passada</h5>
+                <h5 class="modal-title" id="consultaModalLabel" th:text="#{consultar_cita_passada}"></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -322,7 +322,22 @@
         </div>
     </div>
 </div>
-
+    <div class="modal fade" id="passadaModal" tabindex="-1" aria-labelledby="passadaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title" id="passadaModalLabel"><i class="fas fa-exclamation-triangle me-2"></i> <span th:text="#{franja_passada}"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p th:text="#{missatge_franja_passada}"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-warning" data-bs-dismiss="modal" th:text="#{tancar}"></button>
+                </div>
+            </div>
+        </div>
+    </div>
     <th:block th:replace="~{common/footer :: footer}"></th:block>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -350,7 +365,7 @@ const modalConsulta = new bootstrap.Modal(document.getElementById('consultaModal
         const events = /*[[${frangesHorariesGrouped}]]*/ [];
         const modalReserva = new bootstrap.Modal(document.getElementById('reservaModalPrivate'));
         const modalEdicio = new bootstrap.Modal(document.getElementById('edicioModalPrivate'));
-        
+        const passadaModal = new bootstrap.Modal(document.getElementById('passadaModal'));
         const now = new Date();
 
         console.log('Events rebuts:', events);
@@ -430,6 +445,12 @@ const modalConsulta = new bootstrap.Modal(document.getElementById('consultaModal
                 const isPassada = props.isPassada === true; 
                 
                 if (isLliure) {
+                	
+                	if (isPassada) {
+                        passadaModal.show();
+                        return;
+                    }
+                	
                     const offset = info.event.start.getTimezoneOffset() * 60000;
                     const startLocal = new Date(info.event.start.getTime() - offset).toISOString().slice(0, 19);
                     let endLocal = startLocal;
