@@ -164,6 +164,7 @@ INSERT INTO CITA (con, dathorini, dathorfin, obs, nom, llis, numdoc, tipcit_con,
                   nomcar, tel, ema) VALUES
 
 -- DESEMBRE 2025
+-- AJB
 (1,  '2025-12-01 09:00:00', '2025-12-01 10:00:00', 'Primera empadronament', 'Laura', 'Martínez García', '39871234A', 1, 1, 'Empadronament inicial', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Sants 45', 612345601, 'laura.mg@gmail.com'),
 (2,  '2025-12-01 11:00:00', '2025-12-01 12:00:00', 'Canvi dins Eixample', 'Marc', 'Puig Torres', '45127890B', 1, 1, 'Canvi de domicili dins del municipi', '2', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'Av. Paral·lel 123', 623456712, 'marc.pt@gmail.com'),
 (3,  '2025-12-02 15:00:00', '2025-12-02 16:00:00', 'Vinc de Terrassa', 'Ahmed', 'Rahmani', 'Y9988776F', 1, 2, 'Canvi de domicili des d''un altre municipi', '3', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Marina 78', 667890156, 'ahmed.r@yahoo.com'),
@@ -197,6 +198,7 @@ INSERT INTO CITA (con, dathorini, dathorfin, obs, nom, llis, numdoc, tipcit_con,
 (60, '2025-12-19 13:00:00', '2025-12-19 14:00:00', 'Estudi de petjada', 'Lucía', 'Domínguez Ruiz', 'X8877665O', 3, 4, '23', '76', '176', 'Mestre','Hockey',NULL,NULL,NULL,NULL,NULL, 'C/ Rocafort 123', 677889945, 'lucia.dr@gmail.com'),
 
 -- GENER 2026
+-- AJB
 (16, '2026-01-07 10:00:00', '2026-01-07 11:00:00', 'Després de Reis', 'Júlia', 'Ferrer Mas', '38765432P', 1, 3, 'Empadronament inicial', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Rosselló 89', 688990056, 'julia.fm@gmail.com'),
 (17, '2026-01-08 16:00:00', '2026-01-08 17:00:00', 'Canvi de pis', 'Arnau', 'Vila Pons', '40987654Q', 1, 2, 'Canvi de domicili dins del municipi', '2', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Viladomat 56', 699001167, 'arnau.vp@gmail.com'),
 (18, '2026-01-09 09:00:00', '2026-01-09 10:00:00', 'Vinc de Mataró', 'Nadia', 'El Amrani', 'Y9988776R', 1, 3, 'Canvi de domicili des d''un altre municipi', '4', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Tarragona 123', 611223378, 'nadia.ea@yahoo.com'),
@@ -212,6 +214,22 @@ INSERT INTO CITA (con, dathorini, dathorfin, obs, nom, llis, numdoc, tipcit_con,
 (28, '2026-01-28 10:00:00', '2026-01-28 11:00:00', 'Empadronament inicial', 'Pablo', 'López Navarro', '45123987B1', 1, 3, 'Empadronament inicial', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Casanova 167', 622334478, 'pablo.ln@gmail.com'),
 (29, '2026-01-29 15:00:00', '2026-01-29 16:00:00', 'Canvi dins ciutat', 'Núria', 'Bosch Torrent', '51234567C1', 1, 2, 'Canvi de domicili dins del municipi', '3', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Diputació 321', 633445589, 'nuria.bt@gmail.com'),
 (30, '2026-01-30 10:00:00', '2026-01-30 11:00:00', 'Alta per naixement', 'Albert', 'Roca Pons', '38765432D1', 1, 3, 'Alta per naixement', '2', 'Sí, menor de 14 anys', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Comte d’Urgell 56', 644556690, 'albert.rp@gmail.com'),
+-- FIS
+(61, '2026-01-07 10:00:00', '2026-01-07 11:00:00', 'Mal d''esquena', 'Laura', 'Martínez García', '39871234A', 3, 4, '38', '67', '144', 'Informàtic',NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Sants 45', 612345601, 'laura.mg@gmail.com'),
+(62, '2026-01-08 16:00:00', '2026-01-08 17:00:00', 'Problemes tropitjada peu dret', 'Marc', 'Puig Torres', '45127890B', 4, 5, '18', '90', '124', 'Mestre','Padel',NULL,NULL,NULL,NULL,NULL, 'Av. Paral·lel 123', 623456712, 'marc.pt@gmail.com'),
+(63, '2026-01-09 09:00:00', '2026-01-09 10:00:00', 'Tendinitis roluliana', 'Ahmed', 'Rahmani', 'Y9988776F', 3, 4, '54', '78', '143', 'Mestre','Escacs',NULL,NULL,NULL,NULL,NULL, 'C/ Marina 78', 667890156, 'ahmed.r@yahoo.com'),
+(64, '2026-01-12 09:00:00', '2026-01-12 10:00:00', 'Tendinopatia rotuliana', 'Sara', 'López Ruiz', '50987654C', 3, 4, '12', '68', '198', 'Atleta','Running',NULL,NULL,NULL,NULL,NULL, 'C/ Balmes 89', 634567823, 'sara.lr@hotmail.com'),
+(65, '2026-01-13 15:00:00', '2026-01-13 16:00:00', 'Mal hombre esquerra', 'Pau', 'Roca Mas', '51234567H', 4, 5, '54', '45', '177', 'Informàtic',NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Enric Granados 12', 689012378, 'pau.rm@gmail.com'),
+(66, '2026-01-14 11:00:00', '2026-01-14 12:00:00', 'Molèsties isquiotibial esquerra', 'Joan', 'Ferrer Pons', 'X1239876D', 3, 4, '188', '54', '155', 'Informàtic','Natació',NULL,NULL,NULL,NULL,NULL, 'Pg. de Gràcia 101', 645678934, 'joan.fp@gmail.com'),
+(67, '2026-01-15 16:00:00', '2026-01-15 17:00:00', 'Massatge relaxant tren superior', 'Marta', 'Giménez Coll', '40987654G', 4, 5, '182', '76', '153', 'Futbolista','Fútbol',NULL,NULL,NULL,NULL,NULL, 'C/ Provença 56', 678901267, 'marta.gc@gmail.com'),
+(68, '2026-01-19 12:00:00', '2026-01-19 13:00:00', 'Bessons carregats', 'Clàudia', 'Vidal Serra', '38765432E', 3, 4, '43', '34', '176', 'Informàtic',NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Aragó 234', 656789045, 'claudia.vs@outlook.com'),
+(69, '2026-01-20 18:00:00', '2026-01-20 19:00:00', 'Tortícolis', 'Fatima', 'Zouhair', 'Z1122334I', 4, 5, '75', '56', '176', 'Futbolista','Fútbol',NULL,NULL,NULL,NULL,NULL, 'C/ Entença 210', 611223389, 'fatima.zh@gmail.com'),
+(70, '2026-01-21 12:00:00', '2026-01-21 13:00:00', 'Lumbàlgia forta', 'David', 'Soler Pons', '39876543J', 3, 4, '23', '63', '198', 'Cuiner','Bàsquet',NULL,NULL,NULL,NULL,NULL, 'C/ Muntaner 167', 622334490, 'david.sp@gmail.com'),
+(71, '2026-01-22 15:00:00', '2026-01-22 16:00:00', 'Problemes cervicals', 'Omar', 'Benali', 'Y5566778L', 4, 5, '11', '35', '201', 'Informàtic',NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Floridablanca 45', 644556612, 'omar.ba@yahoo.es'),
+(72, '2026-01-27 16:00:00', '2026-01-27 17:00:00', 'Mal d''espatlla', 'Elena', 'Puig Camps', '45123987M', 4, 5, '13', '65', '156', 'Atleta','Salts d''altura',NULL,NULL,NULL,NULL,NULL, 'C/ Casanova 78', 655667723, 'elena.pc@gmail.com'),
+(73, '2026-01-28 10:00:00', '2026-01-28 11:00:00', 'Fascitis plantar', 'Rosa', 'Castillo Vega', '27654321K', 3, 4, '53', '35', '173', 'Futbolista','Fútbol',NULL,NULL,NULL,NULL,NULL, 'C/ Calàbria 89', 633445501, 'rosa.cv@hotmail.com'),
+(74, '2026-01-29 15:00:00', '2026-01-29 16:00:00', 'Molèsties pubàlgia', 'Sergi', 'Bosch Torrent', '49234567N', 4, 5, '62', '65', '187', 'Atleta','Salts de longitud',NULL,NULL,NULL,NULL,NULL, 'C/ Diputació 210', 666778834, 'sergi.bt@outlook.com'),
+(75, '2026-01-30 10:00:00', '2026-01-30 11:00:00', 'Estudi de petjada', 'Lucía', 'Domínguez Ruiz', 'X8877665O', 3, 4, '23', '76', '176', 'Mestre','Hockey',NULL,NULL,NULL,NULL,NULL, 'C/ Rocafort 123', 677889945, 'lucia.dr@gmail.com'),
 
 -- FEBRER 2026
 (31, '2026-02-02 09:00:00', '2026-02-02 10:00:00', 'Canvi de pis', 'Marta', 'Puig Camps', '39876543E1', 1, 3, 'Canvi de domicili dins del municipi', '2', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Enric Granados 45', 655667801, 'marta.pc@outlook.com'),
