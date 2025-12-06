@@ -191,7 +191,6 @@ INSERT INTO CITA (con, dathorini, dathorfin, obs, nom, llis, numdoc, tipcit_con,
 (96,  '2025-12-18 11:00:00', '2025-12-18 12:00:00', 'Me’n vaig a València', 'Joan', 'Ferrer Pons', 'X1239876D', 2, 6, 'Baixa per trasllat a un altre municipi', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'Pg. de Gràcia 101', 645678934, 'joan.fp@gmail.com'),
 (97,  '2025-12-23 12:00:00', '2025-12-23 13:00:00', 'Alta per omissió', 'Marta', 'Giménez Coll', '40987654G', 2, 6, 'Alta per omissió', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Provença 56', 678901267, 'marta.gc@gmail.com'),
 (98,  '2025-12-25 13:00:00', '2025-12-25 14:00:00', 'Correcció nom', 'Clàudia', 'Vidal Serra', '38765432E', 2, 6, 'Modificació de dades', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Aragó 234', 656789045, 'claudia.vs@outlook.com'),
-
 -- FIS
 (46,  '2025-12-01 09:00:00', '2025-12-01 10:00:00', 'Mal d''esquena', 'Laura', 'Martínez García', '39871234A', 3, 4, '38', '67', '144', 'Informàtic',NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Sants 45', 612345601, 'laura.mg@gmail.com'),
 (47,  '2025-12-01 11:00:00', '2025-12-01 12:00:00', 'Problemes tropitjada peu dret', 'Marc', 'Puig Torres', '45127890B', 3, 4, '18', '90', '124', 'Mestre','Padel',NULL,NULL,NULL,NULL,NULL, 'Av. Paral·lel 123', 623456712, 'marc.pt@gmail.com'),
@@ -226,6 +225,15 @@ INSERT INTO CITA (con, dathorini, dathorfin, obs, nom, llis, numdoc, tipcit_con,
 (28, '2026-01-28 10:00:00', '2026-01-28 11:00:00', 'Empadronament inicial', 'Pablo', 'López Navarro', '45123987B1', 1, 3, 'Empadronament inicial', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Casanova 167', 622334478, 'pablo.ln@gmail.com'),
 (29, '2026-01-29 15:00:00', '2026-01-29 16:00:00', 'Canvi dins ciutat', 'Núria', 'Bosch Torrent', '51234567C1', 1, 2, 'Canvi de domicili dins del municipi', '3', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Diputació 321', 633445589, 'nuria.bt@gmail.com'),
 (30, '2026-01-30 10:00:00', '2026-01-30 11:00:00', 'Alta per naixement', 'Albert', 'Roca Pons', '38765432D1', 1, 3, 'Alta per naixement', '2', 'Sí, menor de 14 anys', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Comte d’Urgell 56', 644556690, 'albert.rp@gmail.com'),
+-- Online
+(99,  '2026-01-02 09:00:00', '2026-01-02 10:00:00', 'Primera empadronament', 'Laura', 'Martínez García', '39871234A', 2, 6, 'Empadronament inicial', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Sants 45', 612345601, 'laura.mg@gmail.com'),
+(100,  '2026-01-06 11:00:00', '2026-01-06 12:00:00', 'Canvi dins Eixample', 'Marc', 'Puig Torres', '45127890B', 2, 6, 'Canvi de domicili dins del municipi', '2', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'Av. Paral·lel 123', 623456712, 'marc.pt@gmail.com'),
+(101,  '2026-01-08 10:00:00', '2026-01-08 11:00:00', 'Vinc de Terrassa', 'Ahmed', 'Rahmani', 'Y9988776F', 2, 6, 'Canvi de domicili des d''un altre municipi', '3', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Marina 78', 667890156, 'ahmed.r@yahoo.com'),
+(102,  '2026-01-13 09:00:00', '2026-01-13 10:00:00', 'Alta nadó', 'Sara', 'López Ruiz', '50987654C', 2, 6, 'Alta per naixement', '2', 'Sí, menor de 14 anys', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Balmes 89', 634567823, 'sara.lr@hotmail.com'),
+(103,  '2026-01-13 10:00:00', '2026-01-13 11:00:00', 'Canvi dins Gràcia', 'Pau', 'Roca Mas', '51234567H', 2, 6, 'Canvi de domicili dins del municipi', '4', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Enric Granados 12', 689012378, 'pau.rm@gmail.com'),
+(104,  '2026-01-15 11:00:00', '2026-01-15 12:00:00', 'Me’n vaig a València', 'Joan', 'Ferrer Pons', 'X1239876D', 2, 6, 'Baixa per trasllat a un altre municipi', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'Pg. de Gràcia 101', 645678934, 'joan.fp@gmail.com'),
+(105,  '2026-01-22 12:00:00', '2026-01-22 13:00:00', 'Alta per omissió', 'Marta', 'Giménez Coll', '40987654G', 2, 6, 'Alta per omissió', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Provença 56', 678901267, 'marta.gc@gmail.com'),
+(106,  '2026-01-27 13:00:00', '2026-01-27 14:00:00', 'Correcció nom', 'Clàudia', 'Vidal Serra', '38765432E', 2, 6, 'Modificació de dades', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Aragó 234', 656789045, 'claudia.vs@outlook.com'),
 -- FIS
 (61, '2026-01-07 10:00:00', '2026-01-07 11:00:00', 'Mal d''esquena', 'Laura', 'Martínez García', '39871234A', 3, 4, '38', '67', '144', 'Informàtic',NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Sants 45', 612345601, 'laura.mg@gmail.com'),
 (62, '2026-01-08 16:00:00', '2026-01-08 17:00:00', 'Problemes tropitjada peu dret', 'Marc', 'Puig Torres', '45127890B', 4, 5, '18', '90', '124', 'Mestre','Padel',NULL,NULL,NULL,NULL,NULL, 'Av. Paral·lel 123', 623456712, 'marc.pt@gmail.com'),
