@@ -43,13 +43,13 @@ INSERT INTO HORARI (con, dec, dem, SUBAPL_COA, TIPCIT_CON) VALUES
 
 -- AGENDA
 INSERT INTO AGENDA (con, datini, datfin, UBI_CON, TEC_COA, HORCIT_CON) VALUES 
-(1, '2025-11-24', '2025-12-23', 1, 'JGOMEZ', 1),
-(2, '2025-11-24', '2026-02-28', 2, 'AGINARD', 2),
+(1, '2025-12-01', '2025-12-23', 1, 'JGOMEZ', 1),
+(2, '2025-12-01', '2026-02-28', 2, 'AGINARD', 2),
 (3, '2025-12-24', '2026-02-28', 1, 'GSIMONET', 1),
 -- Fisios
-(4, '2025-11-24', '2026-02-28', 3, 'FISIO1', 3),
-(5, '2025-11-24', '2026-02-28', 4, 'FISIO2', 4),
-(6, '2025-11-24', '2026-02-28', 5, 'MENSENYAT', 5)
+(4, '2025-12-01', '2026-02-28', 3, 'FISIO1', 3),
+(5, '2025-12-01', '2026-02-28', 4, 'FISIO2', 4),
+(6, '2025-12-01', '2026-02-28', 5, 'MENSENYAT', 5)
 ;
 
 -- SetmanaTipus: Lunes y Miércoles, 9-10 y 10-11
