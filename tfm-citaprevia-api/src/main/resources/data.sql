@@ -9,43 +9,48 @@ INSERT INTO TECNIC (coa, pass, nom, ll1, ll2, prf) VALUES
 ('JGOMEZ', '1234', 'Joan', 'Gómez', 'Marqués','TECNIC_AJB'), -- fa feina de matins
 ('GSIMONET', '1234', 'Guillermo', 'Simonet', 'Ramon','ADMINISTRADOR_AJB'), -- fa feina de tardes
 ('AGINARD', '1234', 'Antonio', 'Ginard', 'Reinés','TECNIC_AJB'), -- fa feina de matins
+('MENSENYAT', '1234', 'Miquel', 'Ensenyat', 'Gutiérrez','TECNIC_AJB'), -- fa feina de matins online
 -- Tecnics fisios
 ('FISIO1', '1234', 'Jaume', 'Carrió', 'Sureda','TECNIC_FIS'),
 ('FISIO2', '1234', 'Margalida', 'Ramon', 'Gibert','ADMINISTRADOR_FIS');
 
 -- UBICACIO
 INSERT INTO UBICACIO (con, nom, nomcar, obs, SUBAPL_COA) VALUES 
-(1, 'OAC Avingudes', 'C/ Avinguda Barcelona 2', 'Davant la sortida del Metro L11', 'AJB'),
-(2, 'OAC Pl Catalunya', 'Plaça Catalunya 32 baixos', 'Entrada pel Centre Comercial El Corte Inglés', 'AJB'),
+(1, 'OAC Avingudes', 'C/ Avinguda Barcelona 2', 'Davant la sortida del Metro L11', 'AJB'), -- AJB
+(2, 'OAC Pl Catalunya', 'Plaça Catalunya 32 baixos', 'Entrada pel Centre Comercial El Corte Inglés', 'AJB'), --AJB
 -- Ubicacions fisios
 (3, 'FisioCat Barcelona', 'Carrer Enric Granados 2', 'Centre ubicat al centre de Barcelona', 'FIS'),
-(4, 'FisioCat Tarragona', 'Avinguda Tarraco 3 pis 2A', 'Centre ubicat a les afores de Tarragona', 'FIS');
+(4, 'FisioCat Tarragona', 'Avinguda Tarraco 3 pis 2A', 'Centre ubicat a les afores de Tarragona', 'FIS'),
+(5, 'OAC Online', 'Torres Algur', 'Centre Atenció al Ciutadà online', 'AJB');
 
 -- TIPUS_CITA
 INSERT INTO TIPUS_CITA (con, dec, dem, tipcitmod, SUBAPL_COA) VALUES 
 (1, 'Certificat PH', 'Certificat Padró d''Habitants', 'P', 'AJB'),
-(2, 'Certificat de Resi.', 'Certificat de Residència', 'P', 'AJB'),
+(2, 'Certificat de Resi.', 'Certificat de Residència', 'V', 'AJB'), -- videoconferencia
 -- Fisios
 (3, 'Primer', 'Primera consulta', 'P', 'FIS'),
 (4, 'Segon', 'Consulta successiva', 'P', 'FIS');
 
 -- HORARI
 INSERT INTO HORARI (con, dec, dem, SUBAPL_COA, TIPCIT_CON) VALUES
-(1, 'OAC-Matí', 'Horari de matí dl-dm-dv 9-14h', 'AJB', 1),
-(2, 'OAC-Tarda', 'Horari de tarda dm-dj 15-19h', 'AJB', 1),
+(1, 'OAC-Matí', 'Horari de matí dl-dm-dv 9-14h', 'AJB', 1), --AJB
+(2, 'OAC-Tarda', 'Horari de tarda dm-dj 15-19h', 'AJB', 1), --AJB
 -- Fisios
-(3, 'Torn de matí', 'Horari de matí de dl-ds 9 a 14h', 'FIS', 3),
-(4, 'Torn de tarda', 'Horari de tarda dl-dv 15-19h', 'FIS', 4)
+(3, 'Torn de matí', 'Horari de matí de dl-ds 9 a 14h', 'FIS', 3), --FIS
+(4, 'Torn de tarda', 'Horari de tarda dl-dv 15-19h', 'FIS', 4), --FIS
+(5, 'Torn de matí', 'Horari de matí dm-dj 9-14h', 'AJB', 2) --AJB Online
 ;
 
 -- AGENDA
 INSERT INTO AGENDA (con, datini, datfin, UBI_CON, TEC_COA, HORCIT_CON) VALUES 
 (1, '2025-11-24', '2025-12-23', 1, 'JGOMEZ', 1),
-(2, '2025-11-24', '2026-04-01', 2, 'AGINARD', 2),
-(3, '2025-12-24', '2026-04-01', 1, 'GSIMONET', 1),
+(2, '2025-11-24', '2026-02-28', 2, 'AGINARD', 2),
+(3, '2025-12-24', '2026-02-28', 1, 'GSIMONET', 1),
 -- Fisios
-(4, '2025-12-01', '2026-04-01', 3, 'FISIO1', 3),
-(5, '2025-12-01', '2026-04-01', 4, 'FISIO2', 4);
+(4, '2025-11-24', '2026-02-28', 3, 'FISIO1', 3),
+(5, '2025-11-24', '2026-02-28', 4, 'FISIO2', 4),
+(6, '2025-11-24', '2026-02-28', 5, 'MENSENYAT', 5)
+;
 
 -- SetmanaTipus: Lunes y Miércoles, 9-10 y 10-11
 INSERT INTO SETMANA_TIPUS (HORCIT_CON, DIASET_CON, horini, horfin) VALUES
@@ -71,6 +76,12 @@ INSERT INTO SETMANA_TIPUS (HORCIT_CON, DIASET_CON, horini, horfin) VALUES
 (2, 2, '16:00:00', '17:00:00'),  -- OAC-tarda horari 2 tardes dm-dj cada hora
 (2, 2, '17:00:00', '18:00:00'),  -- OAC-tarda horari 2 tardes dm-dj cada hora
 (2, 2, '18:00:00', '19:00:00'),  -- OAC-tarda horari 2 tardes dm-dj cada hora
+--
+(5, 2, '09:00:00', '10:00:00'),  -- OAC online
+(5, 2, '10:00:00', '11:00:00'),
+(5, 2, '11:00:00', '12:00:00'),
+(5, 2, '12:00:00', '13:00:00'), 
+(5, 2, '13:00:00', '14:00:00'),  
 --  FIS
 (3, 2, '09:00:00', '10:00:00'),  -- mati
 (3, 2, '10:00:00', '11:00:00'), 
@@ -103,6 +114,12 @@ INSERT INTO SETMANA_TIPUS (HORCIT_CON, DIASET_CON, horini, horfin) VALUES
 (2, 4, '16:00:00', '17:00:00'),  -- OAC-tarda horari 2 tardes dm-dj cada hora
 (2, 4, '17:00:00', '18:00:00'),  -- OAC-tarda horari 2 tardes dm-dj cada hora
 (2, 4, '18:00:00', '19:00:00'),  -- OAC-tarda horari 2 tardes dm-dj cada hora
+--
+(5, 4, '09:00:00', '10:00:00'),  -- OAC online
+(5, 4, '10:00:00', '11:00:00'),
+(5, 4, '11:00:00', '12:00:00'),
+(5, 4, '12:00:00', '13:00:00'),
+(5, 4, '13:00:00', '14:00:00'),
 -- FIS
 (3, 4, '09:00:00', '10:00:00'),  -- mati
 (3, 4, '10:00:00', '11:00:00'), 
@@ -195,24 +212,7 @@ INSERT INTO CITA (con, dathorini, dathorfin, obs, nom, llis, numdoc, tipcit_con,
 (42, '2026-02-19 17:00:00', '2026-02-19 18:00:00', 'Baixa per defunció', 'Ivan', 'Petrov Ivanov', 'Z5678901P1', 1, 2, 'Baixa per defunció', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Valencia 444', 677890012, 'ivan.petrov@gmail.com'),
 (43, '2026-02-20 10:00:00', '2026-02-20 11:00:00', 'Empadronament inicial', 'Clara', 'Moreno Gil', '40987654Q1', 1, 3, 'Empadronament inicial', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Consell de Cent 12', 688901123, 'clara.mg@outlook.com'),
 (44, '2026-02-23 12:00:00', '2026-02-23 13:00:00', 'Canvi dins ciutat', 'David', 'Sánchez Pérez', '51234567R1', 1, 3, 'Canvi de domicili dins del municipi', '2', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Muntaner 89', 699012234, 'david.sp@gmail.com'),
-(45, '2026-02-24 17:00:00', '2026-02-24 18:00:00', 'Alta per naixement', 'Amina', 'Rahmani', 'Y1122334S1', 1, 2, 'Alta per naixement', '2', 'Sí, menor de 14 anys', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Entença 210', 611223345, 'amina.rahmani@yahoo.com'),
-
--- MARÇ 2026
-(46, '2026-03-02 11:00:00', '2026-03-02 12:00:00', 'Canvi de pis', 'Joan', 'Riera Pons', '38765432T1', 1, 3, 'Canvi de domicili dins del municipi', '3', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Rosselló 123', 622334456, 'joan.riera@gmail.com'),
-(47, '2026-03-03 15:00:00', '2026-03-03 16:00:00', 'Empadronament inicial', 'Lucía', 'Domínguez Vega', 'X9988776U1', 1, 2, 'Empadronament inicial', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Rocafort 55', 633445567, 'lucia.dv@gmail.com'),
-(48, '2026-03-05 16:00:00', '2026-03-05 17:00:00', 'Canvi des de Badalona', 'Sergi', 'Collado Mas', '40987654V1', 1, 2, 'Canvi de domicili des d''un altre municipi', '2', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Viladomat 99', 644556678, 'sergi.cm@hotmail.com'),
-(49, '2026-03-06 12:00:00', '2026-03-06 13:00:00', 'Alta nadó', 'Núria', 'Bosch Torrent', '51234567W1', 1, 3, 'Alta per naixement', '2', 'Sí, menor de 14 anys', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Diputació 321', 655667789, 'nuria.bt@gmail.com'),
-(50, '2026-03-09 09:00:00', '2026-03-09 10:00:00', 'Canvi dins ciutat', 'Omar', 'Benali', 'Z2233445X1', 1, 3, 'Canvi de domicili dins del municipi', '4', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Tarragona 78', 666778890, 'omar.benali@yahoo.es'),
-(51, '2026-03-10 15:00:00', '2026-03-10 16:00:00', 'Baixa per trasllat', 'Rosa', 'Vidal Serra', '27654321Y1', 1, 2, 'Baixa per trasllat a un altre municipi', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Calàbria 210', 677890001, 'rosa.vs@gmail.com'),
-(52, '2026-03-12 16:00:00', '2026-03-12 17:00:00', 'Empadronament inicial', 'Marta', 'Puig Camps', '39876543Z1', 1, 2, 'Empadronament inicial', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Enric Granados 45', 688901112, 'marta.pc@outlook.com'),
-(53, '2026-03-13 09:00:00', '2026-03-13 10:00:00', 'Canvi dins Gràcia', 'Pablo', 'López Navarro', '45123987A2', 1, 3, 'Canvi de domicili dins del municipi', '2', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Casanova 167', 699012223, 'pablo.ln@gmail.com'),
-(54, '2026-03-16 11:00:00', '2026-03-16 12:00:00', 'Canvi des de l''Hospitalet', 'Fatima', 'Zouhair', 'Y5566778B2', 1, 3, 'Canvi de domicili des d''un altre municipi', '5', 'Sí, menor de 14 anys', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Floridablanca 89', 611223334, 'fatima.zh@gmail.com'),
-(55, '2026-03-17 15:00:00', '2026-03-17 16:00:00', 'Alta per naixement', 'Albert', 'Roca Pons', '38765432C2', 1, 2, 'Alta per naixement', '2', 'Sí, menor de 14 anys', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Comte d’Urgell 56', 622334445, 'albert.rp@gmail.com'),
-(56, '2026-03-19 15:00:00', '2026-03-19 16:00:00', 'Modificació dades', 'Elena', 'Castillo Ruiz', '49234567D2', 1, 2, 'Modificació de dades', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ París 187', 633445556, 'elena.cr@hotmail.com'),
-(57, '2026-03-20 10:00:00', '2026-03-20 11:00:00', 'Baixa per trasllat', 'Raúl', 'Molina Vega', 'X8877665E2', 1, 3, 'Baixa per trasllat a un altre municipi', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Rocafort 123', 644556667, 'raul.mv@gmail.com'),
-(58, '2026-03-23 12:00:00', '2026-03-23 13:00:00', 'Empadronament inicial', 'Júlia', 'Ferrer Mas', '38765432F2', 1, 3, 'Empadronament inicial', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Rosselló 89', 655667778, 'julia.fm@gmail.com'),
-(59, '2026-03-24 18:00:00', '2026-03-24 19:00:00', 'Canvi dins ciutat', 'Arnau', 'Vila Pons', '40987654G2', 1, 2, 'Canvi de domicili dins del municipi', '3', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Viladomat 56', 666778889, 'arnau.vp@gmail.com'),
-(60, '2026-03-26 16:00:00', '2026-03-26 17:00:00', 'Alta per omissió', 'Nadia', 'El Amrani', 'Y9988776H2', 1, 2, 'Alta per omissió', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Tarragona 123', 677890000, 'nadia.ea@yahoo.com');
+(45, '2026-02-24 17:00:00', '2026-02-24 18:00:00', 'Alta per naixement', 'Amina', 'Rahmani', 'Y1122334S1', 1, 2, 'Alta per naixement', '2', 'Sí, menor de 14 anys', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Entença 210', 611223345, 'amina.rahmani@yahoo.com');
 
 
 -- SINCRONITZAR SEQUENCIES

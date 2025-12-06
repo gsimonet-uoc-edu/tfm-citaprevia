@@ -5,8 +5,8 @@ package uoc.edu.citaprevia.model;
  */
 public enum ModalitatTipusCita {
 	P("P","Presencial"),
-	T("T","Telèfon"),
-	V("V", "Video Conferència");
+	T("T","Telefonica"),
+	V("V", "Video Conferencia");
 	
 	private String valor;
 	private String descripcio;
