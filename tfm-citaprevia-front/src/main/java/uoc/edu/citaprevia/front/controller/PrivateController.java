@@ -477,88 +477,93 @@ public class PrivateController {
 	 * @return TreeMap, clau és la data i el valor és un llistat de mapes d'String/Object que representen els les franges horàries
 	 */
 	private Map<LocalDate, List<Map<String, Object>>> generarEvents(List<AgendaDto> agendes, Locale locale) {
+		
 	    Map<LocalDate, List<Map<String, Object>>> grouped = new TreeMap<>();
 	    
-		long startTime=System.currentTimeMillis();
-		LOG.info("### Inici PrivateController.generarEvents startTime={}, agendesSize={}", startTime, agendes != null ? agendes.size() : 0);
-				
-    	try {
-    		
-		    for (AgendaDto agenda : agendes) {
-		    	
-		        LocalDate dataInici = agenda.getDatini();
-		        LocalDate dataFi = agenda.getDatfin();
-	
-		        for (LocalDate data = dataInici; !data.isAfter(dataFi); data = data.plusDays(1)) {
-		            int diaSetmana = data.getDayOfWeek().getValue();
-	
-		            List<SetmanaTipusDto> franges = citaPreviaPublicClient.getSetmanesTipusByHorari(agenda.getHorari().getCon(), locale);
-	
-		            List<Map<String, Object>> dayEvents = new ArrayList<>();
-	
-		            for (SetmanaTipusDto franja : franges) {
-		                if (franja.getDiasetCon() == diaSetmana) {
-		                    LocalDateTime inici = LocalDateTime.of(data, franja.getHorini());
-		                    LocalDateTime fi = LocalDateTime.of(data, franja.getHorfin());
-		                    inici = inici.plusSeconds(1);
-		                    fi = fi.plusSeconds(1);
-		                    
-		                    boolean ocupada = false;
-		                    		
-		                    CitaDto existeixCita = citaPreviaPublicClient.existeixCitaAgenda(agenda.getCon(), inici.minusSeconds(1), fi.minusSeconds(1), agenda.getHorari().getTipusCita().getCon(), locale);
-	
-		                    if (existeixCita != null && !Utils.isEmpty(existeixCita.getCon())) {
-		                    	ocupada = true;
-		                    }
-	
-		                    Map<String, Object> event = new HashMap<>();
-		                    event.put("title", franja.getHorini() + " - " + franja.getHorfin());
-		                    event.put("start", inici);
-		                    event.put("end", fi);
-		                    event.put("classNames", ocupada ? "hora-ocupada" : "hora-lliure");
-		                    event.put("lliure", !ocupada);
-		                    event.put("tecnic", agenda.getTecnic().getNom());
-		                    event.put("agendaCon", agenda.getCon());
-		                    if (ocupada) {
-		                    	event.put("citaCon", existeixCita.getCon());
-		                    }
-		                    if (ocupada) {
-		                    	event.put("citaCon", existeixCita.getCon());		                    	
-		                        event.put("nom", existeixCita.getNom());
-		                        event.put("llis", existeixCita.getLlis());
-		                        event.put("numdoc", existeixCita.getNumdoc());
-		                        event.put("nomcar", existeixCita.getNomcar());
-		                        event.put("tel", existeixCita.getTel() != null ? String.valueOf(existeixCita.getTel()) : ""); 
-		                        event.put("ema", existeixCita.getEma());
-		                        event.put("obs", existeixCita.getObs());
-		                        
-		                        // Camps dinàmics (lit1 a lit10)
-		                        event.put("lit1", existeixCita.getLit1());
-		                        event.put("lit2", existeixCita.getLit2());
-		                        event.put("lit3", existeixCita.getLit3());
-		                        event.put("lit4", existeixCita.getLit4());
-		                        event.put("lit5", existeixCita.getLit5());
-		                        event.put("lit6", existeixCita.getLit6());
-		                        event.put("lit7", existeixCita.getLit7());
-		                        event.put("lit8", existeixCita.getLit8());
-		                        event.put("lit9", existeixCita.getLit9());
-		                        event.put("lit10", existeixCita.getLit10());
-		                    }
-		                    dayEvents.add(event);
-		                }
-		            }
-	
-		            if (!dayEvents.isEmpty()) {
-		                grouped.put(data, dayEvents);
-		            }
-		        }
-		    }
+	    long startTime=System.currentTimeMillis();
+	    LOG.info("### Inici PrivateController.generarEvents startTime={}, agendesSize={}", startTime, agendes != null ? agendes.size() : 0);
+	            
+	    try {
+	        
+	        for (AgendaDto agenda : agendes) {
+	            
+	            LocalDate dataInici = agenda.getDatini();
+	            LocalDate dataFi = agenda.getDatfin();
+
+	            for (LocalDate data = dataInici; !data.isAfter(dataFi); data = data.plusDays(1)) {
+	                int diaSetmana = data.getDayOfWeek().getValue();
+
+	                List<SetmanaTipusDto> franges = citaPreviaPublicClient.getSetmanesTipusByHorari(agenda.getHorari().getCon(), locale);
+
+	                List<Map<String, Object>> aux = new ArrayList<>();
+
+	                for (SetmanaTipusDto franja : franges) {
+	                    if (franja.getDiasetCon() == diaSetmana) {
+	                        LocalDateTime inici = LocalDateTime.of(data, franja.getHorini());
+	                        LocalDateTime fi = LocalDateTime.of(data, franja.getHorfin());
+	                        inici = inici.plusSeconds(1);
+	                        fi = fi.plusSeconds(1);
+	                        
+	                        boolean ocupada = false;
+	                                
+	                        CitaDto existeixCita = citaPreviaPublicClient.existeixCitaAgenda(agenda.getCon(), inici.minusSeconds(1), fi.minusSeconds(1), agenda.getHorari().getTipusCita().getCon(), locale);
+
+	                        if (existeixCita != null && !Utils.isEmpty(existeixCita.getCon())) {
+	                            ocupada = true;
+	                        }
+
+	                        Map<String, Object> event = new HashMap<>();
+	                        event.put("title", franja.getHorini() + " - " + franja.getHorfin());
+	                        event.put("start", inici);
+	                        event.put("end", fi);
+	                        event.put("classNames", ocupada ? "hora-ocupada" : "hora-lliure");
+	                        event.put("lliure", !ocupada);
+	                        event.put("tecnic", agenda.getTecnic().getNom());
+	                        event.put("agendaCon", agenda.getCon());
+
+	                        if (ocupada) {
+	                            event.put("citaCon", existeixCita.getCon());                        
+	                            event.put("nom", existeixCita.getNom());
+	                            event.put("llis", existeixCita.getLlis());
+	                            event.put("numdoc", existeixCita.getNumdoc());
+	                            event.put("nomcar", existeixCita.getNomcar());
+	                            event.put("tel", existeixCita.getTel() != null ? String.valueOf(existeixCita.getTel()) : ""); 
+	                            event.put("ema", existeixCita.getEma());
+	                            event.put("obs", existeixCita.getObs());
+	                            
+	                            // Camps dinàmics (lit1 a lit10)
+	                            event.put("lit1", existeixCita.getLit1());
+	                            event.put("lit2", existeixCita.getLit2());
+	                            event.put("lit3", existeixCita.getLit3());
+	                            event.put("lit4", existeixCita.getLit4());
+	                            event.put("lit5", existeixCita.getLit5());
+	                            event.put("lit6", existeixCita.getLit6());
+	                            event.put("lit7", existeixCita.getLit7());
+	                            event.put("lit8", existeixCita.getLit8());
+	                            event.put("lit9", existeixCita.getLit9());
+	                            event.put("lit10", existeixCita.getLit10());
+	                        }
+	                        aux.add(event);
+	                    }
+	                }
+	                
+	                // Concatena els esdeveniments per a la mateixa data
+	                if (!aux.isEmpty()) {
+	                    List<Map<String, Object>> existingEvents = grouped.getOrDefault(data, new ArrayList<>());
+	                    
+	                    // Afegim tots els nous esdeveniments a la llista existent
+	                    existingEvents.addAll(aux);
+	                    
+	                    grouped.put(data, existingEvents);
+	                }
+	            }
+	        }
 	    }  catch (Exception e) {
 	        LOG.error("### Error PrivateController.generarEvents: ", e);
 	    } finally {
-	    	long totalTime = (System.currentTimeMillis() - startTime);
-			LOG.info("### Final PrivateController.generarEvents totalTime={}, agendesSize={}", totalTime, agendes != null ? agendes.size() : 0);
-		}  
+	        long totalTime = (System.currentTimeMillis() - startTime);
+	        LOG.info("### Final PrivateController.generarEvents totalTime={}, agendesSize={}", totalTime, agendes != null ? agendes.size() : 0);
+	    }  
 	    return grouped;
 	}
 	
