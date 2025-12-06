@@ -2,15 +2,15 @@
 INSERT INTO SUBAPLICACIO (coa, dec, dem) VALUES 
 ('AJB', 'Ajuntament de Barcelona', 'Ajuntament de Barcelona (Catalunya)'),
 ('FIS', 'Fisioterapia FisioCat', 'Centre de Fisioterapia FisioCat'),
-('ACA', 'Acadèmia Oposite', 'Acadèmia Oposicions Oposite');
+('ACA', 'Acadèmia Oposite', 'Acadèmia Oposicions Oposite'); -- Aplicació de prova per configurar de 0
 
 -- TECNIC
 INSERT INTO TECNIC (coa, pass, nom, ll1, ll2, prf) VALUES 
--- Tencis Ajuntament de Palma
+-- Tecnics Ajuntament de Palma
 ('JGOMEZ', '1234', 'Joan', 'Gómez', 'Marqués','TECNIC_AJB'), -- fa feina de matins
 ('GSIMONET', '1234', 'Guillermo', 'Simonet', 'Ramon','ADMINISTRADOR_AJB'), -- fa feina de tardes
 ('AGINARD', '1234', 'Antonio', 'Ginard', 'Reinés','TECNIC_AJB'), -- fa feina de matins
-('MENSENYAT', '1234', 'Miquel', 'Ensenyat', 'Gutiérrez','TECNIC_AJB'), -- fa feina de matins online
+('JENSENYAT', '1234', 'Jaume', 'Ensenyat', 'Gutiérrez','TECNIC_AJB'), -- fa feina de matins online
 -- Tecnics fisios
 ('FISIO1', '1234', 'Jaume', 'Carrió', 'Sureda','TECNIC_FIS'),
 ('FISIO2', '1234', 'Margalida', 'Ramon', 'Gibert','ADMINISTRADOR_FIS'),
@@ -51,7 +51,7 @@ INSERT INTO AGENDA (con, datini, datfin, UBI_CON, TEC_COA, HORCIT_CON) VALUES
 -- Fisios
 (4, '2025-12-01', '2026-02-28', 3, 'FISIO1', 3), -- Mati FIS
 (5, '2025-12-01', '2026-02-28', 4, 'FISIO2', 4), -- Tarda FIS
-(6, '2025-12-01', '2026-02-28', 5, 'MENSENYAT', 5) -- Online AJB
+(6, '2025-12-01', '2026-02-28', 5, 'JENSENYAT', 5) -- Online AJB
 ;
 
 -- SetmanaTipus: Lunes y Miércoles, 9-10 y 10-11
@@ -182,6 +182,16 @@ INSERT INTO CITA (con, dathorini, dathorfin, obs, nom, llis, numdoc, tipcit_con,
 (13, '2025-12-17 11:00:00', '2025-12-17 12:00:00', 'Canvi des de Badalona', 'Rosa', 'Castillo Vega', '27654321K', 1, 1, 'Canvi de domicili des d''un altre municipi', '2', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Calàbria 89', 633445501, 'rosa.cv@hotmail.com'),
 (14, '2025-12-18 17:00:00', '2025-12-18 18:00:00', 'Baixa per trasllat', 'Sergi', 'Bosch Torrent', '49234567N', 1, 2, 'Baixa per trasllat a un altre municipi', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Diputació 210', 666778834, 'sergi.bt@outlook.com'),
 (15, '2025-12-19 13:00:00', '2025-12-19 14:00:00', 'Última setmana', 'Lucía', 'Domínguez Ruiz', 'X8877665O', 1, 1, 'Modificació de dades', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Rocafort 123', 677889945, 'lucia.dr@gmail.com'),
+-- Online
+(91,  '2025-12-02 09:00:00', '2025-12-02 10:00:00', 'Primera empadronament', 'Laura', 'Martínez García', '39871234A', 2, 6, 'Empadronament inicial', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Sants 45', 612345601, 'laura.mg@gmail.com'),
+(92,  '2025-12-04 11:00:00', '2025-12-04 12:00:00', 'Canvi dins Eixample', 'Marc', 'Puig Torres', '45127890B', 2, 6, 'Canvi de domicili dins del municipi', '2', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'Av. Paral·lel 123', 623456712, 'marc.pt@gmail.com'),
+(93,  '2025-12-09 10:00:00', '2025-12-09 11:00:00', 'Vinc de Terrassa', 'Ahmed', 'Rahmani', 'Y9988776F', 2, 6, 'Canvi de domicili des d''un altre municipi', '3', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Marina 78', 667890156, 'ahmed.r@yahoo.com'),
+(94,  '2025-12-11 09:00:00', '2025-12-11 10:00:00', 'Alta nadó', 'Sara', 'López Ruiz', '50987654C', 2, 6, 'Alta per naixement', '2', 'Sí, menor de 14 anys', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Balmes 89', 634567823, 'sara.lr@hotmail.com'),
+(95,  '2025-12-16 10:00:00', '2025-12-16 11:00:00', 'Canvi dins Gràcia', 'Pau', 'Roca Mas', '51234567H', 2, 6, 'Canvi de domicili dins del municipi', '4', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Enric Granados 12', 689012378, 'pau.rm@gmail.com'),
+(96,  '2025-12-18 11:00:00', '2025-12-18 12:00:00', 'Me’n vaig a València', 'Joan', 'Ferrer Pons', 'X1239876D', 2, 6, 'Baixa per trasllat a un altre municipi', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'Pg. de Gràcia 101', 645678934, 'joan.fp@gmail.com'),
+(97,  '2025-12-23 12:00:00', '2025-12-23 13:00:00', 'Alta per omissió', 'Marta', 'Giménez Coll', '40987654G', 2, 6, 'Alta per omissió', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Provença 56', 678901267, 'marta.gc@gmail.com'),
+(98,  '2025-12-25 13:00:00', '2025-12-25 14:00:00', 'Correcció nom', 'Clàudia', 'Vidal Serra', '38765432E', 2, 6, 'Modificació de dades', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Aragó 234', 656789045, 'claudia.vs@outlook.com'),
+
 -- FIS
 (46,  '2025-12-01 09:00:00', '2025-12-01 10:00:00', 'Mal d''esquena', 'Laura', 'Martínez García', '39871234A', 3, 4, '38', '67', '144', 'Informàtic',NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Sants 45', 612345601, 'laura.mg@gmail.com'),
 (47,  '2025-12-01 11:00:00', '2025-12-01 12:00:00', 'Problemes tropitjada peu dret', 'Marc', 'Puig Torres', '45127890B', 3, 4, '18', '90', '124', 'Mestre','Padel',NULL,NULL,NULL,NULL,NULL, 'Av. Paral·lel 123', 623456712, 'marc.pt@gmail.com'),
