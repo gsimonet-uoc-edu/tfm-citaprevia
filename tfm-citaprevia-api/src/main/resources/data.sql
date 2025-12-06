@@ -47,9 +47,9 @@ INSERT INTO AGENDA (con, datini, datfin, UBI_CON, TEC_COA, HORCIT_CON) VALUES
 (2, '2025-12-01', '2026-02-28', 2, 'AGINARD', 2),
 (3, '2025-12-24', '2026-02-28', 1, 'GSIMONET', 1),
 -- Fisios
-(4, '2025-12-01', '2026-02-28', 3, 'FISIO1', 3),
-(5, '2025-12-01', '2026-02-28', 4, 'FISIO2', 4),
-(6, '2025-12-01', '2026-02-28', 5, 'MENSENYAT', 5)
+(4, '2025-12-01', '2026-02-28', 3, 'FISIO1', 3), -- Mati FIS
+(5, '2025-12-01', '2026-02-28', 4, 'FISIO2', 4), -- Tarda FIS
+(6, '2025-12-01', '2026-02-28', 5, 'MENSENYAT', 5) -- Online AJB
 ;
 
 -- SetmanaTipus: Lunes y Miércoles, 9-10 y 10-11
@@ -179,6 +179,22 @@ INSERT INTO CITA (con, dathorini, dathorfin, obs, nom, llis, numdoc, tipcit_con,
 (13, '2025-12-17 11:00:00', '2025-12-17 12:00:00', 'Canvi des de Badalona', 'Rosa', 'Castillo Vega', '27654321K', 1, 1, 'Canvi de domicili des d''un altre municipi', '2', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Calàbria 89', 633445501, 'rosa.cv@hotmail.com'),
 (14, '2025-12-18 17:00:00', '2025-12-18 18:00:00', 'Baixa per trasllat', 'Sergi', 'Bosch Torrent', '49234567N', 1, 2, 'Baixa per trasllat a un altre municipi', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Diputació 210', 666778834, 'sergi.bt@outlook.com'),
 (15, '2025-12-19 13:00:00', '2025-12-19 14:00:00', 'Última setmana', 'Lucía', 'Domínguez Ruiz', 'X8877665O', 1, 1, 'Modificació de dades', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Rocafort 123', 677889945, 'lucia.dr@gmail.com'),
+-- FIS
+(46,  '2025-12-01 09:00:00', '2025-12-01 10:00:00', 'Mal d''esquena', 'Laura', 'Martínez García', '39871234A', 3, 4, '38', '67', '144', 'Informàtic',NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Sants 45', 612345601, 'laura.mg@gmail.com'),
+(47,  '2025-12-01 11:00:00', '2025-12-01 12:00:00', 'Problemes tropitjada peu dret', 'Marc', 'Puig Torres', '45127890B', 3, 4, '18', '90', '124', 'Mestre','Padel',NULL,NULL,NULL,NULL,NULL, 'Av. Paral·lel 123', 623456712, 'marc.pt@gmail.com'),
+(48,  '2025-12-02 15:00:00', '2025-12-02 16:00:00', 'Tendinitis roluliana', 'Ahmed', 'Rahmani', 'Y9988776F', 4, 5, '54', '78', '143', 'Mestre','Escacs',NULL,NULL,NULL,NULL,NULL, 'C/ Marina 78', 667890156, 'ahmed.r@yahoo.com'),
+(49,  '2025-12-03 10:00:00', '2025-12-03 11:00:00', 'Tendinopatia rotuliana', 'Sara', 'López Ruiz', '50987654C', 3, 4, '12', '68', '198', 'Atleta','Running',NULL,NULL,NULL,NULL,NULL, 'C/ Balmes 89', 634567823, 'sara.lr@hotmail.com'),
+(50,  '2025-12-04 17:00:00', '2025-12-04 18:00:00', 'Mal hombre esquerra', 'Pau', 'Roca Mas', '51234567H', 4, 5, '54', '45', '177', 'Informàtic',NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Enric Granados 12', 689012378, 'pau.rm@gmail.com'),
+(51,  '2025-12-05 13:00:00', '2025-12-05 14:00:00', 'Molèsties isquiotibial esquerra', 'Joan', 'Ferrer Pons', 'X1239876D', 3, 4, '188', '54', '155', 'Informàtic','Natació',NULL,NULL,NULL,NULL,NULL, 'Pg. de Gràcia 101', 645678934, 'joan.fp@gmail.com'),
+(52,  '2025-12-09 16:00:00', '2025-12-09 17:00:00', 'Massatge relaxant tren superior', 'Marta', 'Giménez Coll', '40987654G', 4, 5, '182', '76', '153', 'Futbolista','Fútbol',NULL,NULL,NULL,NULL,NULL, 'C/ Provença 56', 678901267, 'marta.gc@gmail.com'),
+(53,  '2025-12-10 09:00:00', '2025-12-10 10:00:00', 'Bessons carregats', 'Clàudia', 'Vidal Serra', '38765432E', 3, 4, '43', '34', '176', 'Informàtic',NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Aragó 234', 656789045, 'claudia.vs@outlook.com'),
+(54,  '2025-12-11 18:00:00', '2025-12-11 19:00:00', 'Tortícolis', 'Fatima', 'Zouhair', 'Z1122334I', 4, 5, '75', '56', '176', 'Futbolista','Fútbol',NULL,NULL,NULL,NULL,NULL, 'C/ Entença 210', 611223389, 'fatima.zh@gmail.com'),
+(55, '2025-12-12 12:00:00', '2025-12-12 13:00:00', 'Lumbàlgia forta', 'David', 'Soler Pons', '39876543J', 3, 4, '23', '63', '198', 'Cuiner','Bàsquet',NULL,NULL,NULL,NULL,NULL, 'C/ Muntaner 167', 622334490, 'david.sp@gmail.com'),
+(56, '2025-12-15 10:00:00', '2025-12-15 11:00:00', 'Problemes cervicals', 'Omar', 'Benali', 'Y5566778L', 3, 4, '11', '35', '201', 'Informàtic',NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Floridablanca 45', 644556612, 'omar.ba@yahoo.es'),
+(57, '2025-12-16 15:00:00', '2025-12-16 16:00:00', 'Mal d''espatlla', 'Elena', 'Puig Camps', '45123987M', 4, 5, '13', '65', '156', 'Atleta','Salts d''altura',NULL,NULL,NULL,NULL,NULL, 'C/ Casanova 78', 655667723, 'elena.pc@gmail.com'),
+(58, '2025-12-17 11:00:00', '2025-12-17 12:00:00', 'Fascitis plantar', 'Rosa', 'Castillo Vega', '27654321K', 3, 4, '53', '35', '173', 'Futbolista','Fútbol',NULL,NULL,NULL,NULL,NULL, 'C/ Calàbria 89', 633445501, 'rosa.cv@hotmail.com'),
+(59, '2025-12-18 17:00:00', '2025-12-18 18:00:00', 'Molèsties pubàlgia', 'Sergi', 'Bosch Torrent', '49234567N', 4, 5, '62', '65', '187', 'Atleta','Salts de longitud',NULL,NULL,NULL,NULL,NULL, 'C/ Diputació 210', 666778834, 'sergi.bt@outlook.com'),
+(60, '2025-12-19 13:00:00', '2025-12-19 14:00:00', 'Estudi de petjada', 'Lucía', 'Domínguez Ruiz', 'X8877665O', 3, 4, '23', '76', '176', 'Mestre','Hockey',NULL,NULL,NULL,NULL,NULL, 'C/ Rocafort 123', 677889945, 'lucia.dr@gmail.com'),
 
 -- GENER 2026
 (16, '2026-01-07 10:00:00', '2026-01-07 11:00:00', 'Després de Reis', 'Júlia', 'Ferrer Mas', '38765432P', 1, 3, 'Empadronament inicial', '1', 'No', NULL,NULL,NULL,NULL,NULL,NULL,NULL, 'C/ Rosselló 89', 688990056, 'julia.fm@gmail.com'),
