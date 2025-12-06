@@ -60,7 +60,7 @@
                             <input type="hidden" name="tipcitCon" th:value="${tip.con}">
                         </div>
 
-							<div th:unless="${noAgendas}">
+							<div th:if="${error == null and alert == null and (noAgendas == null or !noAgendas)}">
 							    <button type="submit"
 							            class="btn btn-success btn-lg w-100 mt-3"
 							            th:utext="#{continuar}">
@@ -77,7 +77,7 @@
                         </a>
                     </div>
 
-                    <div class="text-center mt-4" th:unless="${noAgendas}">
+					<div class="text-center mt-4" th:if="${error == null and alert == null and (noAgendas == null or !noAgendas)}">
                         <button type="button"
                                 class="btn btn-outline-danger"
                                 data-bs-toggle="modal"
