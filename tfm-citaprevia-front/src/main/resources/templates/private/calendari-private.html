@@ -160,7 +160,7 @@
                         <div class="mt-4 p-3 bg-light rounded">
                             <small class="text-muted">
                                 <i class="fas fa-clock me-1"></i>
-                                <span th:text="#{hora_seleccionada}"></span>: <strong id="horaSeleccionadaPrivate"></strong>
+                                <span th:text="#{hora_seleccionada}"></span>: <strong id="reservaHora"></strong>
                             </small>
                         </div>
                     </div>
@@ -224,12 +224,12 @@
                             </div>
                         </div>
 
-                        <div class="mt-4 p-3 bg-light rounded">
-                            <small class="text-muted">
-                                <i class="fas fa-clock me-1"></i>
-                                <span th:text="#{hora_seleccionada}"></span>: <strong id="edicioHora"></strong>
-                            </small>
-                        </div>
+					<div class="mt-4 p-3 bg-light rounded">
+					    <small class="text-muted">
+					        <i class="fas fa-clock me-1"></i>
+					        <span th:text="#{hora_seleccionada}"></span>: <strong id="edicioHora"></strong>
+					    </small>
+					</div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmCancelModal">
@@ -309,12 +309,12 @@
                     </div>
                 </div>
 
-                <div class="mt-4 p-3 bg-light rounded">
-                    <small class="text-muted">
-                        <i class="fas fa-clock me-1"></i>
-                        <span th:text="#{hora_seleccionada}"></span>: <strong id="consultaHora"></strong>
-                    </small>
-                </div>
+				<div class="mt-4 p-3 bg-light rounded">
+				    <small class="text-muted">
+				        <i class="fas fa-clock me-1"></i>
+				        <span th:text="#{hora_seleccionada}"></span>: <strong id="consultaHora"></strong>
+				    </small>
+				</div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{tancar}">Tancar</button>
@@ -392,7 +392,7 @@ const modalConsulta = new bootstrap.Modal(document.getElementById('consultaModal
                     
                     const eventStart = new Date(event.start);
                     const isPassada = eventStart < now;
-                    
+                    const originalTimeSlot = event.title;
                     const nom = (event.nom || '').trim();
                     const llis = (event.llis || '').trim();
                     const nomComplet = (nom && llis) ? `${nom} ${llis}` : (nom || llis || 'Ocupada');
@@ -414,6 +414,7 @@ const modalConsulta = new bootstrap.Modal(document.getElementById('consultaModal
                         extendedProps: {
                             lliure: isLliure,
                             isPassada: isPassada,
+                            originalTitle: originalTimeSlot,
                             agendaCon: event.agendaCon || null,
                             citaCon: event.citaCon || null,
                             nom: nom,
@@ -461,10 +462,12 @@ const modalConsulta = new bootstrap.Modal(document.getElementById('consultaModal
                     document.getElementById('modalAgendaConPrivate').value = props.agendaCon || '';
                     document.getElementById('modalDataHoraIniciPrivate').value = startLocal;
                     document.getElementById('modalDataHoraFinPrivate').value = endLocal;
-                    document.getElementById('horaSeleccionadaPrivate').textContent = info.event.title || '';
-
+                    
+                    document.getElementById('reservaHora').textContent = info.event.title || '';
+                    
                     document.getElementById('formCitaPrivate').reset();
                     modalReserva.show();
+                    
                 } else {
                     if (!props.citaCon) {
                         alert('Error: cita no identificada');
@@ -498,7 +501,8 @@ const modalConsulta = new bootstrap.Modal(document.getElementById('consultaModal
                         if (field) field.value = props['lit' + i] || '';
                     }
 
-                    document.getElementById(prefix + 'Hora').textContent = info.event.title || '';
+                    document.getElementById(prefix + 'Hora').textContent = props.originalTitle || '';
+                    
                     document.getElementById('cancelCitaCon').value = props.citaCon;
                    
                     if (isPassada) {
