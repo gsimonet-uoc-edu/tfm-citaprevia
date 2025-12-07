@@ -205,7 +205,7 @@ public class PrivateController {
 	        	 return "redirect:/private/calendari";
 		    }
 	
-		    // Obtener agenda y tipus de cita
+		    // Obtenir agenda y tipus de cita
 		    AgendaDto agenda = citaPreviaPublicClient.getAgenda(form.getAgendaCon(), locale);
 		    if (agenda == null || !subaplCoa.equals(agenda.getHorari().getSubapl().getCoa())) {
 		    	redirectAttributes.addFlashAttribute("error", bundle.getMessage(Constants.ERROR_FRONT_GESTIO_AGENDES, null, locale));
@@ -946,7 +946,7 @@ public class PrivateController {
         Map<Long, String> diesSetmana = new TreeMap<>();
 
         for (long i = 1; i <= 7; i++) {
-            String key = "dia.setmana." + i; // day.1, day.2, etc.
+            String key = "dia.setmana." + i;
             String nomDia = bundle.getMessage(key, null, locale); 
             diesSetmana.put(i, nomDia);
         }

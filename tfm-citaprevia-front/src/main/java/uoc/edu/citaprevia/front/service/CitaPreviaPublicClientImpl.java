@@ -175,7 +175,6 @@ public class CitaPreviaPublicClientImpl  implements CitaPreviaPublicClient{
 		params.put(PARAM_CIT_CON, citCon);
 		params.put("numdoc", numdoc);
 		params.put(PARAM_LOCALE, locale);
-		//params.put("lang", locale == null ? "es" : locale.toString());
 		String url = getBaseApiUrl() + "/cites/{citCon}/documents-identificatius/{numdoc}?lang={lang}";
 	    ResponseEntity<ErrorDto> response = restTemplate.exchange(url, 
 	        HttpMethod.DELETE, 
