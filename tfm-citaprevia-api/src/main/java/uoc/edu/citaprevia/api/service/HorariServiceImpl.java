@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
-import uoc.edu.citaprevia.api.dao.CitaDao;
+import uoc.edu.citaprevia.api.dao.AgendaDao;
 import uoc.edu.citaprevia.api.dao.HorariDao;
-import uoc.edu.citaprevia.api.model.Cita;
+import uoc.edu.citaprevia.api.model.Agenda;
 import uoc.edu.citaprevia.api.model.Horari;
 import uoc.edu.citaprevia.api.utils.Converter;
 import uoc.edu.citaprevia.dto.HorariDto;
@@ -30,10 +30,11 @@ public class HorariServiceImpl implements HorariService{
 	private HorariDao horariDao;
 	
 	@Autowired
-	private SetmanaTipusService setmanaTipusService;
+	private AgendaDao agendaDao;
+	
 	
 	@Autowired
-	private CitaDao citaDao;
+	private SetmanaTipusService setmanaTipusService;
 	
 	@Autowired
 	protected MessageSource bundle;
@@ -147,9 +148,9 @@ public class HorariServiceImpl implements HorariService{
 				return new ErrorDto(9999L,bundle.getMessage(Constants.ERROR_API_CRUD_HORARI, null, locale));
 			} else {
 				// Validacions per esborrar horari
-				List<Cita> teCites = citaDao.findCitesByHorari(con);
-				// Comprovar que l'agenda no te cites
-				if (teCites != null && !teCites.isEmpty() && teCites.size() > 0) {
+				List<Agenda> teAgendes = agendaDao.findAgendesByHorari(con);
+				// Comprovar que l'horari no té agendas assignades
+				if (teAgendes != null && !teAgendes.isEmpty() && teAgendes.size() > 0) {
 					return new ErrorDto(9999L,bundle.getMessage(Constants.ERROR_API_DELETE_HORARI, null, locale));
 				} else {
 					// Comprovar si te setmanes tipus associades

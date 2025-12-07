@@ -15,4 +15,5 @@ public interface AgendaRepository extends PagingAndSortingRepository<Agenda, Lon
 	List<Agenda> findByTecnicCoa(String tecCoa);
 	List<Agenda> findByCentreCon(Long ubiCon);
 	List<Agenda> findByHorariTipusCitaConAndHorariSubaplCoaAndDatfinGreaterThanEqual(Long tipCitCon, String subaplCoa, LocalDate datfin);
+	List<Agenda> findByHorariCon(Long horCon);
 }
