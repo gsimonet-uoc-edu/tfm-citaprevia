@@ -79,6 +79,9 @@ public class PublicController {
 	        	return "index";
 	        }
 	        
+			// Afegir al model el elements necessaris
+			model.addAttribute("subaplCoa", subAplicacioSessio.getCoa());
+			model.addAttribute("subAplicacio", subAplicacioSessio);
 			
 			// Obtenir tots els tipus de cites de la subaplicació
 			SeleccioTipusCitaDto llistaTipusCites =   citaPreviaPublicClient.getAllTipusCites(subaplCoa, locale);
@@ -87,9 +90,6 @@ public class PublicController {
 	        	return "index";
 			}
 			
-			// Afegir al model el elements necessaris
-			model.addAttribute("subaplCoa", subAplicacioSessio.getCoa());
-			model.addAttribute("subAplicacio", subAplicacioSessio);
 			model.addAttribute("llistaTipusCites", llistaTipusCites);
 			
 	    }  catch (Exception e) {
