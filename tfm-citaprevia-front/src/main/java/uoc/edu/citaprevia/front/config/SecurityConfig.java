@@ -1,6 +1,4 @@
 package uoc.edu.citaprevia.front.config;
-import java.util.Locale;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -17,7 +15,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import lombok.RequiredArgsConstructor;
 import uoc.edu.citaprevia.dto.TecnicDto;
 import uoc.edu.citaprevia.front.service.CitaPreviaPrivateClient;
-import uoc.edu.citaprevia.util.Constants;
 import uoc.edu.citaprevia.util.Utils;
 
 

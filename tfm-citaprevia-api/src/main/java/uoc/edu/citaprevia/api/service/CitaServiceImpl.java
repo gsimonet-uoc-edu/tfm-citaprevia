@@ -14,7 +14,6 @@ import uoc.edu.citaprevia.api.dao.CitaDao;
 import uoc.edu.citaprevia.api.model.Cita;
 import uoc.edu.citaprevia.api.utils.Converter;
 import uoc.edu.citaprevia.dto.CitaDto;
-import uoc.edu.citaprevia.dto.HorariDto;
 import uoc.edu.citaprevia.dto.generic.ErrorDto;
 import uoc.edu.citaprevia.util.Constants;
 import uoc.edu.citaprevia.util.Utils;

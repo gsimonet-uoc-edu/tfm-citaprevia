@@ -18,7 +18,7 @@ public interface AgendaService {
 	List<AgendaDto> getAgendesByTipusCitaAndSubaplicacio(Long tipCitCon, String subaplCoa, Locale locale);
 	
 	/**
-	 * Obté agenda donat el codi
+	 * Consulta les dades d'una agenda donat el codi
 	 * @param con codi numèric d'agenda
 	 * @param locale idioma
 	 * @return agenda
@@ -45,7 +45,7 @@ public interface AgendaService {
 	 * Desa les dades d'una agenda a la BBDD
 	 * @param agenda entitat
 	 * @param locale idioma
-	 * @return agenda desada
+	 * @return agenda desada, o error en cas contrari
 	 */
 	AgendaDto saveAgenda(AgendaDto agenda, Locale locale);
 
@@ -53,7 +53,7 @@ public interface AgendaService {
 	 * Actualitza les dades d'una agenda a la BBDD
 	 * @param agenda entitat
 	 * @param locale idioma
-	 * @return agenda actualitzada
+	 * @return agenda actualitzada, error en cas contrari
 	 */
 	AgendaDto updateAgenda(AgendaDto agenda, Locale locale);
 

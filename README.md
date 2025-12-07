@@ -1,4 +1,4 @@
-1. Ubicar-se a la carpeta arrel del projecte
+1. Ubicar-se a la carpeta arrel del projecte clonat
 Ex: C:\Users\simonet\git-09-2025\tfm-citaprevia>
 
 2. Encendre Docker Desktop
@@ -30,9 +30,9 @@ C:\Users\simonet\git-09-2025\tfm-citaprevia>docker compose up --build
  		- Acadèmia Oposicions Oposite
  			- Usuari: GRAMON    Password: 1234 Perfil: ADMINISTRADOR	
  - Part pública:
- 	- Ajuntament de Barcelona: 		   		http://localhost:8081/citapreviafront/public/AJB
- 	- Centre de Fisioterapia FisioCat: 		http://localhost:8081/citapreviafront/public/FIS
- 	- Acadèmia Oposicions Oposite (buida):  http://localhost:8081/citapreviafront/public/ACA
+ 	- Ajuntament de Barcelona: 		   		    http://localhost:8081/citapreviafront/public/AJB
+ 	- Centre de Fisioterapia FisioCat: 		    http://localhost:8081/citapreviafront/public/FIS
+ 	- Acadèmia Oposicions Oposite (app buida):  http://localhost:8081/citapreviafront/public/ACA
  	
  5. Tancar els desplegaments
  
