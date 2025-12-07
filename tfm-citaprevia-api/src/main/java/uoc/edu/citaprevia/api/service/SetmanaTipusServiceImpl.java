@@ -71,7 +71,16 @@ public class SetmanaTipusServiceImpl implements SetmanaTipusService{
 				SetmanaTipus settipExist = setmanaTipusDao.findSetmanaTipusById(id);
 				// Restricció per no duplicar franges
 				if (settipExist != null && settipExist.getId() != null && settipExist.getId().getHorari() != null &&  !Utils.isEmpty(settipExist.getId().getHorari().getCon())) {
+					// Franja existent
 					dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL, bundle.getMessage(Constants.ERROR_API_ADD_CITES_SETMANES_TIPUS, null, locale)));
+					LOG.error("### Error SetmanaTipusServiceImpl.saveSetmanaTipus={} " , dto.getErrors().get(0).toString());
+				} else if (settip.getHorini().equals(settip.getHorfin())) {
+					// Franja amb data inici = data fi
+					dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL, bundle.getMessage(Constants.ERROR_API_ADD_CITES_SETMANES_TIPUS_IGUALS, null, locale)));
+					LOG.error("### Error SetmanaTipusServiceImpl.saveSetmanaTipus={} " , dto.getErrors().get(0).toString());
+				} else if (settip.getHorini().isAfter(settip.getHorfin())) {
+					// Franja amb data inici > data fi
+					dto.addError(new ErrorDto(Constants.CODI_ERROR_FATAL, bundle.getMessage(Constants.ERROR_API_ADD_CITES_SETMANES_TIPUS_GIRADES, null, locale)));
 					LOG.error("### Error SetmanaTipusServiceImpl.saveSetmanaTipus={} " , dto.getErrors().get(0).toString());
 				} else {
 					dto = Converter.toDto(setmanaTipusDao.saveSetmanaTipus(Converter.toDao(settip)));

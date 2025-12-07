@@ -26,6 +26,8 @@ public final class Constants {
     public static final String ERROR_API_CRUD_SUBAPLICACIONS_TIPUS = "error.subaplicacions.crud";
     public static final String MSG_ERR_GET_CALENDARI 			   = "error.get.calendari";   
     public static final String ERROR_API_ADD_CITES_SETMANES_TIPUS       = "error.setmanestipus.cites.add";
+    public static final String ERROR_API_ADD_CITES_SETMANES_TIPUS_IGUALS  = "error.setmanestipus.cites.add.iguals";
+    public static final String ERROR_API_ADD_CITES_SETMANES_TIPUS_GIRADES  = "error.setmanestipus.cites.add.girades";
     public static final String ERROR_API_UPDATE_CITES_SETMANES_TIPUS    = "error.setmanestipus.cites.update";
     public static final String ERROR_API_CITA_CONCURRENT                = "error.cites.concurrencies";
 
