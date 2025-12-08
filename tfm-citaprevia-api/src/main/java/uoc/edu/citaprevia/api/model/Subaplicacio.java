@@ -1,5 +1,6 @@
 package uoc.edu.citaprevia.api.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -20,21 +21,22 @@ import lombok.ToString;
 public class Subaplicacio {
 	
 	@Id
-	@Size(max=3)
+	@Column(length = 3)
 	/**
 	 * Codi alfanumèric
 	 */
 	private String coa;	
-	@NotNull
-	@Size(max=100)
+	
+	@Column(length = 50)
 	/**
 	 * Descripció curta
 	 */
 	private String dec;
+	
+	@Column(length = 100)
 	/**
 	 * Descripció llarga
 	 */
-	@Size(max=240)
 	private String dem;
 
 }

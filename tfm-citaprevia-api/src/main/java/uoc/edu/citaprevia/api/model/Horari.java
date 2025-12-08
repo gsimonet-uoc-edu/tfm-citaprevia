@@ -1,5 +1,6 @@
 package uoc.edu.citaprevia.api.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -9,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,20 +31,26 @@ public class Horari {
 	 * Codi numèrica
 	 */
 	private Long con;
+	
+	@Column(length = 50)
 	/**
 	 * Descripció curta
 	 */
 	private String dec;
+	
+	@Column(length = 100)
 	/**
 	 * Descripció mitjana
 	 */
 	private String dem;
+	
 	@ManyToOne(fetch=FetchType.LAZY) 
 	@JoinColumn(name="SUBAPL_COA")
 	/**
 	 * Subaplicació a la qual pertany l'horari
 	 */
 	private Subaplicacio subapl;
+	
 	@ManyToOne(fetch=FetchType.LAZY) 
 	@JoinColumn(name = "TIPCIT_CON")
 	/**

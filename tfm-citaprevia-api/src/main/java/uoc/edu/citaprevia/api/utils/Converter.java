@@ -146,7 +146,7 @@ public class Converter {
 			dao.setCon(dto.getCon());
 			dao.setNom(dto.getNom());
 			dao.setObs(dto.getObs());
-			dao.setNomcar(dto.getNom());
+			dao.setNomcar(dto.getNomcar());
 			dao.setSubapl(toDao(dto.getSubapl()));
 		}
 		return dao;
