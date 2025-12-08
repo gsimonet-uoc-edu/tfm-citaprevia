@@ -10,7 +10,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,7 +41,7 @@ public class Ubicacio {
 	@Column(length = 100)
 	/**
 	 * Nom del carrer
-	 */
+	 */	
 	private String nomcar;
 	
 	@Column(length = 300)
