@@ -28,13 +28,28 @@ public class TipusCita {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tipus_cita_seq")
 	@SequenceGenerator(name = "tipus_cita_seq", sequenceName = "TIPUS_CITA_SEQ", allocationSize = 1)
+	/**
+	 * Codi numèric
+	 */
 	private Long con;
+	/**
+	 * Descripció curta
+	 */
 	private String dec;
+	/**
+	 * Descripció mitjana
+	 */
 	private String dem;
 	@Enumerated(EnumType.STRING)
+	/**
+	 * Modalitat en que es realitzarà la cita
+	 */
 	private ModalitatTipusCita tipcitmod;
 	@ManyToOne 
 	@JoinColumn(name="SUBAPL_COA")
+	/**
+	 * Subaplicació a la qual pertany el tipus de cita
+	 */
 	private Subaplicacio subaplicacio;
 	
 }

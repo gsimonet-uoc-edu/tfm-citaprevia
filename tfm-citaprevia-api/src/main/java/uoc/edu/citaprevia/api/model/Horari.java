@@ -25,14 +25,29 @@ public class Horari {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "horari_seq")
 	@SequenceGenerator(name = "horari_seq", sequenceName = "HORARI_SEQ", allocationSize = 1)
+	/**
+	 * Codi numèrica
+	 */
 	private Long con;
+	/**
+	 * Descripció curta
+	 */
 	private String dec;
+	/**
+	 * Descripció mitjana
+	 */
 	private String dem;
 	@ManyToOne(fetch=FetchType.LAZY) 
 	@JoinColumn(name="SUBAPL_COA")
+	/**
+	 * Subaplicació a la qual pertany l'horari
+	 */
 	private Subaplicacio subapl;
 	@ManyToOne(fetch=FetchType.LAZY) 
 	@JoinColumn(name = "TIPCIT_CON")
+	/**
+	 * Tipus de cita de l'horari
+	 */
 	private TipusCita tipusCita;
 
 }

@@ -21,12 +21,19 @@ public class Subaplicacio {
 	
 	@Id
 	@Size(max=3)
-	private String coa;
-	
+	/**
+	 * Codi alfanumèric
+	 */
+	private String coa;	
 	@NotNull
 	@Size(max=100)
+	/**
+	 * Descripció curta
+	 */
 	private String dec;
-	
+	/**
+	 * Descripció llarga
+	 */
 	@Size(max=240)
 	private String dem;
 

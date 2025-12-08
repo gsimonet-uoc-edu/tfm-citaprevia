@@ -18,11 +18,29 @@ import lombok.ToString;
 public class Tecnic {
 	
 	@Id
+	/** 
+	 * Codi alfanumèric (login)
+	 */
     private String coa;
+	/**
+	 * Contrasenya Login
+	 */
 	private String pass;
+	/**
+	 * Nom del tècnic
+	 */
 	private String nom;
+	/**
+	 * Primer llinatge del tècnic
+	 */
 	private String ll1;
+	/**
+	 * Segon llinatge del tècnic
+	 */
 	private String ll2;
+	/**
+	 * Perfil (rol) del tècnic
+	 */
     private String prf;
 
 }

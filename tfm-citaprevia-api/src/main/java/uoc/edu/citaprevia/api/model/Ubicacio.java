@@ -26,12 +26,27 @@ public class Ubicacio {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ubicacio_seq")
 	@SequenceGenerator(name = "ubicacio_seq", sequenceName = "UBICACIO_SEQ", allocationSize = 1)
-	private Long con;	
+	/**
+	 * Codi numèrica
+	 */
+	private Long con;
+	/**
+	 * Nom del centre (ubicació)
+	 */
 	private String nom;
+	/**
+	 * Nom del carrer
+	 */
 	private String nomcar;
+	/**
+	 * Observacions
+	 */
 	private String obs;
 	@ManyToOne(fetch=FetchType.LAZY) 
 	@JoinColumn(name="SUBAPL_COA")
+	/**
+	 * Subaplicació assignada al centre
+	 */
 	private Subaplicacio subapl;
 
 }
