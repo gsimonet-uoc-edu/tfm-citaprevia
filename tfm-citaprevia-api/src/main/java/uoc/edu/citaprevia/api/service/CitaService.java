@@ -37,7 +37,7 @@ public interface CitaService {
 	ErrorDto deleteCitaPersona(Long con, String numdoc, Locale locale);
 
 	/**
-	 * Elimina una cita donat el seu codi (part privada)
+	 * Elimina una cita donat el seu codi (part privada) de la BBDD
 	 * @param con codi de la cita
 	 * @param locale idioma
 	 * @return null si cita esborrada, error en cas contrari

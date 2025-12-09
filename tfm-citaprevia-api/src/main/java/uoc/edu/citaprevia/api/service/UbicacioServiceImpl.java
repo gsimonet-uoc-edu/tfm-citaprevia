@@ -53,19 +53,19 @@ public class UbicacioServiceImpl implements UbicacioService {
 	}
 	
 	@Override
-	public List<UbicacioDto> getUbicacionsByUbicacio(String subaplCoa, Locale locale) {
+	public List<UbicacioDto> getUbicacionsBySubaplicacio(String subaplCoa, Locale locale) {
 		List<UbicacioDto> resposta = new ArrayList<>();
 		long startTime=System.currentTimeMillis();
-		LOG.info("### Inici UbicacioServiceImpl.getUbicacionsByUbicacio startTime={}, subaplCoa={}", startTime, subaplCoa);
+		LOG.info("### Inici UbicacioServiceImpl.getUbicacionsBySubaplicacio startTime={}, subaplCoa={}", startTime, subaplCoa);
 		try {
 			List<Ubicacio> llista = ubicacioDao.findUbicacionsBySubaplicacio(subaplCoa);
 			llista.forEach(item->resposta.add(Converter.toDto(item)));
 		} catch (Exception e) {
-			LOG.error("### Error UbicacioServiceImpl.getUbicacionsByUbicacio: " , bundle.getMessage(Constants.ERROR_API_FIND_UBICACIONS, null, locale));
+			LOG.error("### Error UbicacioServiceImpl.getUbicacionsBySubaplicacio: " , bundle.getMessage(Constants.ERROR_API_FIND_UBICACIONS, null, locale));
 			e.printStackTrace();			
 		} finally {
 			long totalTime = (System.currentTimeMillis() - startTime);
-			LOG.info("### Final UbicacioServiceImpl.getUbicacionsByUbicacio totalTime={}, subaplCoa={}, resposta.size={}", totalTime, subaplCoa, resposta.size());
+			LOG.info("### Final UbicacioServiceImpl.getUbicacionsBySubaplicacio totalTime={}, subaplCoa={}, resposta.size={}", totalTime, subaplCoa, resposta.size());
 		}
 		return resposta;
 	}

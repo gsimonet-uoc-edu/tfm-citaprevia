@@ -33,7 +33,7 @@ public interface HorariService {
 	HorariDto updateHorari(HorariDto horari, Locale locale);
 	
 	/**
-	 * Elimina un horari de la BBDD
+	 * Elimina un horari de la BBDD i les seves franges associades
 	 * @param con codi numèric de l'horari
 	 * @param locale idioma
 	 * @return null si esborrat, error en cas contrari
