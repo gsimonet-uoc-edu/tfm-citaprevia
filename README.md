@@ -27,12 +27,12 @@ C:\Users\simonet\git-09-2025\tfm-citaprevia>docker compose up --build
  		- Centre de Fisioterapia FisioCat (FIS)
   			- Usuari: FISIO1    Password: 1234 Perfil: TECNIC
  			- Usuari: FISIO2    Password: 1234 Perfil: ADMINISTRADOR
- 		- Acadèmia Oposicions Oposite
+ 		- Acadèmia Oposicions Oposite (aplicacio buida per ser configurada amb ADMINISTRADOR desde zero)
  			- Usuari: GRAMON    Password: 1234 Perfil: ADMINISTRADOR	
  - Part pública:
  	- Ajuntament de Barcelona: 		   		    http://localhost:8081/citapreviafront/public/AJB
  	- Centre de Fisioterapia FisioCat: 		    http://localhost:8081/citapreviafront/public/FIS
- 	- Acadèmia Oposicions Oposite (app buida):  http://localhost:8081/citapreviafront/public/ACA
+ 	- Acadèmia Oposicions Oposite:   	        http://localhost:8081/citapreviafront/public/ACA
  	
  5. Tancar els desplegaments
  
