@@ -107,21 +107,21 @@
                         <div class="modal-body">
                             <div class="mb-3">
                                 <label for="nom" class="form-label" th:text="#{nom} + ' *'"></label>
-                                <input type="text" class="form-control" id="nom" th:field="*{nom}" required maxlength="100"
+                                <input type="text" class="form-control" id="nom" th:field="*{nom}" required  maxlength=50 th:title="#{valid.max50}"
                                        th:classappend="${#fields.hasErrors('nom')} ? 'is-invalid' : ''">
                                 <div class="invalid-feedback" th:if="${#fields.hasErrors('nom')}" th:errors="*{nom}"></div>
                             </div>
 
                             <div class="mb-3">
-                                <label for="nomcar" class="form-label" th:text="#{nomcar}"></label>
-                                <input type="text" class="form-control" id="nomcar" th:field="*{nomcar}" maxlength="100"
+                                <label for="nomcar" class="form-label" th:text="#{nomcar} + ' *'"></label>
+                                <input type="text" class="form-control" id="nomcar" th:field="*{nomcar}" required maxlength=100 th:title="#{valid.max100}"
                                        th:classappend="${#fields.hasErrors('nomcar')} ? 'is-invalid' : ''">
                                 <div class="invalid-feedback" th:if="${#fields.hasErrors('nomcar')}" th:errors="*{nomcar}"></div>
                             </div>
 
                             <div class="mb-3">
                                 <label for="obs" class="form-label" th:text="#{obs}"></label>
-                                <textarea class="form-control" id="obs" th:field="*{obs}" rows="3"></textarea>
+                                <textarea class="form-control" id="obs" th:field="*{obs}" rows="3"  maxlength=2000 th:title="#{valid.max2000}"></textarea>
                             </div>
                         </div>
 

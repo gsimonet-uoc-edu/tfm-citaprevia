@@ -121,26 +121,26 @@
                         <input type="hidden" name="dataHoraFin" id="modalDataHoraFinPrivate">
 
                         <div class="row g-3">
-                            <div class="col-md-6"><label class="form-label" th:text="#{nom} + ' *'"></label><input type="text" name="nom" class="form-control" required></div>
-                            <div class="col-md-6"><label class="form-label" th:text="#{llis} + ' *'"></label><input type="text" name="llis" class="form-control" required></div>
-                            <div class="col-md-6"><label class="form-label" th:text="#{numdoc} + ' *'"></label><input type="text" name="numdoc" class="form-control" required></div>
-                            <div class="col-md-6"><label class="form-label" th:text="#{nomcar} + ' *'"></label><input type="text" name="nomcar" class="form-control" required></div>
+                            <div class="col-md-6"><label class="form-label" th:text="#{nom} + ' *'"></label><input type="text" name="nom" class="form-control" maxlength=30 th:title="#{valid.max30}" required></div>
+                            <div class="col-md-6"><label class="form-label" th:text="#{llis} + ' *'"></label><input type="text" name="llis" class="form-control" maxlength=100 th:title="#{valid.max100}" required></div>
+                            <div class="col-md-6"><label class="form-label" th:text="#{numdoc} + ' *'"></label><input type="text" name="numdoc" class="form-control" maxlength=20 th:title="#{valid.max20}" required></div>
+                            <div class="col-md-6"><label class="form-label" th:text="#{nomcar} + ' *'"></label><input type="text" name="nomcar" class="form-control" maxlength=250 th:title="#{valid.max250}" required></div>
 					        <div class="col-md-6">
 					            <label class="form-label" th:text="#{tel} + ' *'"><i class="fas fa-phone me-2"></i></label>
 					            <div class="input-group">
 					                <span class="input-group-text"><i class="fas fa-phone"></i></span>
 					                <input type="text" name="tel" class="form-control" pattern="[0-9]{9}" 
-					                       title="Ha de contenir exactament 9 dígits." required>
+					                       th:title="#{valid.9digits}" required>
 					            </div>
 					        </div>       
 							<div class="col-md-6">
-							            <label class="form-label" th:text="#{ema} + ' *'"><i class="fas fa-envelope me-2"></i></label>
+							            <label class="form-label" th:text="#{ema}"><i class="fas fa-envelope me-2"></i></label>
 							            <div class="input-group">
 							                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-							                <input type="email" name="ema" class="form-control" required>
+							                <input type="email" name="ema" class="form-control" maxlength=250 th:title="#{valid.max250}">
 							            </div>
 							 </div>
-                            <div class="col-12"><label class="form-label" th:text="#{obs}"></label><textarea name="obs" class="form-control" rows="3"></textarea></div>
+                            <div class="col-12"><label class="form-label" th:text="#{obs}"></label><textarea name="obs" class="form-control" rows="3" maxlength=2000 th:title="#{valid.max2000}"></textarea></div>
                         </div>
 
                         <div class="row g-3 mt-4" th:if="${camposCita != null and !#lists.isEmpty(camposCita)}">

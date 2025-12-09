@@ -44,7 +44,7 @@ public class Ubicacio {
 	 */	
 	private String nomcar;
 	
-	@Column(length = 300)
+	@Column(length = 2000)
 	/**
 	 * Observacions
 	 */

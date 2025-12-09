@@ -96,13 +96,13 @@
                         
                         <div class="mb-3">
                             <label for="dec" class="form-label" th:text="#{dec} + ' *'"></label>
-                            <input type="text" class="form-control" id="dec" th:field="*{dec}" required>
+                            <input type="text" class="form-control" id="dec" th:field="*{dec}" maxlength=50 th:title="#{valid.max50}" required>
                             <span class="text-danger" th:if="${#fields.hasErrors('dec')}" th:errors="*{dec}"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label for="dem" class="form-label" th:text="#{dem}"></label>
-                            <textarea class="form-control" id="dem" th:field="*{dem}" rows="3"></textarea>
+                            <label for="dem" class="form-label" th:text="#{dem} + ' *'"></label>
+                            <textarea class="form-control" id="dem" th:field="*{dem}" rows="3" maxlength=100 th:title="#{valid.max100}"  required></textarea>
                             <span class="text-danger" th:if="${#fields.hasErrors('dem')}" th:errors="*{dem}"></span>
                         </div>
 

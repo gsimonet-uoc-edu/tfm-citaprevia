@@ -50,7 +50,7 @@ public class Cita {
 	 */
 	private String obs;
 	
-	@Column(length = 50)
+	@Column(length = 30)
 	/**
 	 * Nom de l'interessat
 	 */
@@ -153,7 +153,7 @@ public class Cita {
 	 */
 	private Long tel;
 	
-	@Column(length = 240)
+	@Column(length = 250)
 	/*
 	 * Correu electrònic de l'interessat
 	 */

@@ -107,14 +107,14 @@
                         <div class="modal-body">
                             <div class="mb-3">
                                 <label for="dec" class="form-label" th:text="#{dec} + ' *'"></label>
-                                <input type="text" class="form-control" id="dec" th:field="*{dec}" required maxlength="100"
+                                <input type="text" class="form-control" id="dec" th:field="*{dec}"  required maxlength=50 th:title="#{valid.max50}"
                                        th:classappend="${#fields.hasErrors('dec')} ? 'is-invalid' : ''">
                                 <div class="invalid-feedback" th:if="${#fields.hasErrors('dec')}" th:errors="*{dec}"></div>
                             </div>
 
                             <div class="mb-3">
-                                <label for="dem" class="form-label" th:text="#{dem}"></label>
-                                <input type="text" class="form-control" id="dem" th:field="*{dem}" maxlength="100"
+                                <label for="dem" class="form-label" th:text="#{dem} + ' *'"></label>
+                                <input type="text" class="form-control" id="dem" th:field="*{dem}" required maxlength=100 th:title="#{valid.max100}"
                                        th:classappend="${#fields.hasErrors('dem')} ? 'is-invalid' : ''">
                                 <div class="invalid-feedback" th:if="${#fields.hasErrors('dem')}" th:errors="*{dem}"></div>
                             </div>

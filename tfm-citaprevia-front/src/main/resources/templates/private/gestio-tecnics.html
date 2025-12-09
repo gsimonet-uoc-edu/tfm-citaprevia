@@ -111,38 +111,38 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="coa" class="form-label" th:text="#{tecnic_coa}"></label>
-                                <input type="text" th:field="*{coa}" id="coa" class="form-control" required maxlength="20"
+                                <label for="coa" class="form-label" th:text="#{tecnic_coa} + ' *'"></label>
+                                <input type="text" th:field="*{coa}" id="coa" class="form-control" required  maxlength=50 th:title="#{valid.max50}"
                                        th:classappend="${#fields.hasErrors('coa')} ? 'is-invalid' : ''">
                                 <div class="invalid-feedback" th:if="${#fields.hasErrors('coa')}" th:errors="*{coa}"></div>
                             </div>
 
                             <div class="mb-3">
-                                <label for="pass" class="form-label" th:text="#{tecnic_pass}"></label>
-                                <input type="password" th:field="*{pass}" id="pass" class="form-control" required maxlength="50"
+                                <label for="pass" class="form-label" th:text="#{tecnic_pass} + ' *'"></label>
+                                <input type="password" th:field="*{pass}" id="pass" class="form-control" required maxlength=50 th:title="#{valid.max50}"
                                        th:classappend="${#fields.hasErrors('pass')} ? 'is-invalid' : ''">
                                 <div class="form-text" th:text="#{pass_no_obligatoria_edicio}"></div>
                                 <div class="invalid-feedback" th:if="${#fields.hasErrors('pass')}" th:errors="*{pass}"></div>
                             </div>
 
                             <div class="mb-3">
-                                <label for="nom" class="form-label" th:text="#{tecnic_nom}"></label>
-                                <input type="text" th:field="*{nom}" id="nom" class="form-control" required maxlength="100"
+                                <label for="nom" class="form-label" th:text="#{tecnic_nom} + ' *'"></label>
+                                <input type="text" th:field="*{nom}" id="nom" class="form-control" required  maxlength=50 th:title="#{valid.max50}"
                                        th:classappend="${#fields.hasErrors('nom')} ? 'is-invalid' : ''">
                                 <div class="invalid-feedback" th:if="${#fields.hasErrors('nom')}" th:errors="*{nom}"></div>
                             </div>
 
                             <div class="mb-3">
-                                <label for="ll1" class="form-label" th:text="#{tecnic_ll1}"></label>
-                                <input type="text" th:field="*{ll1}" id="ll1" class="form-control" maxlength="100">
+                                <label for="ll1" class="form-label" th:text="#{tecnic_ll1} + ' *'"></label>
+                                <input type="text" th:field="*{ll1}" id="ll1" class="form-control"  required maxlength=50 th:title="#{valid.max50}">
                             </div>
                             <div class="mb-3">
                                 <label for="ll2" class="form-label" th:text="#{tecnic_ll2}"></label>
-                                <input type="text" th:field="*{ll2}" id="ll2" class="form-control" maxlength="100">
+                                <input type="text" th:field="*{ll2}" id="ll2" class="form-control"  maxlength=50 th:title="#{valid.max50}">
                             </div>
 
                             <div class="mb-3">
-                                <label for="prf" class="form-label" th:text="#{tecnic_prf}"></label>
+                                <label for="prf" class="form-label" th:text="#{tecnic_prf} + ' *'"></label>
                                 <select th:field="*{prf}" id="prf" class="form-select" required
                                         th:classappend="${#fields.hasErrors('prf')} ? 'is-invalid' : ''">
                                     <option value="" th:text="#{selecciona_perfil}"></option>

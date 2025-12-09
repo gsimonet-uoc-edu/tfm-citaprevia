@@ -100,8 +100,8 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="datfin" class="form-label" th:text="#{datfin}"></label>
-                            <input type="date" class="form-control" id="datfin" th:field="*{datfin}">
+                            <label for="datfin" class="form-label" th:text="#{datfin}+ ' *'"></label>
+                            <input type="date" class="form-control" id="datfin" th:field="*{datfin}" required>
                             <span class="text-danger" th:if="${#fields.hasErrors('datfin')}" th:errors="*{datfin}"></span>
                         </div>
 
