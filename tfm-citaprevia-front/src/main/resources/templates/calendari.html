@@ -84,7 +84,7 @@
 							                <input type="email" name="ema" class="form-control" maxlength=250 th:title="#{valid.max250}">
 							            </div>
 							 </div>                                                       
-                            <div class="col-12"><label class="form-label" th:text="#{obs}"></label><textarea name="obs" class="form-control" rows="3"></textarea></div>
+                            <div class="col-12"><label class="form-label" th:text="#{obs}"></label><textarea name="obs" class="form-control" rows="3" maxlength=2000 th:title="#{valid.max2000}"></textarea></div>
                         </div>
                         <div class="row g-3 mt-4" th:if="${camposCita != null and !#lists.isEmpty(camposCita)}">
                             <h6 th:text="#{dades_adicionals}"></h6>
