@@ -123,6 +123,10 @@ public class PublicController {
 	        	return "index";
 	        }
 	
+			SubaplicacioDto subAplicacioSessio = citaPreviaPublicClient.getSubaplicacio(subaplCoa, locale);
+			model.addAttribute("subaplCoa", subAplicacioSessio.getCoa());
+			model.addAttribute("subAplicacio", subAplicacioSessio);
+			
 	        List<AgendaDto> agendes = citaPreviaPublicClient.getAgendesObertesBySubaplicacioAndTipusCita(subaplCoa, tipcitCon, locale);
 	        
 	        if (agendes == null || agendes.isEmpty()) {
@@ -134,11 +138,7 @@ public class PublicController {
 	        // Generar easdeveniments públics
 	        model.addAttribute("tipusCita", tipusCita);
 	        model.addAttribute("dataInici", LocalDate.now());
-	        model.addAttribute("dataFi", LocalDate.now().plusDays(30));
-	        
-			SubaplicacioDto subAplicacioSessio = citaPreviaPublicClient.getSubaplicacio(subaplCoa, locale);
-			model.addAttribute("subaplCoa", subAplicacioSessio.getCoa());
-			model.addAttribute("subAplicacio", subAplicacioSessio);
+	        model.addAttribute("dataFi", LocalDate.now().plusDays(30));	        
 			
 		    List<CampConfigDto> campos = metacamapService.getCamps(subaplCoa, locale);
 		    model.addAttribute("camposCita", campos);
