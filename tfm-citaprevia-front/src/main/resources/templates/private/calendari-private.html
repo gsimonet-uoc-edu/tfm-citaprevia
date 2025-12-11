@@ -368,7 +368,51 @@ const modalConsulta = new bootstrap.Modal(document.getElementById('consultaModal
         const passadaModal = new bootstrap.Modal(document.getElementById('passadaModal'));
         const now = new Date();
 
-        console.log('Events rebuts:', events);
+		function processBackendEvents(backendEvents) {
+		    return backendEvents.map(event => {
+		        const isLliure = event.lliure === true;
+		        const eventStart = new Date(event.start);
+		        const isPassada = eventStart < new Date();
+
+		        const nom = (event.nom || '').trim();
+		        const llis = (event.llis || '').trim();
+		        const nomComplet = (nom && llis) ? `${nom} ${llis}` : (nom || llis || 'Ocupada');
+
+		        let classNames = isLliure ? 'hora-lliure' : (isPassada ? 'hora-passada' : 'hora-ocupada');
+
+		        return {
+		            start: event.start,
+		            end: event.end,
+		            title: isLliure ? event.title : nomComplet,
+		            classNames: classNames,
+		            extendedProps: {
+		                lliure: isLliure,
+		                isPassada: isPassada,
+		                originalTitle: event.title,
+		                agendaCon: event.agendaCon,
+		                citaCon: event.citaCon,
+		                nom: event.nom || '',
+		                llis: event.llis || '',
+		                numdoc: event.numdoc || '',
+		                nomcar: event.nomcar || '',
+		                tel: event.tel || '',
+		                ema: event.ema || '',
+		                obs: event.obs || '',
+		                lit1: event.lit1 || '',
+		                lit2: event.lit2 || '',
+		                lit3: event.lit3 || '',
+		                lit4: event.lit4 || '',
+		                lit5: event.lit5 || '',
+		                lit6: event.lit6 || '',
+		                lit7: event.lit7 || '',
+		                lit8: event.lit8 || '',
+		                lit9: event.lit9 || '',
+		                lit10: event.lit10 || '',
+		                tecnic: event.tecnicNom || 'Tècnic'
+		            }
+		        };
+		    });
+		}
 
         const calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'timeGridWeek',
@@ -386,59 +430,31 @@ const modalConsulta = new bootstrap.Modal(document.getElementById('consultaModal
             nowIndicator: true,
             height: 'auto',
 
-            events: Object.keys(events).flatMap(date => {
-                return events[date].map(event => {
-                    const isLliure = event.lliure === true;
-                    
-                    const eventStart = new Date(event.start);
-                    const isPassada = eventStart < now;
-                    const originalTimeSlot = event.title;
-                    const nom = (event.nom || '').trim();
-                    const llis = (event.llis || '').trim();
-                    const nomComplet = (nom && llis) ? `${nom} ${llis}` : (nom || llis || 'Ocupada');
-
-                    let classNames = '';
-                    if (isLliure) {
-                        classNames = 'hora-lliure';
-                    } else if (isPassada) {
-                        classNames = 'hora-passada';
-                    } else {
-                        classNames = 'hora-ocupada';
-                    }
-
-                    return {
-                        start: event.start,
-                        end: event.end || null,
-                        classNames: classNames,
-                        title: isLliure ? event.title : nomComplet,
-                        extendedProps: {
-                            lliure: isLliure,
-                            isPassada: isPassada,
-                            originalTitle: originalTimeSlot,
-                            agendaCon: event.agendaCon || null,
-                            citaCon: event.citaCon || null,
-                            nom: nom,
-                            llis: llis,
-                            numdoc: event.numdoc || '',
-                            nomcar: event.nomcar || '',
-                            tel: event.tel || '',
-                            ema: event.ema || '',
-                            obs: event.obs || '',
-                            lit1: event.lit1 || '',
-                            lit2: event.lit2 || '',
-                            lit3: event.lit3 || '',
-                            lit4: event.lit4 || '',
-                            lit5: event.lit5 || '',
-                            lit6: event.lit6 || '',
-                            lit7: event.lit7 || '',
-                            lit8: event.lit8 || '',
-                            lit9: event.lit9 || '',
-                            lit10: event.lit10 || '',
-                            tecnic: event.tecnic || 'Tècnic'
-                        }
-                    };
-                });
-            }),
+			events: function(fetchInfo, successCallback, failureCallback) {
+			    
+				const start = fetchInfo.start.toISOString();
+				const end = fetchInfo.end.toISOString();
+			    
+			    // Construcció de la URL  del front-end amb els paràmetres de rang de dates
+			    const frontUrl = `/citapreviafront/private/cites/rang?datini=${start}&datfin=${end}`;
+			    
+			    // Crida AJAX per tal d'optimitzar la carrega del les franges horàries del calendari consultant per rang de dates
+			    fetch(frontUrl)
+			        .then(response => {
+			            if (!response.ok) {
+			                throw new Error(`Error HTTP: ${response.status}`);
+			            }
+			            return response.json();
+			        })
+			        .then(backendEvents => {
+			            const processedEvents = processBackendEvents(backendEvents);
+			            successCallback(processedEvents);
+			        })
+			        .catch(error => {
+			            console.error('Error:', error);
+			            failureCallback(error); 
+			        });
+			},
 
             eventClick: function(info) {
                 const props = info.event.extendedProps || {};

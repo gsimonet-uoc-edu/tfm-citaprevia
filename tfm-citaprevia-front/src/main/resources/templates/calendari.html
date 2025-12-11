@@ -137,13 +137,49 @@
     <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', function() {
             const calendarEl = document.getElementById('calendar');
-            const events = /*[[${frangesHorariesGrouped}]]*/ [];
             const reservaModal = new bootstrap.Modal(document.getElementById('reservaModal'));
             const passadaModal = new bootstrap.Modal(document.getElementById('passadaModal'));
-
+			const tipusCitaCon = /*[[${tipusCita != null ? tipusCita.con : ''}]]*/ '';
+			const subaplCoa = /*[[${subaplCoa}]]*/ 'public';
             const now = new Date();
             const todayISO = now.toISOString().slice(0, 10); 
             
+			function processBackendEvents(backendEvents) {
+			        const now = new Date();
+			        
+			        return backendEvents.map(event => {
+			            const isLliure = event.lliure === true;
+			            const eventStart = new Date(event.start);
+			            const isPassada = eventStart < now;
+			            
+			            const title = isLliure ? event.title : 'Ocupada';
+
+			            let classNames = isLliure ? 'hora-lliure' : 'hora-ocupada';
+			            // Al públic no s'han de veure franges franges passades, però per seguretat les marquem amb un color diferenciador
+			            if (isPassada) {
+			                classNames = 'hora-passada'; 
+			            }
+
+			            return {
+			                start: event.start,
+			                end: event.end || null,
+			                title: title,
+			                classNames: classNames,
+			                extendedProps: {
+			                    lliure: isLliure,
+			                    isPassada: isPassada,
+			                    agendaCon: event.agendaCon,
+			                    title: event.title,
+			                    tecnicNom: event.tecnicNom || '',
+			                    tecnicLlinatge1: event.tecnicLl1 || '',
+			                    centreNom: event.centreNom || ''
+			                },
+			                // Si la franja està ocupada o passada, no la fem clicable
+			                display: (isLliure && !isPassada) ? 'auto' : 'block' 
+			            };
+			        });
+			    }
+				
             const calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'timeGridWeek',
                 locale: /*[[${#locale.language}]]*/ 'ca',
@@ -156,20 +192,29 @@
                     start: todayISO 
                 },
 
-                events: Object.keys(events).flatMap(date => {
-                    return events[date].map(event => {
-                        const isLliure = event.lliure;
-                        return {
-                            start: event.start,
-                            end: event.end || null,
-                            classNames: isLliure ? 'hora-lliure' : 'hora-ocupada',
-                            extendedProps: { lliure: isLliure, agendaCon: event.agendaCon, title: event.title, tecnicNom: event.tecnicNom, 
-							                                tecnicLlinatge1: event.tecnicLl1, 
-							                                centreNom: event.centreNom},
-                            title: isLliure ? event.title : 'Ocupada'
-                        };
-                    });
-                }),
+				events: function(fetchInfo, successCallback, failureCallback) {
+				                
+				                const start = fetchInfo.start.toISOString();
+				                const end = fetchInfo.end.toISOString();				                			
+				                const frontUrl = `/citapreviafront/public/cites/rang?datini=${start}&datfin=${end}&tipcitCon=${tipusCitaCon}&subaplCoa=${subaplCoa}`;
+				                
+				                fetch(frontUrl)
+				                    .then(response => {
+				                        if (!response.ok) {
+				                            throw new Error(`Error HTTP: ${response.status}. URL: ${frontUrl}`);
+				                        }
+				                        return response.json();
+				                    })
+				                    .then(backendEvents => {
+				                        const processedEvents = processBackendEvents(backendEvents);
+				                        successCallback(processedEvents);
+				                    })
+				                    .catch(error => {
+				                        console.error('Error carregant events públics del backend:', error);
+				                        failureCallback(error); 
+				                        alert('Error en carregar les franges horàries. Si us plau, actualitzi la pàgina o revisi els logs.');
+				                    });
+				            },
                 eventContent: function(info) {
                     const props = info.event.extendedProps;
                     if (props.lliure) {

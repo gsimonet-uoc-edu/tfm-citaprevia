@@ -2,13 +2,12 @@ package uoc.edu.citaprevia.front.controller;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -16,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import uoc.edu.citaprevia.dto.AgendaDto;
@@ -129,9 +131,7 @@ public class PublicController {
 	            return "index";
 	        }
 	
-	        // Generar eventos
-	        List<Map<String, Object>> events = generarEvents(agendes, locale);
-	        model.addAttribute("frangesHoraries", events);
+	        // Generar easdeveniments públics
 	        model.addAttribute("tipusCita", tipusCita);
 	        model.addAttribute("dataInici", LocalDate.now());
 	        model.addAttribute("dataFi", LocalDate.now().plusDays(30));
@@ -140,16 +140,6 @@ public class PublicController {
 			model.addAttribute("subaplCoa", subAplicacioSessio.getCoa());
 			model.addAttribute("subAplicacio", subAplicacioSessio);
 			
-	        Map<LocalDate, List<Map<String, Object>>> grouped = events.stream()
-	        	    .collect(Collectors.groupingBy(
-	        	        e -> ((LocalDateTime) e.get("start")).toLocalDate(),
-	        	        TreeMap::new,
-	        	        Collectors.toList()
-	        	    ));
-	
-	        model.addAttribute("frangesHorariesGrouped", grouped);	
-		    model.addAttribute("frangesHoraries", events);
-		    
 		    List<CampConfigDto> campos = metacamapService.getCamps(subaplCoa, locale);
 		    model.addAttribute("camposCita", campos);
 		    
@@ -166,21 +156,67 @@ public class PublicController {
         return "calendari";
     }
 	
-	private List<Map<String, Object>> generarEvents(List<AgendaDto> agendes, Locale locale) {
-	    List<Map<String, Object>> events = new ArrayList<>();
-	    
-		long startTime=System.currentTimeMillis();
-		LOG.info("### Inici PublicController.generarEvents startTime={}, agendesSize={}", startTime, agendes != null ? agendes.size() : 0);				
-    	try {
+	@GetMapping("/cites/rang")
+    @ResponseBody
+    public ResponseEntity<List<Map<String, Object>>> getCitesPerRang(
+        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime datini, 
+        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime datfin,
+        @RequestParam Long tipcitCon,
+        @RequestParam String subaplCoa,
+        Locale locale) {
 
-    		// Recorrer cada agenda del tipus de cita
-    		
-		    for (AgendaDto agenda : agendes) {
-		        LocalDate dataInici = agenda.getDatini();
-		        LocalDate dataFi = agenda.getDatfin();
+        LocalDate datiniFiltre = datini.toLocalDate();
+        LocalDate datfinFiltre = datfin.toLocalDate();
+        
+		long startTime=System.currentTimeMillis();
+		List<AgendaDto> agendes = new ArrayList<AgendaDto>();
+		List<Map<String, Object>> events = new ArrayList<>();
+        LOG.info("### Inici PublicController.getCitesPerRang datiniFiltre={}, datfinFiltre={}, tipcitCon={}, subaplCoa={}, startTime={}", datiniFiltre, datiniFiltre, tipcitCon, subaplCoa, startTime);
+        try {
+        	
+          agendes = citaPreviaPublicClient.getAgendesObertesBySubaplicacioAndTipusCita(subaplCoa, tipcitCon, locale);          
+            // Crida a generació d'esdeveniments
+	       events = generarEvents(agendes, datiniFiltre, datfinFiltre, locale);
+ 
+        } catch (Exception e) {
+            LOG.error("### Error PublicController.getCitesPerRang: ", e);
+            return ResponseEntity.ok(events);
+	    } finally {
+	        long totalTime = (System.currentTimeMillis() - startTime);
+	        LOG.info("### Final PublicController.getCitesPerRang datiniFiltre={}, datfinFiltre={}, totalTime={}, agendesSize={}", datiniFiltre, datfinFiltre, totalTime, agendes != null ? agendes.size() : 0);
+	    } 
+        
+        return ResponseEntity.ok(events);
+    }
 	
-		        for (LocalDate data = dataInici; !data.isAfter(dataFi); data = data.plusDays(1)) {
-		            int diaSetmana = data.getDayOfWeek().getValue();
+	private List<Map<String, Object>> generarEvents(
+	        List<AgendaDto> agendes, 
+	        LocalDate dataIniFiltre, 
+	        LocalDate dataFiFiltre, 
+	        Locale locale) {
+	       
+        List<Map<String, Object>> events = new ArrayList<>();
+        long startTime=System.currentTimeMillis();
+        LOG.info("### Inici PublicController.generarEvents datiniFiltre={}, datfinFiltre={}, startTime={}", dataIniFiltre, dataFiFiltre, startTime);
+        
+      	try {
+
+    		// Recorrer cada agenda del tipus de cita   		
+		    for (AgendaDto agenda : agendes) {
+		    	
+                LocalDate datiniAge = agenda.getDatini();
+                LocalDate datfiAge = agenda.getDatfin();
+                
+                LocalDate dataIniciReal = dataIniFiltre.isAfter(datiniAge) ? dataIniFiltre : datiniAge;
+                LocalDate dataFiReal = dataFiFiltre.isBefore(datfiAge) ? dataFiFiltre : datfiAge;
+
+                if (dataIniciReal.isAfter(dataFiReal)) {
+                    continue; 
+                }
+	
+                // Recórrer les dates dins del rang especificat
+                for (LocalDate data = dataIniciReal; !data.isAfter(dataFiReal); data = data.plusDays(1)) {
+                    int diaSetmana = data.getDayOfWeek().getValue();
 	
 		            // Recuperar les franges horàries del tipus d'horari seleccionat
 		            List<SetmanaTipusDto> franges = citaPreviaPublicClient.getSetmanesTipusByHorari(agenda.getHorari().getCon(), locale);
@@ -219,14 +255,14 @@ public class PublicController {
 		        }
 		    }
 		    
-	    }  catch (Exception e) {
-	        LOG.error("### Error PublicController.generarEvents: ", e);
-	    } finally {
-	    	long totalTime = (System.currentTimeMillis() - startTime);
-			LOG.info("### Final PublicController.generarEvents totalTime={}, agendesSize={}", totalTime, agendes != null ? agendes.size() : 0);
-		}  
+        }  catch (Exception e) {
+            LOG.error("### Inici PublicController.generarEvents: ", e);
+        } finally {
+            long totalTime = (System.currentTimeMillis() - startTime);
+            LOG.info("### Final PublicController.generarEvents datiniFiltre={}, datfinFiltre={}, totalTime={}", dataIniFiltre, dataFiFiltre, totalTime);
+        }  
 
-	    return events;
+        return events;
 	}
 	
 	@PostMapping("/{subaplCoa}/reserva")
