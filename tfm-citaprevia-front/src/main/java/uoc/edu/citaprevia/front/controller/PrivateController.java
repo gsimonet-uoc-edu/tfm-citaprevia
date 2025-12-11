@@ -132,15 +132,6 @@ public class PrivateController {
 	
 	        boolean isAdministrador = this.isAdministrador(authentication);
 	        
-	        List<AgendaDto> agendes;
-	        if (isAdministrador) {
-	            agendes = citaPreviaPrivateClient.getAgendasBySubaplicacio(subaplCoa, locale);
-	        } else {
-	            agendes = citaPreviaPrivateClient.getAgendasByTecnic(tecnic.getCoa(), locale);    
-	        }
-	        
-
-	        
 	        model.addAttribute("isAdministrador", isAdministrador);
 			model.addAttribute("subaplCoa", subaplCoa); 
 			model.addAttribute("tipusCita", new TipusCitaDto());	
